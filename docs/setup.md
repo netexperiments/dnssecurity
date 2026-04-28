@@ -208,7 +208,7 @@ com.        IN  NS  ns.com.
 ns.com.     IN  A   10.0.1.1
 ```
 
-### TLD Server (.com)
+### TLD (Top Level Domain) Server (.com)
 
 Example of TLD Server configuration for `.com`:
 
