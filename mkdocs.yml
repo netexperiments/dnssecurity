@@ -1,0 +1,49 @@
+site_name: DNS Security
+site_url: https://netexperiments.github.io/dnssecurity/
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.tabs  
+    - navigation.indexes
+    - content.code.copy
+markdown_extensions:
+  - toc:
+      toc_depth: 0
+  - attr_list
+  - md_in_html
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+#extra_css:
+ # - stylesheets/extra.css
+
+nav:
+  - Home: index.md
+  - Lab Setup: setup.md
+  - DNS Security and Privacy Enhancements:
+    - enhancements/index.md
+    - DNSSEC: enhancements/dnssec.md
+    - DNS-over-HTTPS (DoH): enhancements/doh.md
+  - DNS Attacks and Countermeasures:
+    - attacks/index.md
+    - DNS Protocol and Resolution Attacks:
+      - attacks/protocol/index.md
+      - DNS Rebinding: attacks/protocol/rebinding.md
+      - DHCP DNS Spoofing: attacks/protocol/dhcp-dns-spoofing.md
+    - DNS Server and Infrastructure Attacks:
+      - attacks/server/index.md
+      - NXDOMAIN DDoS: attacks/server/nxdomain-ddos.md
+      - DNS Cache Poisoning: attacks/server/cache-poisoning.md
+      - Kaminsky Cache Poisoning: attacks/server/kaminsky.md
+      - Unauthorized Zone Transfer: attacks/server/zone-transfer.md
+      - DNS ARP Poisoning: attacks/server/dns-arp-poisoning.md
+    - DNS Abuse/Misuse Attacks:
+      - attacks/abuse-misuse/index.md
+      - DNS Amplification: attacks/abuse-misuse/amplification.md
+      - DNS Fast Flux Single-based: attacks/abuse-misuse/ff-single.md
+      - DNS Fast Flux Double-based: attacks/abuse-misuse/ff-double.md
+      - DNS Tunneling: attacks/abuse-misuse/tunneling.md
+      - DGA-based: attacks/abuse-misuse/dgas.md
+      - Fast Flux and DGA-based Tunneling: attacks/abuse-misuse/ff-dgas-tunneling.md
+  - DNS Security Extended Report: report.md
