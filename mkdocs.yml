@@ -46,4 +46,3 @@ nav:
       - DNS Tunneling: attacks/abuse-misuse/tunneling.md
       - DGA-based: attacks/abuse-misuse/dgas.md
       - Fast Flux and DGA-based Tunneling: attacks/abuse-misuse/ff-dgas-tunneling.md
-  - DNS Security Extended Report: report.md
