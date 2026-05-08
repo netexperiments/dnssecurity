@@ -27,6 +27,14 @@ A feature of DNS not previously explained, relevant for this attack, is the glue
 Do note that the attack is only successful if Step 2.1 happens before Step 3, and for that, the attacker's nameserver has to flood the victim DNS server with replies right after the attacker sends the DNS query in Step 1.
 
 <br>
+
+The following script was used in this lab:
+
+- <a href="../../../scripts/kaminsky.py" download>kaminsky.py</a>
+
+
+
+<br>
 <br>
 
 # Objectives

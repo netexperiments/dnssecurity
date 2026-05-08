@@ -33,6 +33,13 @@ In the GNS3 project showed in Figure 2, you will need to add in the following to
 | **Client** | Client of the Resolver         | **10.0.2.1**   | 10.0.2.0/24  |
 
 <br>
+
+The following script was used in this lab:
+
+- <a href="../../../scripts/doh_query.py" download>doh_query.py</a>
+
+
+
 <br>
 <br>
 

@@ -53,7 +53,7 @@ rebinding-victim, for the **Malicious Website** install 0xdrogon/dns-rebinding-m
 
 For the **Victim Browser** use the **Ubuntu Desktop Guest** appliance of GNS3 (22.04 version was the one used in this lab, includes Firefox). To log in, use credentials: `Username: osboxes.org`, `Password: osboxes.org`.
 
-<br>
+
 <br>
 <br>
 

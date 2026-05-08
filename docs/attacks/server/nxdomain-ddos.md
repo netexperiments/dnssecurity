@@ -56,6 +56,13 @@ In the GNS3 project showed in [Figure 2](#figure-2), you will need to add in the
 Since there is no TLD server in this lab, the Resolver machine should be configured to host `.com` zone to be able to access the Authoritative Server. You can check the [Lab Setup Guide](../../setup.md){:target="_blank"} to know how.
 
 <br>
+
+The following scripts were used in this lab:
+
+- <a href="../../../scripts/nxdomainddos_activate_bots.py" download>nxdomainddos_activate_bots.py</a>
+- <a href="../../../scripts/nxdomainddos.py" download>nxdomainddos.py</a>
+
+<br>
 <br>
 
 
@@ -112,13 +119,13 @@ The attacker's infrastructure consists of a central controller machine and four 
 
 ### Step 2.1: Prepare the Scripts
 
-On the **Attacker** machine, add the script `activate.py`:
+On the **Attacker** machine, add the script `nxdomainddos_activate_bots.py`:
 
 ```bash
-nano /home/activate.py
+nano /home/nxdomainddos_activate_bots.py
 ```
 
-The script `activate.py` uses the paramiko python library to run, via ssh, the `nxdomainddos.py` on each of the bots.
+This script uses the paramiko python library to command, via ssh, the `nxdomainddos.py` to be run on each of the bots.
 
 <br>
 
@@ -159,7 +166,7 @@ Make sure it receives a correct response. If not, restart BIND on the designated
 On the **Attacker** machine, run:
 
 ```bash
-python3 /home/activate.py
+python3 /home/nxdomainddos_activate_bots.py
 ```
 
 

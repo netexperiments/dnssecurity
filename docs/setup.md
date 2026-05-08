@@ -1,3 +1,9 @@
+This guide is designed as an essential companion to the lab guides, ensuring you can properly set up the laboratory environment before diving into the specifics of each experiment.  The laboratory environment is designed for local deployment on a single host, allowing you to replicate real-world DNS scenarios in a controlled setting. All attack scripts used in the experiments are available on [GitHub](https://netexperiments.github.io/dnssecurity/){:target="_blank"}.
+
+
+## Docker Containers
+Docker containers are provided through [Docker Hub](https://hub.docker.com/){:target="_blank"} to facilitate deployment.
+
 ## Add Docker based machines
 Start by importing the docker images for the relevant machines provided here (preciso ainda de adicionar). To add them to GNS3, go to `Edit>Preferences>Docker containers`.
 

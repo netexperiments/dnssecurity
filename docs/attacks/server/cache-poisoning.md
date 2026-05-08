@@ -64,6 +64,14 @@ We will add a delay in the connection between the router and the Authoritative S
 Right-Click on the connection and select `Packet Filters`, and in `Delay` add 600ms of latency.
 
 <br>
+
+The following script was used in this lab:
+
+- <a href="../../../scripts/cache_poisoning.py" download>cache_poisoning.py</a>
+
+
+
+<br>
 <br>
 
 

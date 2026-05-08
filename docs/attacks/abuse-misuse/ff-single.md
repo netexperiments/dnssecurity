@@ -66,12 +66,23 @@ In the GNS3 project showed in Figure 2, you will need to add in the following to
 
 
 <br>
+
+
+The following scripts were used in this lab:
+
+- <a href="../../../scripts/fast_flux_proxy_FFA.py" download>fast_flux_proxy_FFA.py</a>
+- <a href="../../../scripts/CC_server.py" download>CC_server.py</a>
+- <a href="../../../scripts/fast_flux_victim.py" download>fast_flux_victim.py</a>
+- <a href="../../../scripts/single_flux_detector.py" download>single_flux_detector.py</a>
+
+
+<br>
 <br>
 
 # Phase 1: FFA Setup and DNS Registration
 
 
-### Step 1.1: Create and Configure a Sudo User for Remote Commands
+### Step 1.1: Configure a Sudo User for Remote Commands
 
 For the C&C Server to be able to run commands on the FFAs remotely via SHH it will need new user credentials.
 
@@ -105,10 +116,10 @@ test ALL=(ALL) NOPASSWD: /usr/sbin/named, /usr/bin/pkill named, /usr/bin/python3
 On each **FFA**, run:
 
 ```bash
-python3 /home/CC_proxy.py
+python3 /home/fast_flux_proxy_FFA.py
 ```
 
-This script /home/CC_proxy.py has all the logic that enables an FFA agent to function as a proxy of C&C Server. Although only one will be used by the C&C Server at each time, all have to be ready to accept commands from it.
+This script `fast_flux_proxy_FFA.py` has all the logic that enables an FFA agent to function as a proxy of C&C Server. Although only one will be used by the C&C Server at each time, all have to be ready to accept commands from it.
 
 
 <br>
@@ -163,7 +174,7 @@ On the **C&C-Server**, run:
 python3 /home/CC_server.py
 ```
 
-The CC_server.py script is responsabile for handling the beacon signal sent by the bots and all communication thereafter. It allows an operator to monitor connected bots, to send commands, and collect outputs and files from those bots. The server exposes four HTTP endpoints for communication with bots: `/beacon` (POST, bots send a "beacon" to signal they are alive); `/get-command` (GET, bots request commands to execute); `/report` (POST, bots send the output of executed commands); `/file-report` (POST, bots send file contents e.g., stolen data). The script can then save the information obtained for future use.
+The `CC_server.py` script is responsabile for handling the beacon signal sent by the bots and all communication thereafter. It allows an operator to monitor connected bots, to send commands, and collect outputs and files from those bots. The server exposes four HTTP endpoints for communication with bots: `/beacon` (POST, bots send a "beacon" to signal they are alive); `/get-command` (GET, bots request commands to execute); `/report` (POST, bots send the output of executed commands); `/file-report` (POST, bots send file contents e.g., stolen data). The script can then save the information obtained for future use.
 <br>
 <br>
 
@@ -174,12 +185,12 @@ On the **Victim** machine, run:
 
 
 ```bash
-python3 /home/FF_comms_CC.py
+python3 /home/fast_flux_victim.py
 ```
 
 Observe the DNS lookup process and the IP address the Victim machine is communicating with. Look into the Wireshark capture to see the process in detail.
 
-The Victim runs the script: queries the Resolver for the IP address of cc.attacker.com, gets one response, receives one response pointing to **FFA1**, and establishes a connection with that machine. The infected host will use those HTTP endpoints to communicate with the FFA.
+The Victim runs the script, it queries the Resolver for the IP address of cc.attacker.com, gets one response, receives one response pointing to **FFA1**, and establishes a connection with that machine. The infected host will use those HTTP endpoints to communicate with the FFA.
 <br>
 <br>
 
@@ -201,7 +212,7 @@ For data exfiltration, select Option `2. Issue Command to Victim` again, issue t
 # Phase 3: FFA Rotation and Connection Resilience
 
 
-While maintaining both the C&C Server script, as well as the `FF_comms_CC.py` in the Victim machine running, we will use an auxiliary console of C&C Server to update the IP address associated with cc.attacker.com (select `Auxiliary Console` option).
+While maintaining both the C&C Server script, as well as the `fast_flux_victim.py` in the Victim machine running, we will use an auxiliary console of C&C Server to update the IP address associated with cc.attacker.com (select `Auxiliary Console` option).
 
 ### Step 3.1: Rotating the Domain's IP Address
 
@@ -244,7 +255,7 @@ Now let's simulate a new victim connecting.
 On the **Victim** machine, stop the running python script and run it again:
 
 ```bash
-python3 /home/FF_comms_CC.py
+python3 /home/fast_flux_victim.py
 ```
 
 <br>
@@ -311,20 +322,20 @@ In the GNS3 project showed in Figure 3, you will need to modify the previous top
 
 In Figure 3, we added a hub positioned between the Victim machine and the central router to which we will add the **Sniffer** machine. This way this machine can actually observe all traffic that reaches and is sent from the Victim machine.
 
-The script `FFS_scapy_attack_detector.py` uses the Python library Scapy to sniff network packets, capturing DNS response packets returned to the Victim machine. It listens for all UDP port 53 packets and filters specifically for DNS responses (QR flag = 1) that contain at least one answer record.
+The script `single_flux_detector.py` uses the Python library Scapy to sniff network packets, capturing DNS response packets returned to the Victim machine. It listens for all UDP port 53 packets and filters specifically for DNS responses (QR flag = 1) that contain at least one answer record.
 For every DNS response it sees, it runs two heuristic checks to decide if the traffic looks like fast flux activity: a **unique IP count check** — legitimate domains resolve to a stable set of IP addresses over time. Fast flux networks constantly rotate their A records. If a given domain resolves to 3 or more unique IP addresses across observed responses, it is flagged; and a **TTL analysis check**, which inspects the Time-To-Live value on each A record in the response. Legitimate TTLs are 300 seconds or higher to allow caching. Fast flux TTLs are short to force clients to re-resolve frequently, cycling through their botnet pool. If any A record carries a TTL below 300 seconds, the alert is upgraded from MEDIUM to HIGH confidence.
 If either condition triggers and that (client IP, domain) pair has not already been alerted, it calls a console alert. 
 
 The script maintains a 24-hour rolling history window per domain so that stale resolutions from legitimate high-IP domains do not accumulate and trigger false positives. State is persisted to disk at /home/fast_flux_state.json every 60 seconds and is reloaded with expiry filtering on startup so detection context survives process restarts.
 <br>
 
-### Step 1:  Execute the Scapy Detector Script
+### Step 1:  Execute the Detector Script
 Do a new Wireshark capture right next to the Victim machine interface.
 
 On the **Sniffer** machine, run: 
 
 ```bash
-python3 /home/FFS_scapy_attack_detector.py
+python3 /home/single_flux_detector.py
 ```
 <br>
 
@@ -335,20 +346,20 @@ Repeat previous steps to re-run the attack.
 
 
 !!! question Question
-     Did the Sniffer script correctly detect the Fast Flux activity? At what point during the attack did it trigger an alert, and what was the confidence level assigned (MEDIUM or HIGH)? Justify your answer based on the detection heuristics described.
+     Did the detector script correctly detect the Fast Flux activity? At what point during the attack did it trigger an alert, and what was the confidence level assigned (MEDIUM or HIGH)? Justify your answer based on the detection heuristics described.
 
 
 ??? success "Answer"
-    Yes, the Sniffer correctly detected the Fast Flux activity. The first alert was triggered after the domain cc.attacker.com resolved to a third unique IP address (once FFA3 or another agent was used), satisfying the unique IP count threshold of ≥ 3. Because the TTL on the A records was set to 60 seconds (well below the 300-second threshold) the confidence level was upgraded to HIGH. Both heuristics fired: multiple unique IPs for the same domain within a short window, and consistently low TTL values indicating forced re-resolution.
+    The detector should have correctly detected the Fast Flux activity. The first alert was triggered after the domain cc.attacker.com resolved to a third unique IP address (once FFA3 or another agent was used), satisfying the unique IP count threshold of ≥ 3. Because the TTL on the A records was set to 60 seconds (well below the 300-second threshold) the confidence level was upgraded to HIGH. Both heuristics fired: multiple unique IPs for the same domain within a short window, and consistently low TTL values indicating forced re-resolution.
 
 <br>
 
 !!! question Question
-    Why might this Sniffer-based detection approach produce false positives in certain real-world scenarios?Suggest how the detection script could be improved to reduce false positives.
+    Why might this sniffer-based detection approach produce false positives in certain real-world scenarios?Suggest how the detection script could be improved to reduce false positives.
  
 
 ??? success "Answer"
-    Large Content Delivery Networks (CDNs) such as Cloudflare or Akamai can legitimately resolve to dozens of different IP addresses globally, and may sometimes use low TTL values for load balancing or failover purposes. This could cause the Sniffer to falsely flag them as Fast Flux. To reduce false positives, the script detection logic could be improved by, for example, maintaining an allowlist of known CDN IP ranges or domains.
+    Large Content Delivery Networks (CDNs) such as Cloudflare or Akamai can legitimately resolve to dozens of different IP addresses globally, and may sometimes use low TTL values for load balancing or failover purposes. This could cause the sniffer to falsely flag them as Fast Flux. To reduce false positives, the script detection logic could be improved by, for example, maintaining an allowlist of known CDN IP ranges or domains.
 
 
 

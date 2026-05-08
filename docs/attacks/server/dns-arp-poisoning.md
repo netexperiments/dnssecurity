@@ -3,7 +3,7 @@ Address Resolution Protocol (ARP) poisoning, also known as ARP spoofing, is a ma
 
 ARP operates on the principle of broadcasting requests and receiving responses. When a device needs to communicate with another device on the same network, it sends an ARP request to discover the MAC address associated with the target IP address. The device with the matching IP address responds with its MAC address, and the requesting device caches this mapping for future use. These ARP requests happen each time an entry in the ARP cache of a particular device expires, which tipically happens every few minutes.
 
-In an ARP poisoning attack, the attacker sends falsified ARP messages to the target device(s), associating their own MAC address with the IP address of a legitimate network resource—such as the default gateway or a DNS server. Once the target device updates its ARP cache with the attacker's MAC address, all traffic intended for the legitimate resource is instead sent to the attacker's machine, "man-in-the-middle" (MITM). This redirection allows the attacker to intercept, inspect, or alter the traffic before forwarding it to the intended destination, or to drop it entirely.
+In an ARP poisoning attack, the attacker sends falsified ARP messages to the target device(s), associating their own MAC address with the IP address of a legitimate network resource, such as the default gateway or a DNS server. Once the target device updates its ARP cache with the attacker's MAC address, all traffic intended for the legitimate resource is instead sent to the attacker's machine, "man-in-the-middle" (MITM). This redirection allows the attacker to intercept, inspect, or alter the traffic before forwarding it to the intended destination, or to drop it entirely.
 
 DNS spoofing based on ARP Poisoning, or just simply DNS ARP Poisoning is an application of ARP poisoning in the redirection of victims to a rogue DNS server. By poisoning the ARP cache of a victim's device, an attacker can redirect DNS queries to a malicious DNS server under their control. This rogue server can then return incorrect IP addresses for legitimate domains, directing victims to attacker-controlled servers or phishing sites.
 
@@ -15,7 +15,7 @@ DNS spoofing based on ARP Poisoning, or just simply DNS ARP Poisoning is an appl
 
 Figure 1 reveals a DNS spoofing based on ARP Poisoning attack scenario. The steps are the following:
 
-- **Step 1:** The attacker scans the network to identify active devices and their IP/MAC mappings. It then sends ARP replies to a recurrent ARP Request of both the Victim and the Gateway with each other's MAC addresses paired with the attacker's own IP address. 
+- **Step 1:** The attacker scans the network to identify active devices and their IP/MAC mappings. It then sends ARP replies to a recurrent ARP Request of both the Victim and the ARP Server with each other's MAC addresses paired with the attacker's own IP address. 
 - **Step 2:** Eventually, the Victim sends a DNS Query for example.com which the attacker intercepts since he now acts as "man-in-the-middle".
 - **Step 3:** The attacker replies with the IP address of his pre-configured malicious webserver.
 - **Step 4:** The Victim establishes a connection with the Attacker Webserver, oblivious to it not being the legitimate webserver for example.com.
@@ -49,6 +49,14 @@ In the GNS3 project showed in Figure 2, you will need to add in the following to
 | **Router** | Acts as gateway for the Victim. Accesses NAT          | **g0/0: 10.0.0.254 ‎ ‎ ‎ ‎ g0/1:DHCP‎‎‎**   | g0/0:10.0.0.0/24  |
 
 For the **Victim** use the **webterm** appliance of GNS3 (which includes Firefox), and for the **Attacker Webserver** use the **Toolbox** appliance of GNS3 (which includes NGINX). Use a Cisco IOSvL2 switch router between the four key nodes.
+
+<br>
+
+The following script was used in this lab:
+
+- <a href="../../../scripts/dns_arp_poisoning.py" download>dns_arp_poisoning.py</a>
+
+
 
 <br>
 <br>
@@ -174,7 +182,7 @@ Now we launch the attack in the Attacker machine. Perform a Wireshark capture ri
 On the **Attacker** machine, run:
 
 ```bash
-python3 /home/dnsarppoisoning.py eth0 /home/atk.txt 10.0.0.0/24
+python3 /home/dns_arp_poisoning.py eth0 /home/atk.txt 10.0.0.0/24
 ```
 
 On the **Victim** browser we want to use HTTP (port 80) so make sure you enter:
@@ -187,7 +195,7 @@ You can also try the same for other domains listed on `atk.txt`.
 
 
 
-The `dnsarppoisoning.py` script uses the python library scapy to perform a combined ARP poisoning and DNS spoofing attack. Its execution can be broken down into four stages: **IP Forwarding Setup**, the script begins by enabling IP forwarding on the attacker's machine which is essential for the MITM position. It also disables ICMP redirects and drops ICMP "destination unreachable" messages via iptables to prevent the network from correcting itself; **Network Scan**, the script iterates over every address in the provided subnet (`10.0.0.0/24`) and sends ARP requests (broadcast ff:ff:ff:ff:ff:ff) to discover which IP addresses are live and to collect their MAC addresses. The result is a `mac_list` dictionary mapping each active IP to its real MAC address; **ARP Poisoning**, using the collected MAC addresses, the script sends unsolicited ARP Reply packets. Each reply tells host A that the MAC address for host B's IP is actually the attacker's MAC, and vice versa. This poisons the ARP caches of all devices on the subnet simultaneously, placing the attacker as a MITM between all of them. The poisoning loop repeats every 5 seconds to keep the caches stale (since ARP cache entries expire periodically and devices will re-broadcast ARP Requests); **DNS Interception**, an `AsyncSniffer` listens on the network interface for DNS packets. When a DNS query arrives, checks the queried hostname against the `host_map` loaded from `atk.txt`. If a match is found, the script crafts a spoofed DNS Reply packet (using the victim's own source IP/MAC as the destination, the attacker's interface MAC as the Ethernet source, and crucially the legitimate DNS server's IP address (`8.8.8.8`) as the IP source) and sends it back with the Attacker Webserver IP address as the answer. The real DNS query never reaches the legitimate DNS server.
+The `dns_arp_poisoning.py` script uses the python library scapy to perform a combined ARP poisoning and DNS spoofing attack. Its execution can be broken down into four stages: **IP Forwarding Setup**, the script begins by enabling IP forwarding on the attacker's machine which is essential for the MITM position. It also disables ICMP redirects and drops ICMP "destination unreachable" messages via iptables to prevent the network from correcting itself; **Network Scan**, the script iterates over every address in the provided subnet (`10.0.0.0/24`) and sends ARP requests (broadcast ff:ff:ff:ff:ff:ff) to discover which IP addresses are live and to collect their MAC addresses. The result is a `mac_list` dictionary mapping each active IP to its real MAC address; **ARP Poisoning**, using the collected MAC addresses, the script sends unsolicited ARP Reply packets. Each reply tells host A that the MAC address for host B's IP is actually the attacker's MAC, and vice versa. This poisons the ARP caches of all devices on the subnet simultaneously, placing the attacker as a MITM between all of them. The poisoning loop repeats every 5 seconds to keep the caches stale (since ARP cache entries expire periodically and devices will re-broadcast ARP Requests); **DNS Interception**, an `AsyncSniffer` listens on the network interface for DNS packets. When a DNS query arrives, checks the queried hostname against the `host_map` loaded from `atk.txt`. If a match is found, the script crafts a spoofed DNS Reply packet (using the victim's own source IP/MAC as the destination, the attacker's interface MAC as the Ethernet source, and crucially the legitimate DNS server's IP address (`8.8.8.8`) as the IP source) and sends it back with the Attacker Webserver IP address as the answer. The real DNS query never reaches the legitimate DNS server.
 
 
 <br>
@@ -323,7 +331,7 @@ Repeat Steps 2.3 and to 2.4 to re-run the attack. Be sure to also capture the ne
     Why did the attack now fail? 
 
 ??? success "Answer"
-    The attack failed because Dynamic ARP Inspection, enabled on the Switch, is now intercepting and validating every ARP packet received on untrusted ports. When the `dnsarppoisoning.py` script attempts to send its spoofed ARP Reply packets — falsely claiming that the Attacker's MAC address corresponds to the Gateway's IP (`10.0.0.254`) or the Victim's IP — the Switch checks these packets against its DHCP Snooping Binding Table. Since the Attacker's port has no binding table entry that associates the Attacker's MAC with those IP addresses (those IPs belong to other hosts), the Switch identifies the ARP packets as invalid and drops them. As a result, the ARP caches of the Victim and other hosts are never poisoned, the Attacker is never inserted as a MITM, and DNS queries from the Victim continue to flow normally to the legitimate DNS server.
+    The attack failed because Dynamic ARP Inspection, enabled on the Switch, is now intercepting and validating every ARP packet received on untrusted ports. When the `dns_arp_poisoning.py` script attempts to send its spoofed ARP Reply packets — falsely claiming that the Attacker's MAC address corresponds to the Gateway's IP (`10.0.0.254`) or the Victim's IP — the Switch checks these packets against its DHCP Snooping Binding Table. Since the Attacker's port has no binding table entry that associates the Attacker's MAC with those IP addresses (those IPs belong to other hosts), the Switch identifies the ARP packets as invalid and drops them. As a result, the ARP caches of the Victim and other hosts are never poisoned, the Attacker is never inserted as a MITM, and DNS queries from the Victim continue to flow normally to the legitimate DNS server.
 
 <br>
 

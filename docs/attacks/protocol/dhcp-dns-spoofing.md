@@ -67,6 +67,14 @@ iface eth0 inet dhcp
 ```
 
 <br>
+
+The following script was used in this lab:
+
+- <a href="../../../scripts/dhcpspoof.py" download>dhcpspoof.py</a>
+
+
+
+<br>
 <br>
 
 

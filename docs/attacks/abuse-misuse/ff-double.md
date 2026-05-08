@@ -66,12 +66,24 @@ In the GNS3 project showed in Figure 2, you will need to add in the following to
 
 
 <br>
+
+
+The following scripts were used in this lab:
+
+- <a href="../../../scripts/fast_flux_proxy_FFA.py" download>fast_flux_proxy_FFA.py</a>
+- <a href="../../../scripts/CC_server.py" download>CC_server.py</a>
+- <a href="../../../scripts/fast_flux_victim.py" download>fast_flux_victim.py</a>
+- <a href="../../../scripts/double_flux_choose_FFAs.py" download>double_flux_choose_FFAs.py</a>
+- <a href="../../../scripts/double_flux_detector.py" download>double_flux_detector.py</a>
+
+
+<br>
 <br>
 
 # Phase 1: FFA Setup and DNS Registration
 
 
-### Step 1.1: Create and Configure a Sudo User for Remote Commands
+### Step 1.1: Configure a Sudo User for Remote Commands
 
 For the C&C Server to be able to run commands on the FFAs remotely via SHH it will need new user credentials.
 
@@ -260,10 +272,10 @@ Now you will have to select two Fast Flux Agents. One for being the proxy and th
 On the **C&C-Server**, run:
 
 ```bash
-python3 /home/chooseFFAs.py FFA1_IP
+python3 /home/double_flux_choose_FFAs.py FFA1_IP
 ```
 
-The `chooseFFAs.py` script , using ssh, starts the BIND service on the selected FFA to be the authoritative nameserver (FFA1 in this case), then automatically selects the next FFA in the list to act as proxy (FFA2), does a nsupdate request to FFA1, which includes deleting any previous A record of domain cc.attacker.com, and adding a new A record with IP address of FFA2, with a TTL of 60 seconds. Finally, it background-runs the `CC_proxy.py` script in FFA2 in order for it to able to act as proxy of C&C Server.
+The `double_flux_choose_FFAs.py` script , using ssh, starts the BIND service on the selected FFA to be the authoritative nameserver (FFA1 in this case), then automatically selects the next FFA in the list to act as proxy (FFA2), does a nsupdate request to FFA1, which includes deleting any previous A record of domain cc.attacker.com, and adding a new A record with IP address of FFA2, with a TTL of 60 seconds. Finally, it background-runs the `fast_flux_proxy_FFA.py` script in FFA2 in order for it to able to act as proxy of C&C Server.
 
 You can see which FFA currently has the role of authoritative nameserver by runnning `netstat -tulnp | grep 53` in each FFA. Only one will return the listenning ports associated with a DNS server.
 
@@ -290,7 +302,7 @@ On the **Victim** machine, run:
 
 
 ```bash
-python3 /home/FF_comms_CC.py
+python3 /home/fast_flux_victim.py
 ```
 
 Observe the DNS lookup process and the IP address the Victim machine is communicating with. Look into the Wireshark capture to see the process in detail.
@@ -317,7 +329,7 @@ For data exfiltration, select Option `2. Issue Command to Victim` again, issue t
 # Phase 3: FFA Rotation and Connection Resilience
 
 
-While maintaining both the C&C Server script, as well as the FF_comms_CC.py in the Victim machine running, we will use an auxiliary console of C&C Server to remotely update the IP address associated with cc.attacker.com (select `Auxiliary Console` option).
+While maintaining both the C&C Server script, as well as the fast_flux_victim.py in the Victim machine running, we will use an auxiliary console of C&C Server to remotely update the IP address associated with cc.attacker.com (select `Auxiliary Console` option).
 
 ### Step 3.1: Rotating the Domain's IP Address
 
@@ -326,7 +338,7 @@ Now you will have to choose a different Fast Flux Agent to be authoritative name
 On the **C&C-Server** auxiliary console, run:
 
 ```bash
-python3 /home/chooseFFAs.py FFA2_IP
+python3 /home/double_flux_choose_FFAs.py FFA2_IP
 ```
 
 To simulate the resilience expected when using a Fast Flux Double technique, the attacker now has to register a new IP address for ns.attacker.com and a new IP address for cc.attacker.com domain, the victims at the time of the change should still be able to contact the C&C Server, and new victims will use the new domain to establish a connection.
@@ -339,7 +351,7 @@ On the **C&C Server** machine, continue to send commands to the victim using the
 
 
 !!! question Question
-     After running chooseFFAs.py FFA2_IP, two things change in the DNS infrastructure simultaneously. Why is this more disruptive to a defender trying to block the attack compared to Single Flux?
+     After running double_flux_choose_FFAs.py FFA2_IP, two things change in the DNS infrastructure simultaneously. Why is this more disruptive to a defender trying to block the attack compared to Single Flux?
 
 ??? success "Answer"
      Both the authoritative nameserver for attacker.com (the NS record, now pointing to FFA2) and the A record for cc.attacker.com (now pointing to FFA3) are updated at the same time. In Single Flux, a defender could potentially identify and block the fixed nameserver even if the proxy IPs kept rotating. In Double Flux, that option is removed — the nameserver itself is now a moving target on the same botnet. A defender who blacklists FFA1's IP as a malicious nameserver will find that the domain has already migrated to FFA2 as its new NS. There is no stable infrastructure component left to anchor a takedown on.
@@ -355,7 +367,7 @@ Now let's simulate a new victim connecting.
 On the **Victim** machine, stop the running python script and run it again:
 
 ```bash
-python3 /home/FF_comms_CC.py
+python3 /home/fast_flux_victim.py
 ```
 
 <br>
@@ -412,7 +424,7 @@ In the GNS3 project showed in Figure 3, you will need to modify the previous top
 
 In Figure 3, we added a hub positioned between the Victim machine and the central router to which we will add the **Sniffer** machine. This way this machine can actually observe all traffic that reaches and is sent from the Victim machine.
 
-The script `FFD_scapy_attack_detector.py` uses the Python library Scapy to sniff network packets, capturing DNS response packets returned to the Victim machine. It listens for UDP packets on port 53 and filters specifically for DNS responses (QR flag = 1) that contain at least one answer record.
+The script `double_flux_detector.py.py` uses the Python library Scapy to sniff network packets, capturing DNS response packets returned to the Victim machine. It listens for UDP packets on port 53 and filters specifically for DNS responses (QR flag = 1) that contain at least one answer record.
 For every DNS response it sees, it runs detection logic across two independent layers, each targeting a different tier of the Double Flux infrastructure.
 
 The first layer targets the proxy tier and mirrors the Single Flux detector: a **unique A record IP count check** tracks how many distinct IP addresses a domain has resolved to over time. If that count reaches 3 or more unique IPs within the 24-hour observation window, the domain is flagged with a SINGLE FLUX ALERT. Combined with a **TTL analysis check** — which inspects the Time-To-Live value on each A record and upgrades the alert from MEDIUM to HIGH confidence if any TTL falls below 300 seconds — this layer detects the rapid proxy rotation characteristic of both Single and Double Flux.
@@ -428,7 +440,7 @@ Do a new Wireshark capture right next to the Victim machine interface.
 On the **Sniffer** machine, run: 
 
 ```bash
-python3 /home/FFD_scapy_attack_detector.py
+python3 /home/double_flux_detector.py.py
 ```
 <br>
 
@@ -462,18 +474,18 @@ Delete the `/home/fast_flux_state.json` file in the Sniffer machine. Repeat Step
     Where would the Sniffer need to be repositioned in the GNS3 topology to detect the NS-layer rotation and trigger the `DOUBLE FLUX ALERT`? What traffic would it need to observe, and what would the responder IP tracking logic see from that new position?
 
 ??? success "Answer"
-    The Sniffer would need to be repositioned on the link between the Resolver and the rest of the network — specifically so it can observe the Resolver's outgoing queries and the responses it receives from the FFA nameservers. From that vantage point, the Sniffer would see DNS responses where the source IP is the FFA currently acting as authoritative nameserver for attacker.com. As the NS role rotates from FFA1 to FFA2 to FFA3, those responses would arrive from different source IPs for the same queried domain, and the responder IP tracking logic would accumulate distinct IPs until the `NS_THRESHOLD` of 2 is reached, correctly firing a `DOUBLE FLUX ALERT`. This is fundamentally different from the Victim-adjacent position, where the Resolver's IP always masks the true origin of the authoritative answer.
+    The Sniffer would need to be repositioned on the link between the Resolver and the rest of the network, specifically so it can observe the Resolver's outgoing queries and the responses it receives from the FFA nameservers. From that vantage point, the Sniffer would see DNS responses where the source IP is the FFA currently acting as authoritative nameserver for attacker.com. As the NS role rotates from FFA1 to FFA2 to FFA3, those responses would arrive from different source IPs for the same queried domain, and the responder IP tracking logic would accumulate distinct IPs until the `NS_THRESHOLD` of 2 is reached, correctly firing a `DOUBLE FLUX ALERT`. This is fundamentally different from the Victim-adjacent position, where the Resolver's IP always masks the true origin of the authoritative answer.
 
 
 <br>
 
-### Step 3:  Execute the Scapy Detector Script
+### Step 3:  Re-execute the Scapy Detector Script
 Do a new Wireshark capture right next to the Resolver machine interface.
 
 On the **Resolver** machine, run: 
 
 ```bash
-python3 /home/FFD_scapy_attack_detector.py
+python3 /home/double_flux_detector.py.py
 ```
 <br>
 

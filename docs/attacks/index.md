@@ -1,7 +1,6 @@
 # DNS Attacks and Countermeasures
 
-This section covers various DNS attack techniques demonstrated in a lab environment,
-along with their respective countermeasures.
+Various DNS attack techniques along with their respective countermeasures, grouped by type.
 
 ## Categories
 

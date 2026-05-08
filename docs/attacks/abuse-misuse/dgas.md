@@ -58,6 +58,20 @@ In the GNS3 project showed in Figure 2, you will need to add in the following to
 Here the DNS server used is not based on BIND, like it is in most of these labs, but based on DNSMasq. You can install the Docker container adosztal/dns for the **DNS Server** at GNS3.
 <br>
 
+<br>
+
+The following scripts were used in this lab:
+
+- <a href="../../../scripts/CC_server.py" download>CC_server.py</a>
+- <a href="../../../scripts/dga_banjori_attacker.py" download>dga_banjori_attacker.py</a>
+- <a href="../../../scripts/dga_banjori_victim.py" download>dga_banjori_victim.py</a>
+- <a href="../../../scripts/dga_register_domain_attacker.py" download>dga_register_domain_attacker.py</a>
+
+
+
+
+<br>
+
 ## The Algorithm Used: Banjori DGA Variant
 In this lab we will use a simple, deterministic sequence-based DGA, often associated with early malware families like **Banjori**. The domain generation relies on a simple character-shifting process:
 
@@ -75,7 +89,7 @@ In this lab we will use a simple, deterministic sequence-based DGA, often associ
 On the **Attacker** machine, run:
 
 ```bash
-python3 /home/banjori_dga.py
+python3 /home/dga_banjori_attacker.py
 ```
 
 The attacker runs the pre-configured DGA script. In this script, a list of 500 domains is generated based on the seed and following the Banjori algorithm, a random AGD is chosen at the end to be then registered. 
@@ -87,7 +101,7 @@ The attacker runs the pre-configured DGA script. In this script, a list of 500 d
 On the **Attacker** machine, run:
 
 ```bash
-python3 /home/register_dns.py --domain DGA_DOMAIN --ip C&C_SERVER_IP
+python3 /home/dga_register_domain_attacker.py --domain DGA_DOMAIN --ip C&C_SERVER_IP
 ```
 
 
@@ -103,7 +117,7 @@ On the **C&C-Server**, run:
 
 
 ```bash
-python3 /home/c2Server.py
+python3 /home/CC_server.py
 ```
 
 The C&C server’s script is responsible for handling the beacon signal sent by the bots and all communication thereafter. It allows an operator to monitor connected bots, to send commands, and collect outputs and files from those bots. The server exposes four HTTP endpoints for communication with bots: `/beacon` (POST, bots send a "beacon" to signal they are alive); `/get-command` (GET, bots request commands to execute); `/report` (POST, bots send the output of executed commands); `/file-report` (POST, bots send file contents e.g., stolen data). The script can then save the information obtained for future use.
@@ -117,7 +131,7 @@ On the **Victim** machine, run:
 
 
 ```bash
-python3 /home/banjori_dga_CC.py
+python3 /home/dga_banjori_victim.py
 ```
 
 Observe the connection attempts and the final successful beacon confirmation on the C&C terminal. Look into the Wireshark capture to see the process in detail.
@@ -149,7 +163,7 @@ For data exfiltration, select Option `2. Issue Command to Victim` again, issue t
 
 
 ```bash
-python3 /home/banjori_dga.py
+python3 /home/dga_banjori_attacker.py
 ```
 
 2 - Register the new domain: 
@@ -157,7 +171,7 @@ python3 /home/banjori_dga.py
 
 
 ```python
-python3 /home/register_dns.py --domain NEW_DGA_DOMAIN --ip 192.168.40.2
+python3 /home/dga_register_domain_attacker.py --domain NEW_DGA_DOMAIN --ip 192.168.40.2
 ```
 
 
@@ -173,7 +187,7 @@ On the **Victim** machine, run:
 
 
 ```bash
-python3 /home/banjori_dga_CC.py
+python3 /home/dga_banjori_victim.py
 ```
 
 Execute the command and confirm the connection is re-established using the new, rotated domain.
@@ -186,7 +200,7 @@ The Banjori DGA variant used here is simplistic. Real-world DGAs are often far m
 Check here for more information: [https://github.com/baderj/domain_generation_algorithms](https://github.com/baderj/domain_generation_algorithms){:target="_blank"}
 
 
-Copy the contents of the `banjori_dga.py` and `banjori_dga_CC.py` scripts to new files and  implement a basic **Simple Pseudo-Random DGA** where the domains are generated using a fixed random seed. Use the previous given source to understand how to implement such algorithms in Python. You can use [Kraken](https://bin.re/blog/krakens-two-domain-generation-algorithms/){:target="_blank"} for example. 
+Copy the contents of the `dga_banjori_attacker.py` and `dga_banjori_victim.py` scripts to new files and  implement a basic **Simple Pseudo-Random DGA** where the domains are generated using a fixed random seed. Use the previous given source to understand how to implement such algorithms in Python. You can use [Kraken](https://bin.re/blog/krakens-two-domain-generation-algorithms/){:target="_blank"} for example. 
 
 -  **Replace the `next_domain` function** in both scripts with a different generation method using a fixed string or integer as the initial seed for repeatability.
 -  **Repeat Phases 1-3** of this lab guide using your chosen algorithm.
@@ -197,7 +211,7 @@ Copy the contents of the `banjori_dga.py` and `banjori_dga_CC.py` scripts to new
 
 
 ??? success "Answer"
-    Date/Time Synchronous DGAs enable real-time synchronization between malware and C2 servers, making domain prediction and blocking harder for defenders.
+    Date/Time Synchronous DGAs enable real-time synchronization between malware and C&C servers, making domain prediction and blocking harder for defenders.
 
 
 

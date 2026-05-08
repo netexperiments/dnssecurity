@@ -77,8 +77,18 @@ To confirm if it is applied correctly, use:
 ```python
 show policy-map interface g0/0
 ```
-
+9
 This way the connection is limmited to 1Mbps.
+
+<br>
+
+The following scripts were used in this lab:
+
+- <a href="../../../scripts/amplification.py" download>amplification.py</a>
+- <a href="../../../scripts/amplification_activate_bots.py" download>amplification_activate_bots.py</a>
+
+
+
 <br>
 <br>
 
@@ -309,9 +319,9 @@ test ALL=(ALL) NOPASSWD: /usr/sbin/named, /usr/bin/pkill named, /usr/bin/python3
 On **Bot1**, add this file:
 
 ```bash
-nano /home/AMP_attack.py
+nano /home/amplification.py
 ```
-The `AMP_attack.py` script will use the scapy python library to craft 100 ANY request (query type = 255) DNS query packets for `largezone.com` to send to each of the resolvers. Each bot sends a total of 500 such packets per iteration, with the source IP spoofed as the victim’s IP address. Since this process runs inside a `while True` loop, the 500-packet bursts are repeated indefinitely, continuously flooding the target with amplified traffic.
+The `amplification.py` script will use the scapy python library to craft 100 ANY request (query type = 255) DNS query packets for `largezone.com` to send to each of the resolvers. Each bot sends a total of 500 such packets per iteration, with the source IP spoofed as the victim’s IP address. Since this process runs inside a `while True` loop, the 500-packet bursts are repeated indefinitely, continuously flooding the target with amplified traffic.
 
 
 <br>
@@ -327,10 +337,10 @@ The attacker machine will be responsible for activating the bots in order for th
 On the **Attacker** machine, run:
 
 ```bash
-python3 /home/activate_bot.py
+python3 /home/amplification_activate_bots.py
 ```
 
-The `activate_bot.py` script uses the paramiko python library to run, via ssh, the `AMP_attack.py` on each of the bots. In this case, only Bot1.
+The `amplification_activate_bots.py` script uses the paramiko python library to run, via ssh, the `amplification.py` on each of the bots. In this case, only Bot1.
 
 <br>
 

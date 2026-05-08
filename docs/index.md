@@ -20,4 +20,9 @@ analysis of DNS attack techniques, organized into three categories:
     - [DNS Server and Infrastructure Attacks](attacks/server/index.md)
     - [DNS Abuse and Misuse Attacks](attacks/abuse-misuse/index.md)
 
-- **[DNS Security Extended Report](report.md)** – This webpage also contains an DNS Security report, with comprehensive DNS background and detailed attack explanations. Refer to it at any time to learn more about the attacks present in the practical guides. To access it, press the "DNS Security Extended Report" button.
+
+## Contributors
+
+* Pedro Barão, [Instituto Superior Técnico, Universidade de Lisboa](https://tecnico.ulisboa.pt/pt/){:target="_blank"}
+* Rui Valadas, [Instituto Superior Técnico, Universidade de Lisboa](https://tecnico.ulisboa.pt/pt/){:target="_blank"}
+* Tiago Domingues, [LastPass](https://www.lastpass.com/){:target="_blank"}
