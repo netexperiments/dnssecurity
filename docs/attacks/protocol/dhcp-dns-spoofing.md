@@ -58,6 +58,9 @@ In the GNS3 project showed in [Figure 2](#figure-2), you will need to add in the
 
 Configure the **Attacker DNS Server** machine identically to **DNS Server**. It should be configured to be authoritative for example.com as well.
 
+Use Cisco IOSvL2 switches for Sw1 and Sw2.
+
+
 Use this simple configuration for the `Edit config` option of the **Victim1** and **Victim2** machines options menu:
 
 
@@ -65,6 +68,8 @@ Use this simple configuration for the `Edit config` option of the **Victim1** an
 auto eth0
 iface eth0 inet dhcp
 ```
+
+
 
 <br>
 
@@ -238,9 +243,12 @@ The countermeasure will be implemented in the Switches nodes.
 
 <br>
 
-## Configure DHCP Snooping on the Switches
+## DHCP Snooping
+
 
 ### Step 1: Configure DHCP Snooping on Sw1 and Sw2
+
+In these configurations below, g0/0 of Sw1 is connected to the DHCP Server, and g0/2 of Sw2 is connected to Sw1. Adjust to suit your network topology.
 
 On the **Sw1**, run the following configurations:
 
@@ -278,7 +286,7 @@ end
 ### Step 2:  Re-run the attack
 Repeat Step 2.2 to re-run the attack. 
 
-Perform two Wireshark captures right next to the Sw2 interfaces that link to Victim2 and to the Attacker DHCP Server, Gi0/0 and Gi0/1 respectively. 
+Perform two Wireshark captures right next to the Sw2 interfaces that link to Victim2 and to the Attacker DHCP Server. 
 
 <br>
 
@@ -286,10 +294,10 @@ Perform two Wireshark captures right next to the Sw2 interfaces that link to Vic
 
 
 !!! question Question
-     After re-running the attack with DHCP Snooping enabled, inspect the Wireshark capture on the Sw2  interface facing the **Attacker DHCP Server** (Gi0/1). Can you still see DHCP Offer packets originating from 10.0.2.21 being forwarded toward the victims? What does Sw2 do with those packets?
+     After re-running the attack with DHCP Snooping enabled, inspect the Wireshark capture on the Sw2  interface facing the **Attacker DHCP Server**. Can you still see DHCP Offer packets originating from 10.0.2.21 being forwarded toward the victims? What does Sw2 do with those packets?
 
 ??? success "Answer"
-    Yes, the Attacker DHCP Server still sends DHCP Offer packets, which are visible arriving on Sw2's Gi0/1 interface. However, because Gi0/1 is configured as an **untrusted** port, Sw2 silently drops all DHCP server-originated messages (DHCP Offer, DHCP ACK) received on it. These packets never reach the victim-side ports. In the Wireshark capture on the Victim2-facing interface (Gi0/0 on Sw2), only DHCP Offers from the legitimate DHCP Server (arriving via the trusted uplink Gi0/2) are forwarded through.
+    Yes, the Attacker DHCP Server still sends DHCP Offer packets, which are visible arriving on Sw2's Gi0/1 interface. However, because that interface is configured as an **untrusted** port, Sw2 silently drops all DHCP server-originated messages (DHCP Offer, DHCP ACK) received on it. These packets never reach the victim-side ports. In the Wireshark capture on the Victim2-facing interface of Sw2, only DHCP Offers from the legitimate DHCP Server (arriving via the trusted uplink) are forwarded through.
 
 
 !!! question Question
