@@ -103,7 +103,7 @@ Don't forget to type `wr` at the end to ensure the configurations are persistent
 To use DNSMasq import **DNS** appliance of GNS3. Select `Browse all devices>New template>Install an appliance from the GNS3 server (recommended)`, then use the filter `DNS`, select the available appliance with the same name and install.
 
 
-Once installed, in the “Edit config” option of the DNS Server machine be sure to add the following configurations (specially relevant if running DGAs Lab):
+Once installed, in the `Edit config` option of the DNS Server machine be sure to add the following configurations (specially relevant if running DGAs Lab):
 
 ```console
 auto eth0
@@ -163,7 +163,7 @@ pkill dnsmasq && dnsmasq
 
 Since BIND is used in the majority of the labs, there are many configuration variations.
  
-Sometimes there will be bind files like named.conf.root-hints or named.conf.default- zones that will have conflictive information about the zones like root zone. It's better to edit named.conf file to make sure it isn't including these file sources or even removing these files outright.
+Sometimes there will be bind files like `named.conf.root-hints` or `named.conf.default-zones` that will have conflictive information about the zones like root zone. It's better to edit named.conf file to make sure it isn't including these file sources or even removing these files outright.
 
 Every time you want to reset a BIND DNS servers cache is easier to just reset BIND named service using:
 
