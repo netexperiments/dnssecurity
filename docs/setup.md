@@ -1,11 +1,11 @@
-This guide is designed as an essential companion to the lab guides, ensuring you can properly set up the laboratory environment before diving into the specifics of each experiment.  The laboratory environment is designed for local deployment on a single host, allowing you to replicate real-world DNS scenarios in a controlled setting. All attack scripts used in the experiments are available on [GitHub](https://netexperiments.github.io/dnssecurity/){:target="_blank"}.
+This guide is designed as an essential companion to the lab guides, ensuring you can properly set up the laboratory environment before diving into the specifics of each experiment.  The laboratory environment is designed for local deployment on a single host, allowing you to replicate real-world DNS scenarios in a controlled setting. All attack scripts used in the experiments are available on [GitHub](https://github.com/netexperiments/dnssecurity/tree/main/docs/scripts){:target="_blank"}. The scripts for each experiment are also available for download in each lab guide.
 
 
 ## Docker Containers
-Docker containers are provided through [Docker Hub](https://hub.docker.com/){:target="_blank"} to facilitate deployment.
+A Docker container image, `pedroluisbarao/dns-sec-tools:latest`, is provided through [Docker Hub](https://hub.docker.com/r/pedroluisbarao/dns-sec-tools){:target="_blank"} to facilitate deployment. This image will be the basis for many machines such as BIND DNS servers as well as most other machines, excluding those who indicate a different image/template.
 
 ## Add Docker based machines
-Start by importing the docker images for the relevant machines provided here (preciso ainda de adicionar). To add them to GNS3, go to `Edit>Preferences>Docker containers`.
+Start by importing the docker image. To add it to GNS3, go to `Edit>Preferences>Docker containers`.
 
 
 <figure markdown id="figure-1">
@@ -19,7 +19,7 @@ Start by importing the docker images for the relevant machines provided here (pr
 
 
 
-Then click `New` and select `New image`, add the name of the container like in the image below.
+Then click `New` and select `New image`, add the full name of the image like in the figure below.
  
 <figure markdown id="figure-3">
   ![Figure-2](images/docker-3.png)
@@ -100,7 +100,10 @@ Don't forget to type `wr` at the end to ensure the configurations are persistent
 
 ## DNSMasq
 
-In the “Edit config” option of the DNS Server machine be sure to add the following configurations (specially relevant if running DGAs Lab):
+To use DNSMasq import **DNS** appliance of GNS3. Select `Browse all devices>New template>Install an appliance from the GNS3 server (recommended)`, then use the filter `DNS`, select the available appliance with the same name and install.
+
+
+Once installed, in the “Edit config” option of the DNS Server machine be sure to add the following configurations (specially relevant if running DGAs Lab):
 
 ```console
 auto eth0
@@ -477,7 +480,10 @@ test ALL=(ALL) NOPASSWD: /usr/sbin/named, /usr/bin/pkill named, /usr/bin/python3
 
 ## Snort
 
-If you are using Snort Inline mode, you should check if the following are as follows and if not modify them. Replace `#SUBNET_IP` with the correct subnet IP address of where the Snort machine is use, should look like `192.168.10.0/24`
+To use **Snort** you will need to add a docker image, `tleemcjr/snort-appliance.1:latest`, to GNS3. Check `Add Docker based machines` to complete the process.
+
+
+If you are using Snort in `inline` mode, you should check if the following are as follows and if not modify them. Replace `#SUBNET_IP` with the correct subnet IP address of where the Snort machine is use, should look like `192.168.10.0/24`
 
 
 ```console
