@@ -1,0 +1,1538 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://netexperiments.github.io/dnssecurity/attacks/server/dns-arp-poisoning/">
+      
+      
+        <link rel="prev" href="../zone-transfer/">
+      
+      
+        <link rel="next" href="../../abuse-misuse/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>DNS ARP Poisoning - DNS Security</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="DNS Security" class="md-header__button md-logo" aria-label="DNS Security" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            DNS Security
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              DNS ARP Poisoning
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../setup/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Lab Setup
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../enhancements/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  DNS Security and Privacy Enhancements
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  DNS Attacks and Countermeasures
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="DNS Security" class="md-nav__button md-logo" aria-label="DNS Security" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    DNS Security
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../enhancements/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Security and Privacy Enhancements
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Security and Privacy Enhancements
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../enhancements/dnssec/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNSSEC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../enhancements/doh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS-over-HTTPS (DoH)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Attacks and Countermeasures
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Attacks and Countermeasures
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../protocol/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Protocol and Resolution Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_2" id="__nav_4_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Protocol and Resolution Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../protocol/rebinding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Rebinding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../protocol/dhcp-dns-spoofing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DHCP DNS Spoofing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Server and Infrastructure Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_3" id="__nav_4_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Server and Infrastructure Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nxdomain-ddos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NXDOMAIN DDoS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cache-poisoning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Cache Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kaminsky/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kaminsky Cache Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../zone-transfer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unauthorized Zone Transfer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS ARP Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../abuse-misuse/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Abuse/Misuse Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_4" id="__nav_4_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Abuse/Misuse Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/amplification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Amplification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/ff-single/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Fast Flux Single-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/ff-double/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Fast Flux Double-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/tunneling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Tunneling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/dgas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DGA-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/ff-dgas-tunneling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fast Flux and DGA-based Tunneling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="background">Background</h1>
+<p>Address Resolution Protocol (ARP) poisoning, also known as ARP spoofing, is a malicious technique used to intercept, modify, or redirect network traffic within a local area network (LAN).  This capability can then used to reroute victims to a rogue DNS server.</p>
+<p>ARP operates on the principle of broadcasting requests and receiving responses. When a device needs to communicate with another device on the same network, it sends an ARP request to discover the MAC address associated with the target IP address. The device with the matching IP address responds with its MAC address, and the requesting device caches this mapping for future use. These ARP requests happen each time an entry in the ARP cache of a particular device expires, which tipically happens every few minutes.</p>
+<p>In an ARP poisoning attack, the attacker sends falsified ARP messages to the target device(s), associating their own MAC address with the IP address of a legitimate network resource, such as the default gateway or a DNS server. Once the target device updates its ARP cache with the attacker's MAC address, all traffic intended for the legitimate resource is instead sent to the attacker's machine, "man-in-the-middle" (MITM). This redirection allows the attacker to intercept, inspect, or alter the traffic before forwarding it to the intended destination, or to drop it entirely.</p>
+<p>DNS spoofing based on ARP Poisoning, or just simply DNS ARP Poisoning is an application of ARP poisoning in the redirection of victims to a rogue DNS server. By poisoning the ARP cache of a victim's device, an attacker can redirect DNS queries to a malicious DNS server under their control. This rogue server can then return incorrect IP addresses for legitimate domains, directing victims to attacker-controlled servers or phishing sites.</p>
+<figure>
+<p><img alt="Figure 1: DGA-based C&amp;C attack" src="../../../images/background/DNSARPPoisoning.png" width="600" />
+  </p>
+<figcaption>Figure 1: DNS ARP Poisoning attack</figcaption>
+</figure>
+<p>Figure 1 reveals a DNS spoofing based on ARP Poisoning attack scenario. The steps are the following:</p>
+<ul>
+<li><strong>Step 1:</strong> The attacker sends a forged ARP reply to the victim, falsely associating the resolver or gateway IP address with the attacker’s MAC address. As a result, DNS traffic sent by the victim is delivered first to the attacker.</li>
+<li><strong>Step 2:</strong> Eventually, the victim issues a DNS query for example.com, which is intercepted by the attacker because of the poisoned ARP state.</li>
+<li><strong>Step 3:</strong> Before the legitimate DNS response is received, the attacker sends a forged DNS reply mapping example.com to an attacker-controlled IP address. If the victim accepts this spoofed reply, it associates the requested
+domain name with the false destination.</li>
+<li><strong>Step 4:</strong> The victim establishes a connection to the attacker-controlled server, believing that it corresponds to the legitimate destination originally requested. In this way, the attacker uses ARP poisoning to gain an on-path position and DNS spoofing to redirect the victim’s subsequent communication.</li>
+</ul>
+<p><br>
+<br></p>
+<h1 id="objectives">Objectives</h1>
+<p>Our goal with the following configurations is to simulate a DNS ARP Poisoning attack. This lab demonstrates how attackers use ARP Poisoning to reroute victims to a malicious DNS server. You will act as both he attacker and the victim, executing a script that automates ARP cache poisoning and DNS reply injection to redirect victims to attacker-controlled infrastructure, without the victim's knowledge, deploy a countermeasure by configuring DHCP Snooping and Dynamic ARP Inspection on a managed switch.</p>
+<p><br>
+<br></p>
+<h1 id="lab-prerequisites-network-configuration">Lab Prerequisites &amp; Network Configuration</h1>
+<figure>
+<p><img alt="Figure 2: GNS3 Lab Topology" src="../../../images/dnsarppoisoning-1.png" />
+  </p>
+<figcaption>Figure 2: DNS ARP Poisoning GNS3 Lab Topology</figcaption>
+</figure>
+<p>In the GNS3 project showed in Figure 2, you will need to add in the following topology that uses four key nodes (be sure to previously check the <a href="../../../setup/" target="_blank">Lab Setup Guide</a>):</p>
+<table>
+<thead>
+<tr>
+<th>Node Name</th>
+<th>Role</th>
+<th>IP Address</th>
+<th>Subnet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Victim</strong></td>
+<td>Target Machine (Browser)</td>
+<td><strong>10.0.0.1</strong></td>
+<td>10.0.0.0/24</td>
+</tr>
+<tr>
+<td><strong>Attacker Webserver</strong></td>
+<td>Attacker Controlled Webserver</td>
+<td><strong>10.0.0.2</strong></td>
+<td>10.0.0.0/24</td>
+</tr>
+<tr>
+<td><strong>Attacker</strong></td>
+<td>Attacker Console/Setup</td>
+<td><strong>10.0.0.3</strong></td>
+<td>10.0.0.0/24</td>
+</tr>
+<tr>
+<td><strong>Router</strong></td>
+<td>Acts as gateway for the Victim. Accesses NAT</td>
+<td><strong>g0/0: 10.0.0.254 ‎ ‎ ‎ ‎ g0/1:DHCP‎‎‎</strong></td>
+<td>g0/0:10.0.0.0/24</td>
+</tr>
+</tbody>
+</table>
+<p>For the <strong>Victim</strong> use the <strong>webterm</strong> appliance of GNS3 (which includes Firefox), and for the <strong>Attacker Webserver</strong> use the <strong>Toolbox</strong> appliance of GNS3 (which includes NGINX). Use a Cisco IOSvL2 switch router between the four key nodes.</p>
+<p><br></p>
+<p>The following script was used in this lab:</p>
+<ul>
+<li><a href="../../../scripts/dns_arp_poisoning.py" download>dns_arp_poisoning.py</a></li>
+</ul>
+<p><br>
+<br>
+<br></p>
+<h1 id="phase-1-setup">Phase 1: Setup</h1>
+<h3 id="step-11-router-configuration">Step 1.1: Router Configuration</h3>
+<p>You might need to implement NAT overload at the Router ro be able to communicate with external networks.</p>
+<p>On the <strong>Router</strong>, apply this configuration:</p>
+<div class="highlight"><pre><span></span><code>conf<span class="w"> </span>t
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>access-list<span class="w"> </span><span class="m">1</span><span class="w"> </span>permit<span class="w"> </span>any
+ip<span class="w"> </span>nat<span class="w"> </span>inside<span class="w"> </span><span class="nb">source</span><span class="w"> </span>list<span class="w"> </span><span class="m">1</span><span class="w"> </span>interface<span class="w"> </span>g0/1<span class="w"> </span>overload
+int<span class="w"> </span>g0/0
+ip<span class="w"> </span>add<span class="w"> </span><span class="m">10</span>.0.0.254<span class="w"> </span><span class="m">255</span>.255.255.0
+ip<span class="w"> </span>nat<span class="w"> </span>inside
+no<span class="w"> </span>shut
+int<span class="w"> </span>g0/1
+ip<span class="w"> </span>add<span class="w"> </span>dhcp
+ip<span class="w"> </span>nat<span class="w"> </span>outside
+no<span class="w"> </span>shut
+</code></pre></div>
+<p>To confirm all interface addresses were correctly configured:</p>
+<div class="highlight"><pre><span></span><code>show<span class="w"> </span>ip<span class="w"> </span>interface<span class="w"> </span>brief<span class="w"> </span>
+</code></pre></div>
+<h3 id="step-12-victim-configuration">Step 1.2: Victim Configuration</h3>
+<p>To easily configure which DNS server the Victim should resort, use the following configuration for the <code>Edit config</code> option of the <strong>Victim</strong> machine options menu: </p>
+<div class="highlight"><pre><span></span><code>auto<span class="w"> </span>eth0
+iface<span class="w"> </span>eth0<span class="w"> </span>inet<span class="w"> </span>static
+<span class="w">    </span>address<span class="w"> </span><span class="m">10</span>.0.0.1
+<span class="w">    </span>netmask<span class="w"> </span><span class="m">255</span>.255.255.0
+<span class="w">    </span>gateway<span class="w"> </span><span class="m">10</span>.0.0.254
+<span class="w">    </span>up<span class="w"> </span><span class="nb">echo</span><span class="w"> </span>nameserver<span class="w"> </span><span class="m">8</span>.8.8.8<span class="w"> </span>&gt;<span class="w"> </span>/etc/resolv.conf
+</code></pre></div>
+<h3 id="step-13-switch-router-configuration">Step 1.3: Switch Router Configuration</h3>
+<p>On the <strong>Switch</strong>, run:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">enable</span>
+conf<span class="w"> </span>t
+no<span class="w"> </span>cdp<span class="w"> </span>advertise-v2
+</code></pre></div>
+<p><br>
+<br>
+<br></p>
+<h1 id="phase-2-attack-preparations">Phase 2: Attack Preparations</h1>
+<h3 id="step-21-activating-the-webserver">Step 2.1: Activating the Webserver</h3>
+<p>On the <strong>Attacker Webserver</strong>, edit the homepage:</p>
+<div class="highlight"><pre><span></span><code>nano<span class="w"> </span>/var/www/html/index.html
+</code></pre></div>
+<p>then start NGINX:</p>
+<div class="highlight"><pre><span></span><code>service<span class="w"> </span>nginx<span class="w"> </span>start
+</code></pre></div>
+<p>Check wether the Victim browser can connect to the Attacker Webserver by using the it's IP address.</p>
+<p><br>
+<br></p>
+<h3 id="step-22-configure-ip-bindings">Step 2.2: Configure IP Bindings</h3>
+<p>On the <strong>Attacker</strong> machine, create the file:</p>
+<div class="highlight"><pre><span></span><code>nano<span class="w"> </span>/home/atk.txt
+</code></pre></div>
+<p>and write something like this:</p>
+<div class="highlight"><pre><span></span><code><span class="m">10</span>.0.0.2<span class="w"> </span>linkedin.com
+<span class="m">10</span>.0.0.2<span class="w"> </span>www.linkedin.com
+<span class="m">10</span>.0.0.2<span class="w"> </span>google.com
+<span class="m">10</span>.0.0.2<span class="w"> </span>www.google.com
+<span class="m">10</span>.0.0.2<span class="w"> </span>example.com
+<span class="m">10</span>.0.0.2<span class="w"> </span>www.example.com
+</code></pre></div>
+<p><br>
+<br></p>
+<h3 id="step-23-prepare-victims-browser">Step 2.3: Prepare Victim's Browser</h3>
+<p>Before lauching the attack in the Attacker machine, be sure to prepare the Victim browser. On Firefox, select <code>Clear Recent History</code> including both <code>History</code> and <code>Data</code>, if there is any option to remove all <code>Cookies</code> be sure to do that as well. Modern browsers have a tendency to use HTTPS by default, using port 443. </p>
+<p><br>
+<br></p>
+<h3 id="step-24-attack-implementation">Step 2.4: Attack Implementation</h3>
+<p>Now we launch the attack in the Attacker machine. Perform a Wireshark capture right next to the Victim's interface connected to the Switch.</p>
+<p>On the <strong>Attacker</strong> machine, run:</p>
+<div class="highlight"><pre><span></span><code>python3<span class="w"> </span>/home/dns_arp_poisoning.py<span class="w"> </span>eth0<span class="w"> </span>/home/atk.txt<span class="w"> </span><span class="m">10</span>.0.0.0/24
+</code></pre></div>
+<p>On the <strong>Victim</strong> browser we want to use HTTP (port 80) so make sure you enter:</p>
+<div class="highlight"><pre><span></span><code>http://www.linkedin.com:80
+</code></pre></div>
+<p>You can also try the same for other domains listed on <code>atk.txt</code>.</p>
+<p>The <code>dns_arp_poisoning.py</code> script uses the python library scapy to perform a combined ARP poisoning and DNS spoofing attack. Its execution can be broken down into four stages: <strong>IP Forwarding Setup</strong>, the script begins by enabling IP forwarding on the attacker's machine which is essential for the MITM position. It also disables ICMP redirects and drops ICMP "destination unreachable" messages via iptables to prevent the network from correcting itself; <strong>Network Scan</strong>, the script iterates over every address in the provided subnet (<code>10.0.0.0/24</code>) and sends ARP requests (broadcast ff:ff:ff:ff:ff:ff) to discover which IP addresses are live and to collect their MAC addresses. The result is a <code>mac_list</code> dictionary mapping each active IP to its real MAC address; <strong>ARP Poisoning</strong>, using the collected MAC addresses, the script sends unsolicited ARP Reply packets. Each reply tells host A that the MAC address for host B's IP is actually the attacker's MAC, and vice versa. This poisons the ARP caches of all devices on the subnet simultaneously, placing the attacker as a MITM between all of them. The poisoning loop repeats every 5 seconds to keep the caches stale (since ARP cache entries expire periodically and devices will re-broadcast ARP Requests); <strong>DNS Interception</strong>, an <code>AsyncSniffer</code> listens on the network interface for DNS packets. When a DNS query arrives, checks the queried hostname against the <code>host_map</code> loaded from <code>atk.txt</code>. If a match is found, the script crafts a spoofed DNS Reply packet (using the victim's own source IP/MAC as the destination, the attacker's interface MAC as the Ethernet source, and crucially the legitimate DNS server's IP address (<code>8.8.8.8</code>) as the IP source) and sends it back with the Attacker Webserver IP address as the answer. The real DNS query never reaches the legitimate DNS server.</p>
+<p><br>
+<br></p>
+<h3 id="step-25-understand-the-attack">Step 2.5: Understand the Attack</h3>
+<p>To understand the attacks, analyze the ARP, DNS and TCP packets observed in the Wireshark capture. Moreover, analyze the ARP caches of the browser and Attacker Webserver using the command <code>arp -a</code>, and analyze the DNS cache of the Web browser by typing <code>about: networking#dns</code> in its address bar.</p>
+<p>If the attack didn't work you might need to repeat it a few times, since the Attacker script might not have been to poison the ARP caches yet. If even after several times the attack was not successful stop the Attacker Webserver and start again, also restart nginx by running <code>service nginx start</code>.</p>
+<p><br>
+<br></p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>Why is it not enough for the attacker to only poison the Victim's ARP cache? Why must the Gateway's cache be poisoned as well?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>Poisoning only the Victim's cache redirects the Victim's outbound traffic to the attacker, but return traffic from the internet still flows through the Gateway directly back to the Victim therefore bypassing the attacker entirely. For a true man-in-the-middle position, the attacker must intercept traffic in both directions. By also poisoning the Gateway's ARP cache, making the Gateway believe the Victim's IP maps to the attacker's MAC, return traffic destined for the Victim is also sent to the attacker first. With IP forwarding enabled, the attacker can then relay packets in both directions, remaining invisible while sitting in the middle of the full communication flow.</p>
+</details>
+<p><br></p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>Why does the script re-send ARP poison packets every 5 seconds instead of just once at the start?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>ARP cache entries are not permanent, operating systems expire them after a short period (typically a few minutes) and re-issue ARP Requests to refresh the mapping. If the attacker only poisoned the caches once, the victim's and gateway's caches would eventually expire and be repopulated with the correct, legitimate IP-to-MAC mappings, ending the attack. By continuously re-sending spoofed ARP Replies every 5 seconds, the script ensures that any time a legitimate ARP refresh occurs, the poisoned entry is immediately re-injected before normal traffic can restore the correct mapping.</p>
+</details>
+<p><br>
+<br>
+<br>
+<br>
+<br></p>
+<h1 id="countermeasure">Countermeasure</h1>
+<p>After performing the attack, we now pass on to the countermeasure phase. To combat ARP poisoning attacks, one of the most commonly used countermeasures is Dynamic ARP Inspection (DAI), which relies on DHCP Snooping. Both will be implemented in the Switch node. </p>
+<p>DHCP Snooping is a Layer 2 security feature implemented on managed switches that acts as a firewall between untrusted hosts and trusted DHCP servers. It works by classifying switch ports as either trusted or untrusted. DHCP Snooping also builds and maintains a DHCP Snooping Binding Table — a database that records the mapping between a client's IP address, its MAC address, the switch port it is connected to, and the VLAN. This binding table is the foundation upon which Dynamic ARP Inspection operates. Every time a client successfully obtains an IP address via DHCP, an entry is created in this table. </p>
+<p>Dynamic ARP Inspection is a security feature that uses the DHCP Snooping Binding Table to validate ARP packets on the network. Without DAI, any device on the LAN can send an ARP Reply claiming any IP-to-MAC mapping — which is precisely what ARP poisoning exploits. With DAI enabled, the switch intercepts all ARP packets on untrusted ports and checks them against the DHCP Snooping Binding Table. If the ARP packet's source IP and source MAC match a valid entry in the binding table, the packet is forwarded normally. If the ARP packet's source IP and MAC do not match any binding table entry (as is the case when an attacker sends a spoofed ARP Reply claiming someone else's IP) the packet is dropped.</p>
+<p><br>
+<br></p>
+<h2 id="dynamic-arp-inspection-dai-via-dhcp-snooping">Dynamic ARP Inspection (DAI) via DHCP Snooping</h2>
+<h3 id="step-1-dhcp-configuration">Step 1: DHCP Configuration</h3>
+<p>For DHCP Snooping and therefore DAI to work, we must have a functional DHCP service. Without DHCP, no binding table is populated, and DAI has no reference to validate ARP packets against.</p>
+<p>On the <strong>Router</strong>, perform the followoing configurations:</p>
+<div class="highlight"><pre><span></span><code>conf<span class="w"> </span>t
+ip<span class="w"> </span>dhcp<span class="w"> </span>pool<span class="w"> </span><span class="m">0</span>
+network<span class="w"> </span><span class="m">10</span>.0.0.0<span class="w"> </span>/24
+default-router<span class="w"> </span><span class="m">10</span>.0.0.254
+dns-server<span class="w"> </span><span class="m">8</span>.8.8.8
+ip<span class="w"> </span>dhcp<span class="w"> </span>excluded-address<span class="w"> </span><span class="m">10</span>.0.0.1<span class="w"> </span><span class="m">10</span>.0.0.3
+ip<span class="w"> </span>dhcp<span class="w"> </span>excluded-address<span class="w"> </span><span class="m">10</span>.0.0.254
+show<span class="w"> </span>ip<span class="w"> </span>dhcp<span class="w"> </span>pool
+show<span class="w"> </span>ip<span class="w"> </span>dhcp<span class="w"> </span>binding
+</code></pre></div>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>Notice how we excluded <code>10.0.0.1</code> and <code>10.0.0.3</code> from the DHCP pool of addresses. Obviously in a real-world scenario this wouldn't happen. How would the actual process work then?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>In a real-world scenario, the DHCP server (the Router in this case) would configure a regular DHCP pool without any manual exclusions for the attacker. The attacker would not have a pre-known static IP address assigned to them. Instead, the attacker would first need to passively monitor the network, for example, by capturing DHCP traffic or sending ARP probes, to identify which IP addresses are currently in use by legitimate machines. Only after identifying the active address space would the attacker configure their own machines (either by requesting a DHCP lease like any other host, or by setting a static IP outside the pool) and subsequently launch the attack. In this lab, we pre-assign static IPs to simplify the setup and focus on the attack mechanics rather than the reconnaissance phase.</p>
+</details>
+<p><br></p>
+<h3 id="step-2-dhcp-victim-configuration">Step 2: DHCP Victim Configuration</h3>
+<p>To make the Victim use DHCP it is easier to just use the following configuration for the <code>Edit config</code> option of the <strong>Victim</strong> machine options menu: </p>
+<div class="highlight"><pre><span></span><code>auto<span class="w"> </span>eth0
+iface<span class="w"> </span>eth0<span class="w"> </span>inet<span class="w"> </span>dhcp
+</code></pre></div>
+<h3 id="step-3-configure-the-switch">Step 3: Configure the Switch</h3>
+<p>On the <strong>Swicth</strong>, perform the following configurations:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">enable</span>
+configure<span class="w"> </span>terminal
+ip<span class="w"> </span>dhcp<span class="w"> </span>snooping
+ip<span class="w"> </span>dhcp<span class="w"> </span>snooping<span class="w"> </span>vlan<span class="w"> </span><span class="m">1</span>
+ip<span class="w"> </span>arp<span class="w"> </span>inspection<span class="w"> </span>vlan<span class="w"> </span><span class="m">1</span>
+interface<span class="w"> </span>GigabitEthernet0/0
+<span class="w"> </span>ip<span class="w"> </span>dhcp<span class="w"> </span>snooping<span class="w"> </span>trust
+<span class="w"> </span>ip<span class="w"> </span>arp<span class="w"> </span>inspection<span class="w"> </span>trust
+interface<span class="w"> </span>range<span class="w"> </span>GigabitEthernet0/1-3,<span class="w"> </span>GigabitEthernet1/0-3,
+<span class="w"> </span>GigabitEthernet2/0-3,<span class="w"> </span>GigabitEthernet3/0-3
+<span class="w"> </span>ip<span class="w"> </span>dhcp<span class="w"> </span>snooping<span class="w"> </span>limit<span class="w"> </span>rate<span class="w"> </span><span class="m">10</span>
+<span class="nb">exit</span>
+end
+conf<span class="w"> </span>t
+no<span class="w"> </span>ip<span class="w"> </span>dhcp<span class="w"> </span>snooping<span class="w"> </span>information<span class="w"> </span>option
+<span class="nb">exit</span>
+</code></pre></div>
+<p><br></p>
+<h3 id="step-4-re-run-the-attack">Step 4: Re-run the attack.</h3>
+<p>Repeat Steps 2.3 and to 2.4 to re-run the attack. Be sure to also capture the network traffic as before.</p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>Why did the attack now fail? </p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>The attack failed because Dynamic ARP Inspection, enabled on the Switch, is now intercepting and validating every ARP packet received on untrusted ports. When the <code>dns_arp_poisoning.py</code> script attempts to send its spoofed ARP Reply packets — falsely claiming that the Attacker's MAC address corresponds to the Gateway's IP (<code>10.0.0.254</code>) or the Victim's IP — the Switch checks these packets against its DHCP Snooping Binding Table. Since the Attacker's port has no binding table entry that associates the Attacker's MAC with those IP addresses (those IPs belong to other hosts), the Switch identifies the ARP packets as invalid and drops them. As a result, the ARP caches of the Victim and other hosts are never poisoned, the Attacker is never inserted as a MITM, and DNS queries from the Victim continue to flow normally to the legitimate DNS server.</p>
+</details>
+<p><br></p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>Why is using DHCP versus static IPs the key for this countermeasure to work? </p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>The entire effectiveness of Dynamic ARP Inspection hinges on the existence of the DHCP Snooping Binding Table, and that table is only populated when hosts obtain their IP addresses dynamically via DHCP. When a host uses DHCP, the switch observes the full DHCP exchange (Discover → Offer → Request → Ack) on its ports and records a trusted binding: this MAC address on this port legitimately owns this IP address. DAI then uses this ground-truth database to validate all subsequent ARP traffic. When hosts use static IP addresses, no DHCP exchange ever occurs, so no binding entry is ever created for those hosts. With an empty or incomplete binding table, the switch has no reference against which to validate ARP packets — meaning DAI would drop <strong>all</strong> ARP traffic from statically configured hosts (since none of them have a binding), effectively breaking connectivity for legitimate devices. While it is possible to manually configure static ARP inspection entries (called "ARP ACLs") on the switch to compensate, this approach is operationally complex and error-prone in any environment larger than a small lab. DHCP therefore provides an automated and scalable mechanism for building and maintaining the binding table, making DAI practical to deploy in real networks.</p>
+</details>
+<p><br>
+<br>
+<br></p>
+<h1 id="conclusion">Conclusion</h1>
+<p>As we saw, after we configured Dynamic ARP Inspection with DHCP Snooping on the Switch, the ARP poisoning attack was completely neutralised. The Switch's enforcement of IP-to-MAC bindings — derived automatically from observed DHCP leases — prevented the Attacker from inserting itself as a man-in-the-middle, blocking the DNS spoofing that depends on it. This demonstrates how a relatively simple Layer 2 control, when properly configured, can defeat a class of attacks that would otherwise be trivially easy to execute on an unprotected switched network.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.tabs", "navigation.indexes", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

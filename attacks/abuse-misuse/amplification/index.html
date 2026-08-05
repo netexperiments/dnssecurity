@@ -1,0 +1,1669 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://netexperiments.github.io/dnssecurity/attacks/abuse-misuse/amplification/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../ff-single/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>DNS Amplification - DNS Security</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="DNS Security" class="md-header__button md-logo" aria-label="DNS Security" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            DNS Security
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              DNS Amplification
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../setup/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Lab Setup
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../enhancements/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  DNS Security and Privacy Enhancements
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  DNS Attacks and Countermeasures
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="DNS Security" class="md-nav__button md-logo" aria-label="DNS Security" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    DNS Security
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../enhancements/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Security and Privacy Enhancements
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Security and Privacy Enhancements
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../enhancements/dnssec/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNSSEC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../enhancements/doh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS-over-HTTPS (DoH)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Attacks and Countermeasures
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Attacks and Countermeasures
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../protocol/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Protocol and Resolution Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_2" id="__nav_4_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Protocol and Resolution Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../protocol/rebinding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Rebinding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../protocol/dhcp-dns-spoofing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DHCP DNS Spoofing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../server/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Server and Infrastructure Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_3" id="__nav_4_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Server and Infrastructure Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/nxdomain-ddos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NXDOMAIN DDoS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/cache-poisoning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Cache Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/kaminsky/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kaminsky Cache Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/zone-transfer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unauthorized Zone Transfer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/dns-arp-poisoning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS ARP Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Abuse/Misuse Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_4" id="__nav_4_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Abuse/Misuse Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Amplification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ff-single/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Fast Flux Single-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ff-double/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Fast Flux Double-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tunneling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Tunneling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dgas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DGA-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ff-dgas-tunneling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fast Flux and DGA-based Tunneling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="background">Background</h1>
+<p>DNS amplification is a cyberattack technique that exploits the DNS protocol to overwhelm a target with an enormous volume of traffic. This method allows attackers to launch devastating Distributed Denial of Service (DDoS) attacks by leveraging the inherent asymmetry between small DNS queries and their significantly larger responses, effectively rendering the target's infrastructure unreachable without directly exhausting the attacker's own resources.</p>
+<p>This technique exploits the open and stateless nature of the DNS protocol, combined with the ability to spoof source IP addresses over UDP. The attack involves manipulating DNS query-response mechanics to redirect and massively amplify traffic toward an unsuspecting victim.</p>
+<p>DNS amplification can be divided into four main concepts: IP Spoofing, Query Transmission, Response Amplification, and Traffic Flooding.
+Initially, the attacker forges DNS queries in which the source IP address is replaced with the IP address of the intended victim. This spoofing ensures that all DNS responses will be directed toward the target rather than back to the attacker, effectively concealing the origin of the attack. The spoofed queries are then transmitted at scale to a large number of open DNS resolvers, publicly accessible servers that will respond to queries from any source without authentication. These queries request record types, such as ANY or TXT records, that are known to produce disproportionately large responses. Each open DNS resolver receives the forged request and, acting in good faith, generates a response many times larger than the original query — an amplification factor that can range to over 7x the size of the initial request. This asymmetry is the cornerstone of the attack's destructive efficiency. The cumulative effect of multiple resolvers simultaneously directing amplified responses toward a single target results in a volumetric flood of traffic that saturates the victim's network bandwidth and overwhelms its infrastructure, causing widespread service disruption.</p>
+<figure id="figure-1">
+<p><img alt="Figure 1: DNS Tunneling attack" src="../../../images/background/Amplification.png" width="600" />
+  </p>
+<figcaption>Figure 1: DNS Amplification attack</figcaption>
+</figure>
+<p><a href="#figure-1">Figure 1</a> shows a DNS Amplification attack scenario. These are the steps:</p>
+<ul>
+<li><strong>Step 1:</strong> The botnet sends a burst of small DNS <strong>ANY</strong> queries for largezone.com to multiple open resolvers, while forging the source IP address of those queries so that it matches the victim’s address, here <strong>203.0.113.1</strong>. </li>
+<li><strong>Step 2:</strong> Each open resolver processes the query as if it had been legitimately sent by the victim and returns a much larger DNS reply to the spoofed destination, namely the victim at <strong>203.0.113.1</strong>. Because the source IP was spoofed, the combined traffic from many resolvers accumulates into a flood of unsolicited amplified responses. As a consequence, the victim’s network link or local resources can become saturated by the incoming DNS
+traffic, so legitimate communication is delayed or dropped, causing denial of service.</li>
+</ul>
+<p>The open resolvers may also experience some additional processing load, but they are not the primary target of the attack. Their main role is to act as reflectors and amplifiers that multiply the traffic delivered to the victim.</p>
+<p><br>
+<br></p>
+<h1 id="objectives">Objectives</h1>
+<p>Our goal with the following configurations is to simulate a DNS Amplification attack. This lab demonstrates how attackers can exploit multiple open DNS resolvers to flood a victim with amplified traffic. </p>
+<p><br>
+<br></p>
+<h1 id="lab-prerequisites-network-configuration">Lab Prerequisites &amp; Network Configuration</h1>
+<figure id="figure-2">
+<p><img alt="Figure-2" src="../../../images/amplification.png" />
+  </p>
+<figcaption>Figure 2: DNS Amplification attack GNS3 Lab Topology</figcaption>
+</figure>
+<p>In the GNS3 project showed in <a href="#figure-2">Figure 2</a>, you will need to add in the following topology that uses eight key nodes (be sure to previously check the <a href="../../../setup/" target="_blank">Lab Setup Guide</a>):</p>
+<table>
+<thead>
+<tr>
+<th>Node Name</th>
+<th>Role</th>
+<th>IP Address</th>
+<th>Subnet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Victim</strong></td>
+<td>Target machine. DNS client</td>
+<td><strong>10.0.0.1</strong></td>
+<td>10.0.0.0/24</td>
+</tr>
+<tr>
+<td><strong>Attacker</strong></td>
+<td>Attacker console</td>
+<td><strong>10.0.1.1</strong></td>
+<td>10.0.1.0/24</td>
+</tr>
+<tr>
+<td><strong>Bot1</strong></td>
+<td>Receives orders from Attacker. Acts as proxy</td>
+<td><strong>10.0.2.1</strong></td>
+<td>10.0.2.0/24</td>
+</tr>
+<tr>
+<td><strong>Resolver1</strong></td>
+<td>Recursive DNS Server. Also acts as authoritative nameserver for largezone.com</td>
+<td><strong>10.0.3.1</strong></td>
+<td>10.0.3.0/24</td>
+</tr>
+<tr>
+<td><strong>Resolver2</strong></td>
+<td>Recursive DNS Server. Also acts as authoritative nameserver for  largezone.com</td>
+<td><strong>10.0.4.1</strong></td>
+<td>10.0.4.0/24</td>
+</tr>
+<tr>
+<td><strong>Resolver3</strong></td>
+<td>Recursive DNS Server. Also acts as authoritative nameserver for  largezone.com</td>
+<td><strong>10.0.5.1</strong></td>
+<td>10.0.5.0/24</td>
+</tr>
+<tr>
+<td><strong>Resolver4</strong></td>
+<td>Recursive DNS Server. Also acts as authoritative nameserver for largezone.com</td>
+<td><strong>10.0.6.1</strong></td>
+<td>10.0.6.0/24</td>
+</tr>
+<tr>
+<td><strong>Resolver5</strong></td>
+<td>Recursive DNS Server. Also acts as authoritative nameserver for largezone.com</td>
+<td><strong>10.0.7.1</strong></td>
+<td>10.0.7.0/24</td>
+</tr>
+</tbody>
+</table>
+<p>Be sure to configure one of the Resolvers to be the designated resolver for the Victim machine by editing file <code>/etc/resolv.conf</code>.</p>
+<p>To be able to simulate network bandwith constraints, apply the following configurations in the <strong>Router</strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="n">conf</span> <span class="n">t</span>
+<span class="n">policy</span><span class="o">-</span><span class="nb">map</span> <span class="n">LIMIT_BW</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">class</span><span class="o">-</span><span class="n">default</span>
+<span class="n">shape</span> <span class="n">average</span> <span class="mi">1000000</span>
+</code></pre></div>
+<p>and then apply to the router interface that faces the Victim machine (g0/0):</p>
+<div class="highlight"><pre><span></span><code><span class="nb">int</span> <span class="n">g0</span><span class="o">/</span><span class="mi">0</span>
+<span class="n">service</span><span class="o">-</span><span class="n">policy</span> <span class="n">output</span> <span class="n">LIMIT_BW</span>
+</code></pre></div>
+<p>To confirm if it is applied correctly, use:
+<div class="highlight"><pre><span></span><code><span class="n">show</span> <span class="n">policy</span><span class="o">-</span><span class="nb">map</span> <span class="n">interface</span> <span class="n">g0</span><span class="o">/</span><span class="mi">0</span>
+</code></pre></div>
+9
+This way the connection is limmited to 1Mbps.</p>
+<p><br></p>
+<p>The following scripts were used in this lab:</p>
+<ul>
+<li><a href="../../../scripts/amplification.py" download>amplification.py</a></li>
+<li><a href="../../../scripts/amplification_activate_bots.py" download>amplification_activate_bots.py</a></li>
+</ul>
+<p><br>
+<br></p>
+<h1 id="phase-1-setting-up-the-zone">Phase 1: Setting up the Zone</h1>
+<p>Each <strong>Resolver</strong> machine will host <code>largezone.com</code> and <code>example.com</code> zones.</p>
+<h3 id="step-11-basic-zone-setup">Step 1.1: Basic Zone Setup</h3>
+<p>On each <strong>Resolver</strong>,</p>
+<p>1 - Create the <code>db.largezone</code> zone file:</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">nano</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">bind</span><span class="o">/</span><span class="n">db</span><span class="o">.</span><span class="n">largezone</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">$</span><span class="n">TTL</span>    <span class="mi">604800</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">SOA</span>     <span class="n">ns1</span><span class="o">.</span><span class="n">largezone</span><span class="o">.</span><span class="n">com</span><span class="o">.</span> <span class="n">hostmaster</span><span class="o">.</span><span class="n">largezone</span><span class="o">.</span><span class="n">com</span><span class="o">.</span> <span class="p">(</span>
+                        <span class="mi">2026102904</span> <span class="p">;</span> <span class="n">Serial</span>
+                        <span class="mi">604800</span>     <span class="p">;</span> <span class="n">Refresh</span>
+                        <span class="mi">86400</span>      <span class="p">;</span> <span class="n">Retry</span>
+                        <span class="mi">2419200</span>    <span class="p">;</span> <span class="n">Expire</span>
+                        <span class="mi">604800</span> <span class="p">)</span>   <span class="p">;</span> <span class="n">Negative</span> <span class="n">Cache</span> <span class="n">TTL</span>
+<span class="p">;</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">NS</span>      <span class="n">ns1</span><span class="o">.</span><span class="n">largezone</span><span class="o">.</span><span class="n">com</span><span class="o">.</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">NS</span>      <span class="n">ns2</span><span class="o">.</span><span class="n">largezone</span><span class="o">.</span><span class="n">com</span><span class="o">.</span>
+
+<span class="p">;</span> <span class="o">---------------------------</span>
+<span class="p">;</span> <span class="n">Apex</span> <span class="n">RRsets</span> <span class="p">(</span><span class="n">many</span> <span class="n">types</span><span class="p">)</span>
+<span class="p">;</span> <span class="o">---------------------------</span>
+
+<span class="p">;</span> <span class="n">Multiple</span> <span class="n">A</span> <span class="n">records</span> <span class="n">at</span> <span class="n">the</span> <span class="n">apex</span> <span class="p">(</span><span class="n">multihomed</span><span class="p">)</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.100</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.101</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.102</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.103</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.104</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.105</span>
+
+<span class="p">;</span> <span class="n">Multiple</span> <span class="n">AAAA</span> <span class="n">records</span> <span class="n">at</span> <span class="n">the</span> <span class="n">apex</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">AAAA</span>    <span class="mi">2001</span><span class="p">:</span><span class="n">db8</span><span class="p">::</span><span class="mi">1</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">AAAA</span>    <span class="mi">2001</span><span class="p">:</span><span class="n">db8</span><span class="p">::</span><span class="mi">2</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">AAAA</span>    <span class="mi">2001</span><span class="p">:</span><span class="n">db8</span><span class="p">::</span><span class="mi">3</span>
+
+<span class="p">;</span> <span class="n">Mail</span> <span class="n">exchange</span> <span class="n">records</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">MX</span>      <span class="mi">10</span> <span class="n">mail</span><span class="o">.</span><span class="n">largezone</span><span class="o">.</span><span class="n">com</span><span class="o">.</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">MX</span>      <span class="mi">20</span> <span class="n">mail2</span><span class="o">.</span><span class="n">largezone</span><span class="o">.</span><span class="n">com</span><span class="o">.</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">MX</span>      <span class="mi">30</span> <span class="n">backupmail</span><span class="o">.</span><span class="n">largezone</span><span class="o">.</span><span class="n">com</span><span class="o">.</span>
+
+<span class="p">;</span> <span class="n">Several</span> <span class="n">TXT</span> <span class="n">records</span> <span class="p">(</span><span class="n">SPF</span><span class="p">,</span> <span class="n">DMARC</span><span class="p">,</span> <span class="n">misc</span><span class="p">)</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">TXT</span>     <span class="s2">&quot;v=spf1 ip4:192.0.2.0/24 include:_spf.largezone.com -all&quot;</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">TXT</span>     <span class="s2">&quot;google-site-verification=example-token-1234567890&quot;</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">TXT</span>     <span class="s2">&quot;site-annotation: created-for-lab-demo&quot;</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">TXT</span>     <span class="s2">&quot;dmarc=none; pct=100; rua=mailto:dmarc@largezone.com&quot;</span>
+
+<span class="p">;</span> <span class="n">Additional</span> <span class="n">plain</span><span class="o">-</span><span class="n">text</span> <span class="n">records</span> <span class="n">to</span> <span class="n">bulk</span> <span class="n">up</span> <span class="n">ANY</span> <span class="n">response</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">TXT</span>     <span class="s2">&quot;long-record-1=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&quot;</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">TXT</span>     <span class="s2">&quot;long-record-2=BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB&quot;</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">TXT</span>     <span class="s2">&quot;long-record-3=CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC&quot;</span>
+
+<span class="p">;</span> <span class="n">Certification</span> <span class="n">Authority</span> <span class="n">Authorization</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">CAA</span>     <span class="mi">0</span> <span class="n">issue</span> <span class="s2">&quot;letsencrypt.org&quot;</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">CAA</span>     <span class="mi">0</span> <span class="n">issuewild</span> <span class="s2">&quot;letsencrypt.org&quot;</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">CAA</span>     <span class="mi">0</span> <span class="n">iodef</span> <span class="s2">&quot;mailto:security@largezone.com&quot;</span>
+
+<span class="p">;</span> <span class="n">Service</span> <span class="n">records</span> <span class="p">(</span><span class="n">SRV</span><span class="p">)</span> <span class="err">—</span> <span class="n">multiple</span> <span class="n">priorities</span><span class="o">/</span><span class="n">weights</span><span class="o">/</span><span class="n">ports</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">SRV</span>     <span class="mi">10</span> <span class="mi">5</span> <span class="mi">5060</span> <span class="n">sip</span><span class="o">.</span><span class="n">largezone</span><span class="o">.</span><span class="n">com</span><span class="o">.</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">SRV</span>     <span class="mi">20</span> <span class="mi">10</span> <span class="mi">5060</span> <span class="n">sip2</span><span class="o">.</span><span class="n">largezone</span><span class="o">.</span><span class="n">com</span><span class="o">.</span>
+
+<span class="p">;</span> <span class="n">LOC</span> <span class="n">record</span> <span class="err">—</span> <span class="n">physical</span> <span class="n">location</span> <span class="n">metadata</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">LOC</span>     <span class="mi">38</span> <span class="mi">43</span> <span class="mf">0.00</span> <span class="n">N</span> <span class="mi">9</span> <span class="mi">8</span> <span class="mf">0.00</span> <span class="n">W</span> <span class="mi">10</span><span class="n">m</span> <span class="mi">1</span><span class="n">m</span> <span class="mi">100</span><span class="n">m</span> <span class="mi">10</span><span class="n">m</span>
+
+<span class="p">;</span> <span class="n">HINFO</span> <span class="err">—</span> <span class="n">host</span> <span class="n">CPU</span><span class="o">/</span><span class="n">OS</span> <span class="n">info</span> 
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">HINFO</span>   <span class="s2">&quot;x86_64&quot;</span> <span class="s2">&quot;Linux&quot;</span>
+
+<span class="p">;</span> <span class="n">RP</span> <span class="err">—</span> <span class="n">responsible</span> <span class="n">person</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">RP</span>      <span class="n">hostmaster</span><span class="o">.</span><span class="n">largezone</span><span class="o">.</span><span class="n">com</span><span class="o">.</span> <span class="o">.</span>   <span class="p">;</span> <span class="n">second</span> <span class="n">field</span> <span class="ow">is</span> <span class="n">TXT</span> <span class="n">RR</span> <span class="n">giving</span> <span class="n">contact</span> <span class="n">info</span> <span class="p">(</span><span class="n">dot</span> <span class="n">means</span> <span class="n">none</span><span class="p">)</span>
+
+<span class="p">;</span> <span class="n">NAPTR</span> <span class="n">records</span> <span class="p">(</span><span class="n">used</span> <span class="k">for</span> <span class="n">URI</span><span class="o">/</span><span class="n">telephone</span> <span class="n">mapping</span><span class="p">)</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">NAPTR</span>   <span class="mi">100</span> <span class="mi">10</span> <span class="s2">&quot;u&quot;</span> <span class="s2">&quot;E2U+sip&quot;</span> <span class="s2">&quot;!^.*$!sip:info@largezone.com!&quot;</span> <span class="o">.</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">NAPTR</span>   <span class="mi">200</span> <span class="mi">10</span> <span class="s2">&quot;u&quot;</span> <span class="s2">&quot;E2U+email&quot;</span> <span class="s2">&quot;!^.*$!mailto:info@largezone.com!&quot;</span> <span class="o">.</span>
+
+<span class="p">;</span> <span class="n">SSHFP</span> <span class="n">records</span> <span class="k">for</span> <span class="n">host</span> <span class="n">keys</span> <span class="p">(</span><span class="n">example</span> <span class="n">hashes</span><span class="p">)</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">SSHFP</span>   <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1234567890</span><span class="n">abcdef1234567890abcdef12345678</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">SSHFP</span>   <span class="mi">2</span> <span class="mi">1</span> <span class="n">abcdef1234567890abcdef1234567890abcdef12</span>
+
+
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">SPF</span>     <span class="s2">&quot;v=spf1 ip4:192.0.2.0/24 -all&quot;</span>
+
+<span class="p">;</span> <span class="n">Additional</span> <span class="n">misc</span> <span class="n">records</span> 
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">TXT</span>     <span class="s2">&quot;misc-note=extra-apex-records-for-testing&quot;</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">TXT</span>     <span class="s2">&quot;backup-info=apex-demo-v1&quot;</span>
+
+<span class="p">;</span> <span class="o">-------------</span> <span class="n">referenced</span> <span class="n">hosts</span> <span class="n">used</span> <span class="n">above</span> <span class="o">-------------</span>
+<span class="n">mail</span>            <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.200</span>
+<span class="n">mail2</span>           <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.201</span>
+<span class="n">backupmail</span>      <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.202</span>
+<span class="n">sip</span>             <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.210</span>
+<span class="n">sip2</span>            <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.211</span>
+<span class="n">ns1</span>             <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">10.0.3.1</span>
+<span class="n">ns2</span>             <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">10.0.3.2</span>
+
+<span class="p">;</span> <span class="n">keep</span> <span class="n">your</span> <span class="n">subhost</span> <span class="nb">list</span> 
+<span class="n">host1</span>   <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.1</span>
+<span class="n">host2</span>   <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.2</span>
+<span class="n">host3</span>   <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.3</span>
+<span class="n">host4</span>   <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.4</span>
+<span class="n">host5</span>   <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.5</span>
+<span class="n">host6</span>   <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.6</span>
+<span class="n">host7</span>   <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.7</span>
+<span class="n">host8</span>   <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.8</span>
+<span class="n">host9</span>   <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.9</span>
+<span class="n">host10</span>  <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.10</span>
+<span class="n">host11</span>  <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.11</span>
+<span class="n">host12</span>  <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.12</span>
+<span class="n">host13</span>  <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.13</span>
+<span class="n">host14</span>  <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.14</span>
+<span class="n">host15</span>  <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.15</span>
+<span class="n">host16</span>  <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.16</span>
+<span class="n">host17</span>  <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.17</span>
+<span class="n">host18</span>  <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.18</span>
+<span class="n">host19</span>  <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.19</span>
+<span class="n">host20</span>  <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.20</span>
+<span class="n">host21</span>  <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.21</span>
+<span class="n">host22</span>  <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.22</span>
+<span class="n">host23</span>  <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.23</span>
+<span class="n">host24</span>  <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">192.0.2.24</span>
+
+
+<span class="o">@</span>     <span class="n">IN</span>       <span class="n">TXT</span>      <span class="s2">&quot;Cum Veteres Mechanicam uti Author est Pappus in verum Naturalium investigatione maximi fecerint recentiores missis formis substantialibus qualitatibus occultis Paenomena Naturae ad leges Mathematicas revocare aggressi sint Visum est in hoc Tractatu&quot;</span>
+
+<span class="o">@</span>     <span class="n">IN</span>       <span class="n">TXT</span>      <span class="s2">&quot;ACum Veteres Mechanicam uti Author est Pappus in verum Naturalium investigatione maximi fecerint recentiores missis formis substantialibus qualitatibus occultis Paenomena Naturae ad leges Mathematicas revocare aggressi sint Visum est in hoc Tractatu&quot;</span>
+
+<span class="o">@</span>     <span class="n">IN</span>       <span class="n">TXT</span>      <span class="s2">&quot;BCum Veteres Mechanicam uti Author est Pappus in verum Naturalium investigatione maximi fecerint recentiores missis formis substantialibus qualitatibus occultis Paenomena Naturae ad leges Mathematicas revocare aggressi sint Visum est in hoc Tractatu&quot;</span>
+
+<span class="o">@</span>     <span class="n">IN</span>       <span class="n">TXT</span>      <span class="s2">&quot;CCum Veteres Mechanicam uti Author est Pappus in verum Naturalium investigatione maximi fecerint recentiores missis formis substantialibus qualitatibus occultis Paenomena Naturae ad leges Mathematicas revocare aggressi sint Visum est in hoc Tractatu&quot;</span>
+</code></pre></div></p>
+<p>2 - Create the <code>db.example</code> zone file:</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">nano</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">bind</span><span class="o">/</span><span class="n">db</span><span class="o">.</span><span class="n">example</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">example</span><span class="o">.</span><span class="n">com</span><span class="o">.</span> <span class="n">IN</span> <span class="n">SOA</span> <span class="n">ns1</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span><span class="o">.</span> <span class="n">admin</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span><span class="o">.</span> <span class="p">(</span>
+    <span class="mi">1</span> <span class="mi">7200</span> <span class="mi">3600</span> <span class="mi">1209600</span> <span class="mi">86400</span>
+<span class="p">)</span>
+    <span class="n">NS</span> <span class="n">ns1</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span><span class="o">.</span>
+<span class="n">ns1</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span><span class="o">.</span> <span class="n">A</span> <span class="mf">10.0.8.3</span>
+
+<span class="o">@</span>                <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">10.0.9.1</span>
+<span class="n">www</span>              <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">10.0.9.1</span>
+<span class="n">secret</span><span class="o">-</span><span class="n">host</span> <span class="n">IN</span> <span class="n">A</span> <span class="mf">10.0.10.1</span>
+<span class="n">mail</span> <span class="n">IN</span> <span class="n">A</span> <span class="mf">10.0.9.100</span>
+<span class="n">mail</span> <span class="n">IN</span> <span class="n">MX</span> <span class="mi">10</span> <span class="n">mail</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span>
+<span class="n">testa</span>            <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">10.0.10.1</span>
+<span class="n">testb</span>            <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">10.0.10.1</span>
+<span class="n">testc</span>            <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">10.0.10.1</span>
+<span class="n">testd</span>            <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">10.0.10.1</span>
+</code></pre></div></p>
+<p>3 - Modify the <code>named.conf.local</code> file, add the <code>largezone.com</code> and <code>example.com</code> zones:</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">nano</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">bind</span><span class="o">/</span><span class="n">named</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">local</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">zone</span> <span class="s2">&quot;largezone.com&quot;</span> <span class="p">{</span>
+    <span class="nb">type</span> <span class="n">master</span><span class="p">;</span>
+    <span class="n">file</span> <span class="s2">&quot;/etc/bind/db.largezone&quot;</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="n">zone</span> <span class="s2">&quot;example.com&quot;</span> <span class="p">{</span>
+     <span class="nb">type</span> <span class="n">master</span><span class="p">;</span>
+     <span class="n">file</span> <span class="s2">&quot;/etc/bind/db.example&quot;</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></p>
+<p>4 - Restart the BIND service (named):</p>
+<p><div class="highlight"><pre><span></span><code>pkill<span class="w"> </span>named<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>named<span class="w"> </span>-c<span class="w"> </span>/etc/bind/named.conf
+</code></pre></div>
+<br>
+<br>
+<br></p>
+<h1 id="phase-2-bot-setup">Phase 2: Bot Setup</h1>
+<h3 id="step-21-create-and-configure-a-sudo-user-for-remote-commands">Step 2.1: Create and Configure a Sudo User for Remote Commands</h3>
+<p>For the Attacker to be able to run commands on the bot remotely via SHH it will need new user credentials.</p>
+<p>On <strong>Bot1</strong>, run:</p>
+<p><div class="highlight"><pre><span></span><code>adduser<span class="w"> </span><span class="nb">test</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>usermod<span class="w"> </span>-aG<span class="w"> </span>sudo<span class="w"> </span><span class="nb">test</span>
+</code></pre></div>
+To confirm the user was added:
+<div class="highlight"><pre><span></span><code>groups<span class="w"> </span><span class="nb">test</span>
+</code></pre></div></p>
+<p>To simplify running commands, we will a no-password needed clause to certain commands used by the C&amp;C Server. 
+<div class="highlight"><pre><span></span><code>visudo
+</code></pre></div></p>
+<p>At the end of the file add:
+<div class="highlight"><pre><span></span><code><span class="nb">test</span><span class="w"> </span><span class="nv">ALL</span><span class="o">=(</span>ALL<span class="o">)</span><span class="w"> </span>NOPASSWD:<span class="w"> </span>/usr/sbin/named,<span class="w"> </span>/usr/bin/pkill<span class="w"> </span>named,<span class="w"> </span>/usr/bin/python3,<span class="w"> </span>/usr/bin/tee
+</code></pre></div></p>
+<p><br></p>
+<h3 id="step-22-set-up-the-attack-script">Step 2.2: Set up the Attack Script</h3>
+<p>On <strong>Bot1</strong>, add this file:</p>
+<p><div class="highlight"><pre><span></span><code>nano<span class="w"> </span>/home/amplification.py
+</code></pre></div>
+The <code>amplification.py</code> script will use the scapy python library to craft 100 ANY request (query type = 255) DNS query packets for <code>largezone.com</code> to send to each of the resolvers. Each bot sends a total of 500 such packets per iteration, with the source IP spoofed as the victim’s IP address. Since this process runs inside a <code>while True</code> loop, the 500-packet bursts are repeated indefinitely, continuously flooding the target with amplified traffic.</p>
+<p><br>
+<br>
+<br></p>
+<h1 id="phase-3-perform-attack">Phase 3: Perform Attack</h1>
+<h3 id="step-31-activate-the-bot-to-start-the-attack">Step 3.1: Activate the Bot to Start the Attack</h3>
+<p>The attacker machine will be responsible for activating the bots in order for the attack to start. In this case only Bot1. Do a Wireshark capture right next to the Victim interface, and another next to one of the resolvers (as a tip, use a “dns” filter to better analyze the relevant DNS packets).</p>
+<p>On the <strong>Attacker</strong> machine, run:</p>
+<div class="highlight"><pre><span></span><code>python3<span class="w"> </span>/home/amplification_activate_bots.py
+</code></pre></div>
+<p>The <code>amplification_activate_bots.py</code> script uses the paramiko python library to run, via ssh, the <code>amplification.py</code> on each of the bots. In this case, only Bot1.</p>
+<p><br></p>
+<h3 id="step-32-confirm-dns-service-disruption">Step 3.2: Confirm DNS Service Disruption</h3>
+<p>Confirm there really was service disruption for the Victim while the attack is still ongoing, and after it stopped.</p>
+<p>On the <strong>Victim</strong> machine, run:</p>
+<p><div class="highlight"><pre><span></span><code>dig<span class="w"> </span>www.example.com
+</code></pre></div>
+or </p>
+<div class="highlight"><pre><span></span><code>dig<span class="w"> </span>mail.example.com
+</code></pre></div>
+<p>If the request is not fulfilled, service disruption is confirmed. You might have to try multiple times with different subdomains of the <code>example.com</code> domain to see service disruption.</p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>During the attack phase, what did you observe in the Wireshark capture next to the Victim's interface? Describe the nature of the traffic — which protocol was used, what type of DNS records were being delivered, and approximately what was the size of the responses compared to what a typical DNS reply would look like?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>The Wireshark capture next to the Victim's interface showed a large flood of unsolicited UDP DNS response packets arriving from multiple resolver IP addresses. These responses contained ANY record replies for largezone.com, which included a wide variety of record types such as A, AAAA, MX, TXT, SRV, NAPTR, CAA, and others defined in the zone file. The responses were significantly larger than a typical DNS reply, although not in the order of several kilobytes in size like it was common in older servers, the answers are still around 400-500 bytes, compared to a standard A record response which would typically be around 70 bytes. This size disparity is the amplification factor at the heart of the attack. Although the sizes are limited, since amplification is constrained not just by RRL, but by UDP size limits and fragmentation avoidance in modern DNS servers.</p>
+</details>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>Running dig testa.example.com or another subdomain on the Victim during the attack likely resulted in a timeout or failed response. Why does the attack affect the Victim's ability to resolve legitimate domains, even though the flood traffic consists entirely of DNS responses and not requests?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>The attack saturates the Victim's network interface with a massive volume of inbound UDP traffic. Even though this traffic consists of DNS responses rather than requests, it consumes the Victim's available bandwidth. As a result, legitimate DNS query responses, such as replies to dig testa.example.com, are either dropped at the network level due to congestion, or the Victim's DNS resolver never receives the response in time, causing the query to time out. The attack does not need to interfere with DNS query logic directly. Overwhelming the link layer is sufficient to deny service.</p>
+</details>
+<p><br>
+<br>
+<br>
+<br></p>
+<h1 id="countermeasure">Countermeasure</h1>
+<p>After performing the attack, we now pass on to the countermeasure phase. DNS amplification abuses open DNS resolvers by spoofing the victim's IP address and exploiting the large response sizes generated by certain DNS record types, taking advantage of the fact that UDP-based DNS traffic requires no handshake or source verification. One of the core features of this attack technique is that the amplified traffic is generated by legitimate third-party open resolvers that are simply responding in good faith to what appears to be a valid request, meaning the attacker never directly floods the victim themselves. The main consequence of this is that by implementing rate limiting on DNS resolvers, restricting the number of responses sent to any single IP address within a given time window, network administrators can neutralize the amplification effect before it reaches the target. Since a spoofed attack relies on resolvers freely and repeatedly responding to high volumes of forged requests, rate limiting breaks this dynamic by capping the volume of responses any one destination can receive, rendering the amplification factor unviable for the attacker and significantly reducing the volumetric impact of the flood.</p>
+<p><br></p>
+<h2 id="configure-response-rate-limiting-in-all-resolvers">Configure Response Rate Limiting in all Resolvers</h2>
+<h3 id="step-1-reconfigure-bind">Step 1:  Reconfigure BIND</h3>
+<p>On each <strong>Resolver</strong>,: </p>
+<p>1 - Modify the <code>named.conf.options</code> file:</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">nano</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">bind</span><span class="o">/</span><span class="n">named</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">options</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">rate</span><span class="o">-</span><span class="n">limit</span> <span class="p">{</span>
+    <span class="n">responses</span><span class="o">-</span><span class="n">per</span><span class="o">-</span><span class="n">second</span> <span class="mi">5</span><span class="p">;</span>
+    <span class="n">window</span> <span class="mi">5</span><span class="p">;</span>
+    <span class="n">slip</span> <span class="mi">2</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+Position the <code>rate-limit</code> block inside <code>options{}</code>. This configuration limits the resolver to sending at most 5 responses per second to any single destination IP within a 5-second time window.
+<br></p>
+<p>2 - Restart the BIND service (named):</p>
+<div class="highlight"><pre><span></span><code>pkill<span class="w"> </span>named<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>named<span class="w"> </span>-c<span class="w"> </span>/etc/bind/named.conf
+</code></pre></div>
+<h3 id="step-2-re-run-the-attack">Step 2:  Re-run the attack</h3>
+<p>Repeat Step 3.1 to re-run the attack. </p>
+<p>Again, do a Wireshark capture right next to the Victim interface, and another next to one of the resolvers (as a tip, use a “dns” filter to better analyze the relevant DNS packets) to see the changes to network traffic. </p>
+<p><br></p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>After enabling Response Rate Limiting on all resolvers and re-running the attack, what differences did you observe in the Wireshark captures — both next to the Victim's interface and next to one of the resolvers? What does this tell you about where in the network the mitigation is acting?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>After enabling RRL, the capture next to the resolver showed that after an initial burst of responses, subsequent replies to the spoofed victim IP were suppressed or replaced with truncated slip responses, as BIND began enforcing the responses-per-second 5 limit. Correspondingly, the capture next to the Victim showed a significant drop in incoming traffic volume. The flood was curtailed at its source. This confirms that RRL acts at the resolver level, throttling outbound responses before they ever reach the victim, rather than filtering traffic at the victim's end.</p>
+</details>
+<div class="admonition question">
+<p class="admonition-title">Question</p>
+<p>Consider the position of the Victim throughout this entire attack. Unlike other attacks, like DNS tunneling for example, where some tools can give network administrators meaningful visibility and control, a victim of DNS amplification has no equivalent lever to pull. Why is this the case, and what does it reveal about the fundamental limitations of host-level or network-local countermeasures against DDoS attacks?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>In a DNS amplification attack, the Victim is entirely passive, it never sends a query, never interacts with the attacker, and has no prior relationship with the resolvers flooding it. By the time the amplified traffic arrives at the Victim's network interface, the damage is already being done: bandwidth is consumed, and the infrastructure is overwhelmed before any local filtering or firewall rule can even inspect the packets. A firewall can drop the offending packets after they arrive, but it cannot reclaim the bandwidth they already consumed in transit. </p>
+<p>This is the defining characteristic of volumetric DDoS: the attack wins at the link level, not the application level. There is no host-based countermeasure the Victim can deploy to stop the flood, because the bottleneck is the network pipe itself, not the Victim's processing capacity. Meaningful defense must therefore occur upstream like at the resolvers via RRL  which are entirely outside the Victim's administrative control.</p>
+</details>
+<p><br>
+<br></p>
+<h1 id="conclusion">Conclusion</h1>
+<p>As we saw, after reconfiguring BIND with Response Rate Limiting (RRL), the volume of amplified traffic directed at the victim is dramatically reduced. By capping the number of responses any single IP address can receive within a given time window, the resolvers are prevented from being weaponized at scale, effectively dismantling the amplification mechanism that makes this attack so destructive.</p>
+<p>However, it is important to recognize that RRL is a mitigation applied at the resolver level, not at the victim's end. The victim remains fundamentally passive throughout this entire attack since it never initiates any communication, never interacts with the attacker, and has no direct means of stopping the flood once it is underway. This highlights one of the most troubling asymmetries of amplification-based DDoS attacks: the target is the least empowered party in the exchange.</p>
+<p>DNS amplification therefore underscores a broader truth about network security: effective defense is often a collective responsibility. Resolver operators, ISPs, and network administrators must cooperate to implement mitigations such as RRL, BCP38 source address validation, and the deprecation of open resolvers, since no single party, least of all the victim, can unilaterally stop the attack alone.</p>
+<p><br></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.tabs", "navigation.indexes", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

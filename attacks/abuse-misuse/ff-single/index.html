@@ -1,0 +1,1597 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://netexperiments.github.io/dnssecurity/attacks/abuse-misuse/ff-single/">
+      
+      
+        <link rel="prev" href="../amplification/">
+      
+      
+        <link rel="next" href="../ff-double/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>DNS Fast Flux Single-based - DNS Security</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="DNS Security" class="md-header__button md-logo" aria-label="DNS Security" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            DNS Security
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              DNS Fast Flux Single-based
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../setup/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Lab Setup
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../enhancements/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  DNS Security and Privacy Enhancements
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  DNS Attacks and Countermeasures
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="DNS Security" class="md-nav__button md-logo" aria-label="DNS Security" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    DNS Security
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../enhancements/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Security and Privacy Enhancements
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Security and Privacy Enhancements
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../enhancements/dnssec/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNSSEC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../enhancements/doh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS-over-HTTPS (DoH)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Attacks and Countermeasures
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Attacks and Countermeasures
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../protocol/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Protocol and Resolution Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_2" id="__nav_4_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Protocol and Resolution Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../protocol/rebinding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Rebinding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../protocol/dhcp-dns-spoofing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DHCP DNS Spoofing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../server/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Server and Infrastructure Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_3" id="__nav_4_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Server and Infrastructure Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/nxdomain-ddos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NXDOMAIN DDoS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/cache-poisoning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Cache Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/kaminsky/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kaminsky Cache Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/zone-transfer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unauthorized Zone Transfer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/dns-arp-poisoning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS ARP Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Abuse/Misuse Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_4" id="__nav_4_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Abuse/Misuse Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../amplification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Amplification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Fast Flux Single-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ff-double/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Fast Flux Double-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tunneling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Tunneling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dgas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DGA-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ff-dgas-tunneling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fast Flux and DGA-based Tunneling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="background">Background</h1>
+<p>DNS Fast Flux is an evasion technique commonly used by attackers to hide the location of malicious
+infrastructure and prolong the availability of malicious services, such as phishing sites, malware distribution, or botnet command-and-control (C&amp;C) servers. The primary goal of this technique is to make
+takedown efforts significantly more difficult by frequently changing the IP addresses associated with a
+malicious domain.</p>
+<p>In a Single-Flux setup, the attacker registers a domain name (e.g., attacker.com) and configures it to resolve to a set of compromised machines distributed globally. These machines act as proxies that relay traffic to the actual malicious backend C&amp;C server. To enable the rapid rotation of IP addresses, the attacker configures their authoritative DNS server to return DNS A records with very low Time to Live (TTL) values, often just seconds. This forces clients and recursive DNS resolvers to frequently query for updated records. With each request, a different IP address
+(belonging to another compromised host) is returned, effectively creating a moving target. This makes
+it difficult for defenders to block access to the malicious service using traditional defense mechanisms
+such as static IP-based blacklists. Even if an individual IP is taken offline or blocked, others remain active and the domain itself remains untouched. In Single-Flux, only the A records (i.e., the IP addresses)
+change dynamically. In more advanced variants like Double-Flux, the NS records (nameservers) also
+rotate, adding another layer of obfuscation.</p>
+<figure>
+<p><img alt="Figure 1: DGA-based C&amp;C attack" src="../../../images/background/FastFluxSingle.png" width="600" />
+  </p>
+<figcaption>Figure 1: Fast Flux Single - based attack</figcaption>
+</figure>
+<p>Figure 1 shows an example of a Single Flux Architecture. These are the steps in the figure:</p>
+<ul>
+<li><strong>Step 1:</strong> The victim sends a DNS query for <strong>service.attacker.com</strong> to a DNS resolver. </li>
+<li><strong>Step 2:</strong> The resolver queries the authoritative DNS server for the A record of service.attacker.com.</li>
+<li><strong>Step 3:</strong> The authoritative server replies with the IP address <strong>101.23.65.98</strong>, corresponding to one fast-flux agent, and sets a short TTL for that answer. </li>
+<li><strong>Step 4:</strong> The resolver returns that IP address to the victim.</li>
+<li><strong>Step 5:</strong> The victim connects to <strong>101.23.65.98</strong>.</li>
+<li><strong>Step 6:</strong> The fast-flux agent relays the traffic to the hidden backend server. Because the TTL is short, a later lookup for the same name may return a different fast-flux agent IP address, such as <strong>59.35.174.58</strong> or <strong>219.67.43.12</strong>. In this way, the domain remains stable from the victim’s point of view, while the visible service endpoint may change across successive resolutions.</li>
+</ul>
+<p><br>
+<br></p>
+<h1 id="objectives">Objectives</h1>
+<p>Our goal with the following configurations is to simulate a DNS Fast Flux (Single)-based C&amp;C attack. This lab demonstrates how attackers abuse the DNS protocol to rapidly rotate IP addresses associated with a malicious domain, bypassing traditional network security controls that rely on static IP-based blacklists. You will act as both the attacker and the victim, executing scripts to dynamically update DNS records, set up a rogue authoritative nameserver to serve rotating A records, establish a command-and-control communication channel through compromised proxy machines, and observe how sensitive data can be exfiltrated.</p>
+<p><br>
+<br></p>
+<h1 id="lab-prerequisites-network-configuration">Lab Prerequisites &amp; Network Configuration</h1>
+<figure>
+<p><img alt="Figure 2: GNS3 Lab Topology" src="../../../images/ffs-1.png" />
+  </p>
+<figcaption>Figure 2: Single Flux GNS3 Lab Topology</figcaption>
+</figure>
+<p>In the GNS3 project showed in Figure 2, you will need to add in the following topology that uses nine key nodes (be sure to previously check the <a href="../../../setup/" target="_blank">Lab Setup Guide</a>):</p>
+<table>
+<thead>
+<tr>
+<th>Node Name</th>
+<th>Role</th>
+<th>IP Address</th>
+<th>Subnet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Root Server</strong></td>
+<td>Root Zone ( .)</td>
+<td><strong>10.0.0.1</strong></td>
+<td>10.0.0.0/24</td>
+</tr>
+<tr>
+<td><strong>TLD (Top Level Domain) Server</strong></td>
+<td>Top-Level Domain (.com)</td>
+<td><strong>10.0.1.1</strong></td>
+<td>10.0.1.0/24</td>
+</tr>
+<tr>
+<td><strong>NS-Attacker</strong></td>
+<td>Authoritative nameserver for example.com</td>
+<td><strong>10.0.2.1</strong></td>
+<td>10.0.2.0/24</td>
+</tr>
+<tr>
+<td><strong>C&amp;C-Server (C2-Server)</strong></td>
+<td>Command and Control Server</td>
+<td><strong>10.0.3.1</strong></td>
+<td>10.0.3.0/24</td>
+</tr>
+<tr>
+<td><strong>Resolver</strong></td>
+<td>Recursive DNS Server</td>
+<td><strong>10.0.4.1</strong></td>
+<td>10.0.4.0/24</td>
+</tr>
+<tr>
+<td><strong>Victim</strong></td>
+<td>Infected Machine</td>
+<td><strong>10.0.5.1</strong></td>
+<td>10.0.5.0/24</td>
+</tr>
+<tr>
+<td><strong>FFA1</strong></td>
+<td>Receives orders from C&amp;C-Server. Acts as proxy</td>
+<td><strong>10.0.6.1</strong></td>
+<td>10.0.6.0/24</td>
+</tr>
+<tr>
+<td><strong>FFA2</strong></td>
+<td>Receives orders from C&amp;C-Server. Acts as proxy</td>
+<td><strong>10.0.7.1</strong></td>
+<td>10.0.7.0/24</td>
+</tr>
+<tr>
+<td><strong>FFA3</strong></td>
+<td>Receives orders from C&amp;C-Server. Acts as proxy</td>
+<td><strong>10.0.8.1</strong></td>
+<td>10.0.8.0/24</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<p>The following scripts were used in this lab:</p>
+<ul>
+<li><a href="../../../scripts/fast_flux_proxy_FFA.py" download>fast_flux_proxy_FFA.py</a></li>
+<li><a href="../../../scripts/CC_server.py" download>CC_server.py</a></li>
+<li><a href="../../../scripts/fast_flux_victim.py" download>fast_flux_victim.py</a></li>
+<li><a href="../../../scripts/single_flux_detector.py" download>single_flux_detector.py</a></li>
+</ul>
+<p><br>
+<br></p>
+<h1 id="phase-1-ffa-setup-and-dns-registration">Phase 1: FFA Setup and DNS Registration</h1>
+<h3 id="step-11-configure-a-sudo-user-for-remote-commands">Step 1.1: Configure a Sudo User for Remote Commands</h3>
+<p>For the C&amp;C Server to be able to run commands on the FFAs remotely via SHH it will need new user credentials.</p>
+<p>On each <strong>FFA</strong>, run:</p>
+<p><div class="highlight"><pre><span></span><code>adduser<span class="w"> </span><span class="nb">test</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>usermod<span class="w"> </span>-aG<span class="w"> </span>sudo<span class="w"> </span><span class="nb">test</span>
+</code></pre></div>
+To confirm the user was added:
+<div class="highlight"><pre><span></span><code>groups<span class="w"> </span><span class="nb">test</span>
+</code></pre></div></p>
+<p>To simplify running commands, we will a no-password needed clause to certain commands used by the C&amp;C Server. 
+<div class="highlight"><pre><span></span><code>visudo
+</code></pre></div></p>
+<p>At the end of the file add:
+<div class="highlight"><pre><span></span><code><span class="nb">test</span><span class="w"> </span><span class="nv">ALL</span><span class="o">=(</span>ALL<span class="o">)</span><span class="w"> </span>NOPASSWD:<span class="w"> </span>/usr/sbin/named,<span class="w"> </span>/usr/bin/pkill<span class="w"> </span>named,<span class="w"> </span>/usr/bin/python3
+</code></pre></div></p>
+<p><br></p>
+<h3 id="step-12-turn-on-every-ffa">Step 1.2: Turn on every FFA</h3>
+<p>On each <strong>FFA</strong>, run:</p>
+<div class="highlight"><pre><span></span><code>python3<span class="w"> </span>/home/fast_flux_proxy_FFA.py
+</code></pre></div>
+<p>This script <code>fast_flux_proxy_FFA.py</code> has all the logic that enables an FFA agent to function as a proxy of C&amp;C Server. Although only one will be used by the C&amp;C Server at each time, all have to be ready to accept commands from it.</p>
+<p><br></p>
+<h3 id="step-13-add-zone-change-key-to-cc-server">Step 1.3: Add Zone Change Key to C&amp;C Server</h3>
+<p>To be able to remotely update a nameserver's DNS records, the C&amp;C Server needs the key that was configured with the zone.</p>
+<p>On the <strong>C&amp;C-Server</strong>:</p>
+<p><div class="highlight"><pre><span></span><code>nano<span class="w"> </span>/home/ns-attacker-key.txt
+</code></pre></div>
+and add the previous used key:</p>
+<div class="highlight"><pre><span></span><code>key<span class="w"> </span><span class="s2">&quot;ns-attacker&quot;</span><span class="w"> </span><span class="o">{</span>
+<span class="w">        </span>algorithm<span class="w"> </span>hmac-sha256<span class="p">;</span>
+<span class="w">        </span>secret<span class="w"> </span><span class="s2">&quot;nvhsmRBHfjI0rKLsTY098adHHtbjRjh+3s8CH0S/k5o=&quot;</span><span class="p">;</span>
+<span class="o">}</span><span class="p">;</span>
+</code></pre></div>
+<p><br></p>
+<h3 id="step-14-select-an-ffa">Step 1.4: Select an FFA</h3>
+<p>Now you will have to choose a Fast Flux Agent. There are three available machines. We selected FFA1.</p>
+<p>On the <strong>C&amp;C-Server</strong>, run:</p>
+<div class="highlight"><pre><span></span><code>nsupdate<span class="w"> </span>-k<span class="w"> </span>/home/ns-attacker-key.txt<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">    server 10.0.2.1</span>
+<span class="s">    update del cc.attacker.com A</span>
+<span class="s">    update add cc.attacker.com 60 A 10.0.6.1</span>
+<span class="s">    send</span>
+<span class="s">    EOF</span>
+</code></pre></div>
+<p>The above set of commands allows the attacker to manually choose which FFA in botnet will become its proxy now, by using a service called nsupdate. With a key stored in /home/ns-attacker-key.txt, it selects the server that will receive the dynamic update request, then deletes any previous A record of domain cc.attacker.com, and ends by adding a new A record with IP address 10.0.6.1 with a TTL of 60 seconds.  </p>
+<p><br>
+<br></p>
+<h1 id="phase-2-activation-and-data-exfiltration">Phase 2: Activation and Data Exfiltration</h1>
+<h3 id="step-21-activating-the-cc-server">Step 2.1: Activating the C&amp;C Server</h3>
+<p>On the <strong>C&amp;C-Server</strong>, run:</p>
+<div class="highlight"><pre><span></span><code>python3<span class="w"> </span>/home/CC_server.py
+</code></pre></div>
+<p>The <code>CC_server.py</code> script is responsabile for handling the beacon signal sent by the bots and all communication thereafter. It allows an operator to monitor connected bots, to send commands, and collect outputs and files from those bots. The server exposes four HTTP endpoints for communication with bots: <code>/beacon</code> (POST, bots send a "beacon" to signal they are alive); <code>/get-command</code> (GET, bots request commands to execute); <code>/report</code> (POST, bots send the output of executed commands); <code>/file-report</code> (POST, bots send file contents e.g., stolen data). The script can then save the information obtained for future use.
+<br>
+<br></p>
+<h3 id="step-22-victim-initiates-the-connection">Step 2.2: Victim Initiates the Connection</h3>
+<p>Do a Wireshark capture right next to the Victim interface (as a tip, use a “dns || http” filter to better analyze the relevant DNS and HTTP packets).</p>
+<p>On the <strong>Victim</strong> machine, run:</p>
+<div class="highlight"><pre><span></span><code>python3<span class="w"> </span>/home/fast_flux_victim.py
+</code></pre></div>
+<p>Observe the DNS lookup process and the IP address the Victim machine is communicating with. Look into the Wireshark capture to see the process in detail.</p>
+<p>The Victim runs the script, it queries the Resolver for the IP address of cc.attacker.com, gets one response, receives one response pointing to <strong>FFA1</strong>, and establishes a connection with that machine. The infected host will use those HTTP endpoints to communicate with the FFA.
+<br>
+<br></p>
+<h3 id="step-23-issuing-commands-and-exfiltration">Step 2.3: Issuing Commands and Exfiltration</h3>
+<p>Use the C&amp;C operator interface to control the Victim. Start by selecting Option <code>2. Issue Command to Victim</code>, entering Victim ID (<code>1</code>), and running the command <code>ls</code>. Next, issue another command using the same process, this time entering <code>ls /home</code>. To verify the output, select Option <code>3. View General Command Outputs</code> and confirm that the directory listing is received.</p>
+<p>For data exfiltration, select Option <code>2. Issue Command to Victim</code> again, issue the command <code>read /home/password.txt</code>, and then select Option <code>4. View Received Files</code>. The content of the requested file should be displayed, confirming successful exfiltration.</p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>Looking at the Wireshark capture, describe the full DNS resolution process that takes place when the Victim queries for cc.attacker.com. Which machine responds at each step, and what IP address is ultimately returned to the Victim?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>The Victim sends a DNS query to the Resolver (10.0.4.1). The Resolver, acting as a recursive resolver, first contacts the Root Server (10.0.0.1), which delegates to the TLD Server (10.0.1.1), which in turn delegates to NS-Attacker (10.0.2.1). NS-Attacker returns an A record for cc.attacker.com pointing to FFA1's IP address (10.0.6.1) with a low TTL (60 seconds). The Resolver then returns this address to the Victim, which begins HTTP communication with FFA1.</p>
+</details>
+<p><br>
+<br></p>
+<h1 id="phase-3-ffa-rotation-and-connection-resilience">Phase 3: FFA Rotation and Connection Resilience</h1>
+<p>While maintaining both the C&amp;C Server script, as well as the <code>fast_flux_victim.py</code> in the Victim machine running, we will use an auxiliary console of C&amp;C Server to update the IP address associated with cc.attacker.com (select <code>Auxiliary Console</code> option).</p>
+<h3 id="step-31-rotating-the-domains-ip-address">Step 3.1: Rotating the Domain's IP Address</h3>
+<p>Now you will have to choose a different Fast Flux Agent. There are two available machines. We selected FFA2.</p>
+<p>On the <strong>C&amp;C Server</strong> auxiliary console, run:</p>
+<div class="highlight"><pre><span></span><code>nsupdate<span class="w"> </span>-k<span class="w"> </span>/home/ns-attacker-key.txt<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">    server 10.0.2.1</span>
+<span class="s">    update del cc.attacker.com A</span>
+<span class="s">    update add cc.attacker.com 60 A 10.0.7.1</span>
+<span class="s">    send</span>
+<span class="s">    EOF</span>
+</code></pre></div>
+<p>To simulate the resilience expected when using a Fast Flux Single technique, the attacker now has to register a new IP address for cc.attacker.com domain, the victims at the time of the change should still be able to contact the C&amp;C Server, but new victims will use the new domain to establish a connection.
+<br></p>
+<h3 id="step-32-checking-connection-resilience">Step 3.2: Checking Connection Resilience</h3>
+<p>On the <strong>C&amp;C Server</strong> machine, continue to send commands to the victim using the appropriate ID. Be sure to check Wireshark to see which packets are being exchanged.</p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>After the DNS record for cc.attacker.com is updated to point to FFA2 (10.0.7.1), which FFA is the already-connected Victim still communicating with? Is it now using FFA2? Explain why or why not.</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>The Victim continues communicating with FFA1 (10.0.6.1). This is because the Victim already resolved cc.attacker.com and established an active HTTP session with FFA1 before the DNS update occurred. As long as that session remains alive, the Victim uses the IP address it previously resolved, no new DNS query is triggered mid-session. The DNS change only affects future lookups, not existing connections. This illustrates a limitation of DNS-based rotation: it does not instantly redirect already-connected victims. All FF agents are always ready to serve as proxy for the C&amp;C Server. </p>
+</details>
+<p><br></p>
+<h3 id="step-33-new-victim-connection">Step 3.3: New Victim Connection</h3>
+<p>Now let's simulate a new victim connecting.</p>
+<p>On the <strong>Victim</strong> machine, stop the running python script and run it again:</p>
+<div class="highlight"><pre><span></span><code>python3<span class="w"> </span>/home/fast_flux_victim.py
+</code></pre></div>
+<p><br></p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>When the Victim script is restarted and performs a fresh DNS lookup for cc.attacker.com, which FFA does it now connect to? Is it the same as the previous Victim instance? Why or why not?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>The restarted Victim resolves cc.attacker.com again and this time receives FFA2's IP address (10.0.7.1), since the DNS record was updated in Step 3.1. This is different from the previous instance, which was still connected to FFA1. The key reason is that restarting the script forces a new DNS resolution, and since the TTL of the old record (60 seconds) has likely expired, the Resolver fetches a fresh response from NS-Attacker, now returning FFA2. This demonstrates how Fast Flux achieves resilience and rotation from the perspective of new connections, even while old connections persist on the previous agent.</p>
+</details>
+<p><br></p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>Can the C&amp;C Server use two FFAs as proxies simultaneously? What does this imply about the C&amp;C Server's design and the scalability of Fast Flux infrastructure?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>Yes. In this lab, the old Victim could remain connected through FFA1 while the new Victim connects through FFA2, meaning both FFAs could be actively proxying traffic to the same C&amp;C Server at the same time (this does not happen though due to there only being one Victim machine). This is by design: each FFA independently forwards traffic to the backend C&amp;C Server, which tracks bots by their unique IDs rather than the IP address they arrived from. This design means the C&amp;C infrastructure scales naturally, the operator can have many FFAs active simultaneously, each serving a different subset of bots, without any coordination needed between the agents themselves.</p>
+</details>
+<p><br>
+<br>
+<br></p>
+<h1 id="countermeasure">Countermeasure</h1>
+<p>After performing the attack, we now move on to the countermeasure phase. Fast Flux networks are considered a state-of-the-art attack mechanism due to their elusive nature and robust resistance to termination attempts. One of the core features of this technique is the use of many IP addresses (belonging to FFAs in a botnet), of which only one at a time will be accessible via DNS lookup. The main consequence of this is the rapid IP rotation that occurs at short intervals, which can signal the presence of a Fast Flux network if monitored.</p>
+<p>Instead of using an internal resolver, which would be realistic in an enterprise environment but not in a personal or home environment, we will use a packet sniffer connected to the victim network. This <strong>Sniffer</strong> will monitor DNS messages and identify patterns associated with Fast Flux networks to then send out an alert.</p>
+<figure>
+<p><img alt="Figure 3: Updated GNS3 Lab Topology" src="../../../images/ffs-2.png" />
+  </p>
+<figcaption>Figure 3: Updated Single Flux GNS3 Lab Topology</figcaption>
+</figure>
+<p><br></p>
+<p>In the GNS3 project showed in Figure 3, you will need to modify the previous topology and add in a Hub connecting the Victim machine to a new machine with some network configurations:</p>
+<table>
+<thead>
+<tr>
+<th>Node Name</th>
+<th>Role</th>
+<th>IP Address</th>
+<th>Subnet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Victim</strong></td>
+<td>Malware-infected victim. Contains sensitive data</td>
+<td><strong>10.0.5.1</strong></td>
+<td>10.0.5.0/24</td>
+</tr>
+<tr>
+<td><strong>Sniffer</strong></td>
+<td>Alert Packet Sniffer</td>
+<td><strong>10.0.5.2</strong></td>
+<td>10.0.5.0/24</td>
+</tr>
+</tbody>
+</table>
+<p><br>
+<br></p>
+<h2 id="sniffer-machine-setup">Sniffer Machine Setup</h2>
+<p>In Figure 3, we added a hub positioned between the Victim machine and the central router to which we will add the <strong>Sniffer</strong> machine. This way this machine can actually observe all traffic that reaches and is sent from the Victim machine.</p>
+<p>The script <code>single_flux_detector.py</code> uses the Python library Scapy to sniff network packets, capturing DNS response packets returned to the Victim machine. It listens for all UDP port 53 packets and filters specifically for DNS responses (QR flag = 1) that contain at least one answer record.
+For every DNS response it sees, it runs two heuristic checks to decide if the traffic looks like fast flux activity: a <strong>unique IP count check</strong> — legitimate domains resolve to a stable set of IP addresses over time. Fast flux networks constantly rotate their A records. If a given domain resolves to 3 or more unique IP addresses across observed responses, it is flagged; and a <strong>TTL analysis check</strong>, which inspects the Time-To-Live value on each A record in the response. Legitimate TTLs are 300 seconds or higher to allow caching. Fast flux TTLs are short to force clients to re-resolve frequently, cycling through their botnet pool. If any A record carries a TTL below 300 seconds, the alert is upgraded from MEDIUM to HIGH confidence.
+If either condition triggers and that (client IP, domain) pair has not already been alerted, it calls a console alert. </p>
+<p>The script maintains a 24-hour rolling history window per domain so that stale resolutions from legitimate high-IP domains do not accumulate and trigger false positives. State is persisted to disk at /home/fast_flux_state.json every 60 seconds and is reloaded with expiry filtering on startup so detection context survives process restarts.
+<br></p>
+<h3 id="step-1-execute-the-detector-script">Step 1:  Execute the Detector Script</h3>
+<p>Do a new Wireshark capture right next to the Victim machine interface.</p>
+<p>On the <strong>Sniffer</strong> machine, run: </p>
+<p><div class="highlight"><pre><span></span><code>python3<span class="w"> </span>/home/single_flux_detector.py
+</code></pre></div>
+<br></p>
+<h3 id="step-2-re-run-the-attack">Step 2:  Re-run the attack</h3>
+<p>Repeat previous steps to re-run the attack.</p>
+<p><br></p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>Did the detector script correctly detect the Fast Flux activity? At what point during the attack did it trigger an alert, and what was the confidence level assigned (MEDIUM or HIGH)? Justify your answer based on the detection heuristics described.</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>The detector should have correctly detected the Fast Flux activity. The first alert was triggered after the domain cc.attacker.com resolved to a third unique IP address (once FFA3 or another agent was used), satisfying the unique IP count threshold of ≥ 3. Because the TTL on the A records was set to 60 seconds (well below the 300-second threshold) the confidence level was upgraded to HIGH. Both heuristics fired: multiple unique IPs for the same domain within a short window, and consistently low TTL values indicating forced re-resolution.</p>
+</details>
+<p><br></p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>Why might this sniffer-based detection approach produce false positives in certain real-world scenarios?Suggest how the detection script could be improved to reduce false positives.</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>Large Content Delivery Networks (CDNs) such as Cloudflare or Akamai can legitimately resolve to dozens of different IP addresses globally, and may sometimes use low TTL values for load balancing or failover purposes. This could cause the sniffer to falsely flag them as Fast Flux. To reduce false positives, the script detection logic could be improved by, for example, maintaining an allowlist of known CDN IP ranges or domains.</p>
+</details>
+<p><br>
+<br></p>
+<h1 id="conclusion">Conclusion</h1>
+<p>As we saw, the Scapy-based sniffer demonstrated that passive DNS monitoring is a viable detection strategy even in a non-enterprise environment. By tracking the number of unique IP addresses a domain resolves to over time, combined with TTL analysis, the detector was able to reliably identify the anomalous pattern introduced by Fast Flux after just a small number of rotations.</p>
+<p>However, this countermeasure has limitations. It relies on observing multiple DNS responses over time, meaning the very first rotation may go undetected. A more robust enterprise-grade defence would combine DNS monitoring with threat intelligence feeds, anomaly detection on beacon timing, and network-level blocking at the resolver layer to prevent resolution of known Fast Flux domains entirely.
+Ultimately, Fast Flux remains a powerful technique precisely because it exploits the fundamental mechanics of DNS — a protocol designed for availability, not security. Understanding how it works at a protocol level, as practised in this lab, is essential groundwork for building effective detection and response capabilities.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.tabs", "navigation.indexes", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

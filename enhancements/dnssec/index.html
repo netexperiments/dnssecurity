@@ -1,0 +1,1737 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://netexperiments.github.io/dnssecurity/enhancements/dnssec/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../doh/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>DNSSEC - DNS Security</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="DNS Security" class="md-header__button md-logo" aria-label="DNS Security" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            DNS Security
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              DNSSEC
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../setup/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Lab Setup
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  DNS Security and Privacy Enhancements
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../attacks/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  DNS Attacks and Countermeasures
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="DNS Security" class="md-nav__button md-logo" aria-label="DNS Security" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    DNS Security
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Security and Privacy Enhancements
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Security and Privacy Enhancements
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNSSEC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../doh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS-over-HTTPS (DoH)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../attacks/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Attacks and Countermeasures
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Attacks and Countermeasures
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../attacks/protocol/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Protocol and Resolution Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Protocol and Resolution Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../attacks/protocol/rebinding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Rebinding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../attacks/protocol/dhcp-dns-spoofing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DHCP DNS Spoofing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../attacks/server/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Server and Infrastructure Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Server and Infrastructure Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../attacks/server/nxdomain-ddos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NXDOMAIN DDoS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../attacks/server/cache-poisoning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Cache Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../attacks/server/kaminsky/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kaminsky Cache Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../attacks/server/zone-transfer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unauthorized Zone Transfer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../attacks/server/dns-arp-poisoning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS ARP Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../attacks/abuse-misuse/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Abuse/Misuse Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Abuse/Misuse Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../attacks/abuse-misuse/amplification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Amplification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../attacks/abuse-misuse/ff-single/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Fast Flux Single-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../attacks/abuse-misuse/ff-double/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Fast Flux Double-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../attacks/abuse-misuse/tunneling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Tunneling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../attacks/abuse-misuse/dgas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DGA-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../attacks/abuse-misuse/ff-dgas-tunneling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fast Flux and DGA-based Tunneling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="background">Background</h1>
+<p>The Domain Name System Security Extensions (DNSSEC) were developed to tackle persistent security issues within DNS, especially its deficiencies in authentication and integrity. DNSSEC introduces a set of extensions to DNS, focused on ensuring data integrity and authenticating the origin of data.</p>
+<p>DNSSEC uses asymmetric (public-key) cryptography, such that each DNS zone has a Zone Signing Key (ZSK) and a Key Signing Key (KSK). The ZSK is used to sign the zone's resource record sets (RRsets). The KSK is used to sign the ZSK itself. The public part of each key is published in the zone via DNSKEY records. There are five DNS record types added by DNSSEC:</p>
+<ul>
+<li>RRSIG: A digital signature for a set of DNS records (an RRset), generated using the private ZSK. Resolvers can verify these signatures to confirm authenticity.</li>
+<li>DNSKEY: Holds a public key used to sign RRSIGs. Each zone usually publishes two: a KSK and a ZSK.</li>
+<li>DS Records: Delegation Signer (DS) records connect a child zone to a parent zone, establishing a chain of trust from the root.</li>
+<li>NSEC/NSEC3: These are used to provide authenticated denial of existence, preventing attackers from falsifying non-existent domains.</li>
+</ul>
+<p>The widespread adoption of DNSSEC is contingent upon support from both DNS resolvers and authoritative servers. Importantly, the client does not need to possess any certificate. Instead, trust is established through a hierarchical chain of trust, as described below. A significant breakthrough occurred in July 2010 with the signing of the root zone, facilitating the complete establishment of the DNSSEC chain of trust. This chain of trust operates hierarchically. Each DNS zone's authenticity is validated by the zone above it, ensuring a secure and authenticated path from the root to individual domains. This process guarantees that DNS information remains untampered during transit. The root zone's public KSK is pre-configured in most validating DNS resolvers and serves as the trust anchor. </p>
+<figure>
+<p><img alt="Figure 1: DGA-based C&amp;C attack" src="../../images/background/DNSSEC.png" />
+  </p>
+<figcaption>Figure 1: DNSSEC Validation Process</figcaption>
+</figure>
+<p>The validation process, as shown in Figure 1, proceeds as follows:</p>
+<ul>
+<li><strong>Step 1:</strong> The resolver queries the root zone for the DNSKEY RRset.</li>
+<li><strong>Step 2:</strong> The Root server returns the DNSKEY RRSET that includes the RRSIG, the public KSK and the public ZSK.</li>
+<li><strong>Step 3:</strong> The resolver uses the root public KSK to verify the RRSIG. If the signature is valid, the resolver now trusts the root public ZSK.</li>
+<li><strong>Step 4:</strong> The ZSK is used to verify RRSIGs (validating) on other records in the root zone, such as the DS record for a TLD (e.g., .com).</li>
+<li><strong>Step 5:</strong> The resolver then queries the .com zone for its DNSKEY RRset.</li>
+<li><strong>Step 6:</strong> .com Server returns its DNSKEY RRset</li>
+<li><strong>Step 7:</strong> The DNS Resolver then checks that the KSK in the .com DNSKEY RRset matches the hash in the DS record.</li>
+<li><strong>Step 8:</strong> If it matches, the resolver uses the .com public KSK to verify the RRSIG over the .com DNSKEY RRset.</li>
+<li><strong>Step 9:</strong> The .com public ZSK is then trusted and used to validate records like the DS for example.com. This process continues down the DNS hierarchy until the final domain is validated.</li>
+</ul>
+<p>The resolver validates each link in the chain by fetching the appropriate DNSKEYs and DS records, validating RRSIGs with the correct public keys, and confirming that the hashes match the DS record in the parent zone. If any of these validation steps fail, the DNS response is considered fraudulent and is not returned to the client. </p>
+<p><br>
+<br></p>
+<h1 id="objectives">Objectives</h1>
+<p>Our goal with the following configurations is to establish a chain of trust that enables the use of DNSSEC. To achieve this, we will begin at the authoritative server for the domain example.com and then ascend the DNS hierarchy. Finally, we will configure a trust anchor in the resolver.
+In a real-world environment, machines can be updated at any time. Tasks such as signing zone files and generating and submitting DS records (from child zones to parent zones) must be repeated whenever changes are made to the zone file data. Due to its repetitive nature, many registries and registrars use the Extensible Provisioning Protocol (EPP) to automate DS record submission, thereby streamlining the process.</p>
+<p><br>
+<br></p>
+<h1 id="lab-prerequisites-network-configuration">Lab Prerequisites &amp; Network Configuration</h1>
+<figure>
+<p><img alt="Figure 2: GNS3 Lab Topology" src="../../images/dnssec-1.png" />
+  </p>
+<figcaption>Figure 2: DNSSEC GNS3 Lab Topology</figcaption>
+</figure>
+<p>In the GNS3 project showed in Figure 2, you will need to add in the following topology that uses six key nodes (be sure to previously check the <a href="../../setup/" target="_blank">Lab Setup Guide</a>):</p>
+<table>
+<thead>
+<tr>
+<th>Node Name</th>
+<th>Role</th>
+<th>IP Address</th>
+<th>Subnet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Root Server</strong></td>
+<td>Root Zone ( . ) nameserver (BIND)</td>
+<td><strong>10.0.0.1</strong></td>
+<td>10.0.0.0/24</td>
+</tr>
+<tr>
+<td><strong>TLD Server</strong></td>
+<td>Top-Level Domain (.com) nameserver (BIND)</td>
+<td><strong>10.0.1.1</strong></td>
+<td>10.0.1.0/24</td>
+</tr>
+<tr>
+<td><strong>Authoritative Server</strong></td>
+<td>Authoritative nameserver for example.com (BIND)</td>
+<td><strong>10.0.2.1</strong></td>
+<td>10.0.2.0/24</td>
+</tr>
+<tr>
+<td><strong>User</strong></td>
+<td>Client of the Resolver</td>
+<td><strong>10.0.4.1</strong></td>
+<td>10.0.4.0/24</td>
+</tr>
+<tr>
+<td><strong>Resolver</strong></td>
+<td>Recursive DNS Server (BIND)</td>
+<td><strong>10.0.5.1</strong></td>
+<td>10.0.5.0/24</td>
+</tr>
+</tbody>
+</table>
+<p><br>
+<br>
+<br></p>
+<h1 id="phase-1-configuring-the-authoritative-server-for-examplecom">Phase 1: Configuring the Authoritative Server for example.com</h1>
+<p>The Authoritative Server (10.0.2.1) hosts the example.com zone and is the lowest-level server in the chain-of-trust. This is where we initiate the DNSSEC signing process.</p>
+<h3 id="step-11-basic-zone-setup">Step 1.1: Basic Zone Setup</h3>
+<p>On the <strong>Authoritative Server</strong>,</p>
+<p>1 - Define the Zone in <code>named.conf.local</code>:</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">nano</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">bind</span><span class="o">/</span><span class="n">named</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">local</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">zone</span> <span class="s2">&quot;example.com&quot;</span> <span class="p">{</span>
+    <span class="nb">type</span> <span class="n">master</span><span class="p">;</span>
+    <span class="n">file</span> <span class="s2">&quot;/etc/bind/db.example.com&quot;</span><span class="p">;</span>
+    <span class="n">allow</span><span class="o">-</span><span class="n">update</span> <span class="p">{</span> <span class="n">none</span><span class="p">;</span> <span class="p">};</span>
+    <span class="n">check</span><span class="o">-</span><span class="n">names</span> <span class="n">ignore</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+<br>
+<br></p>
+<h3 id="step-12-create-the-unsigned-zone-file">Step 1.2: Create the Unsigned Zone File</h3>
+<p>On the <strong>Authoritative Server</strong>,</p>
+<p>1 - Create the <code>db.example.com</code> zone file:</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">nano</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">bind</span><span class="o">/</span><span class="n">db</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">$</span><span class="n">TTL</span> <span class="mi">1</span><span class="n">h</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">SOA</span>     <span class="n">auth</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span><span class="o">.</span> <span class="n">hostmaster</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span><span class="o">.</span> <span class="p">(</span>
+                <span class="mi">2026090801</span> <span class="p">;</span> <span class="n">serial</span>
+                <span class="mi">3</span><span class="n">H</span>         <span class="p">;</span> <span class="n">refresh</span>
+                <span class="mi">15</span><span class="n">M</span>        <span class="p">;</span> <span class="n">retry</span>
+                <span class="mi">1</span><span class="n">W</span>         <span class="p">;</span> <span class="n">expire</span>
+                <span class="mi">1</span><span class="n">H</span> <span class="p">)</span>       <span class="p">;</span> <span class="n">minimum</span>
+
+        <span class="n">IN</span>      <span class="n">NS</span>      <span class="n">auth</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span><span class="o">.</span>
+<span class="n">auth</span>    <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">10.0.2.1</span>
+<span class="n">www</span>     <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">10.0.3.1</span>
+</code></pre></div></p>
+<p><br></p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>What is the purpose of the auth A record (10.0.2.1)?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>It ensures the nameserver auth.example.com can be resolved within the zone itself (glue record).</p>
+</details>
+<p><br>
+<br>
+<br></p>
+<h1 id="phase-2-signing-the-authoritative-zone">Phase 2: Signing the Authoritative Zone</h1>
+<p>DNSSEC requires two types of keys: the <strong>KSK</strong> (Key Signing Key, used for signing DNSKEY records) and the <strong>ZSK</strong> (Zone Signing Key, used for signing all other records).</p>
+<h3 id="step-21-generate-dnssec-keys">Step 2.1: Generate DNSSEC Keys</h3>
+<p>Generate the KSK and ZSK for example.com. We use the ECDSAP256SHA256 algorithm (Algorithm 13).</p>
+<p>On the <strong>Authoritative Server</strong>,</p>
+<div class="highlight"><pre><span></span><code><span class="n">cd</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">bind</span>
+</code></pre></div>
+<p><br></p>
+<p>1 - Generate the ZSK (Zone Signing Key):</p>
+<div class="highlight"><pre><span></span><code><span class="n">dnssec</span><span class="o">-</span><span class="n">keygen</span> <span class="o">-</span><span class="n">a</span> <span class="n">ECDSAP256SHA256</span> <span class="o">-</span><span class="n">b</span> <span class="mi">256</span> <span class="o">-</span><span class="n">n</span> <span class="n">ZONE</span> <span class="n">example</span><span class="o">.</span><span class="n">com</span>
+</code></pre></div>
+<p>This creates two files, one ending in <strong>.key (public)</strong> and one in <strong>.private (private)</strong>. Note the filename, e.g., <code>Kexample.com.+013+12345.key</code>.</p>
+<p><br></p>
+<p>2 - Generate the KSK (Key Signing Key):</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">dnssec</span><span class="o">-</span><span class="n">keygen</span> <span class="o">-</span><span class="n">a</span> <span class="n">ECDSAP256SHA256</span> <span class="o">-</span><span class="n">b</span> <span class="mi">256</span> <span class="o">-</span><span class="n">n</span> <span class="n">ZONE</span> <span class="o">-</span><span class="n">f</span> <span class="n">KSK</span> <span class="n">example</span><span class="o">.</span><span class="n">com</span>
+</code></pre></div>
+Note this filename too, e.g., <code>Kexample.com.+013+54321.key</code>. This KSK key ID will be used to create the DS record later.</p>
+<p><br>
+<br></p>
+<h3 id="step-22-include-keys-in-the-zone-file">Step 2.2: Include Keys in the Zone File</h3>
+<p>Include the public parts of the KSK and ZSK into the <code>db.example.com</code> file.</p>
+<p>On the <strong>Authoritative Server</strong>,</p>
+<p>1 - Edit <code>db.example.com</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="n">nano</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">bind</span><span class="o">/</span><span class="n">db</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span>
+</code></pre></div>
+<p><br></p>
+<p>2 - Below the $TTL line, add:</p>
+<div class="highlight"><pre><span></span><code><span class="err">$</span><span class="n">INCLUDE</span> <span class="n">Kexample</span><span class="o">.</span><span class="n">com</span><span class="o">.+</span><span class="mi">013</span><span class="o">+&lt;</span><span class="n">ZSK_ID</span><span class="o">&gt;.</span><span class="n">key</span> <span class="p">;</span> <span class="n">ZSK</span> 
+<span class="err">$</span><span class="n">INCLUDE</span> <span class="n">Kexample</span><span class="o">.</span><span class="n">com</span><span class="o">.+</span><span class="mi">013</span><span class="o">+&lt;</span><span class="n">KSK_ID</span><span class="o">&gt;.</span><span class="n">key</span> <span class="p">;</span> <span class="n">KSK</span> 
+</code></pre></div>
+<p>Where <code>&lt;ZSK_ID&gt;</code> is the ID from the first key generated, <code>&lt;KSK_ID&gt;</code> is the ID from the second key generated.</p>
+<p>This creates two files, one ending in <strong>.key (public)</strong> and one in <strong>.private (private)</strong>. Note the filename, e.g., <code>Kexample.com.+013+12345.key</code>.</p>
+<p><br>
+<br></p>
+<h3 id="step-23-sign-the-zone">Step 2.3: Sign the Zone</h3>
+<p>Use the KSK and ZSK to sign the zone, creating <strong>RRSIG</strong> records for every other record.</p>
+<p>On the <strong>Authoritative Server</strong>,</p>
+<p>1 - Sign the Zone:</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">dnssec</span><span class="o">-</span><span class="n">signzone</span> <span class="o">-</span><span class="n">o</span> <span class="n">example</span><span class="o">.</span><span class="n">com</span> <span class="o">-</span><span class="n">k</span> <span class="n">Kexample</span><span class="o">.</span><span class="n">com</span><span class="o">.+</span><span class="mi">013</span><span class="o">+&lt;</span><span class="n">KSK_ID</span><span class="o">&gt;.</span><span class="n">key</span> <span class="o">-</span><span class="n">N</span> <span class="n">increment</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">bind</span><span class="o">/</span><span class="n">db</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span> <span class="n">Kexample</span><span class="o">.</span><span class="n">com</span><span class="o">.+</span><span class="mi">013</span><span class="o">+&lt;</span><span class="n">ZSK_ID</span><span class="o">&gt;.</span><span class="n">key</span>
+</code></pre></div>
+This command creates a new file, <code>db.example.com.signed</code>.</p>
+<p><br></p>
+<p>2 - Update <code>named.conf.local</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Change:</span>
+<span class="n">file</span> <span class="s2">&quot;/etc/bind/db.example.com&quot;</span><span class="p">;</span>
+<span class="c1"># TO:</span>
+<span class="n">file</span> <span class="s2">&quot;/etc/bind/db.example.com.signed&quot;</span><span class="p">;</span>
+</code></pre></div>
+<p>Changes the file entry to point to the signed file.</p>
+<p><br></p>
+<p>3 - Restart BIND:</p>
+<div class="highlight"><pre><span></span><code><span class="n">pkill</span> <span class="n">named</span> <span class="o">&amp;&amp;</span> <span class="n">named</span> <span class="o">-</span><span class="n">c</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">bind</span><span class="o">/</span><span class="n">named</span><span class="o">.</span><span class="n">conf</span>
+</code></pre></div>
+<p><br>
+<br></p>
+<h5 id="step-24-generate-the-delegation-signer-ds-record">Step 2.4: Generate the Delegation Signer (DS) Record</h5>
+<p>The <strong>DS record</strong> is the critical security link between the child and parent zone. It must be provided to the parent zone (TLD) for delegation. Generate the DS record using the KSK public key.</p>
+<p>On the <strong>Authoritative Server</strong>,</p>
+<p>1 - Generate DS record (using KSK public key):</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">dnssec</span><span class="o">-</span><span class="n">dsfromkey</span> <span class="n">Kexample</span><span class="o">.</span><span class="n">com</span><span class="o">.+</span><span class="mi">013</span><span class="o">+&lt;</span><span class="n">KSK_ID</span><span class="o">&gt;.</span><span class="n">key</span>
+</code></pre></div>
+Example Output: 
+<code>example.com. IN DS 12345 13 2 9AAF96127BFE1C5BE61DC60E5776561556145B</code></p>
+<p>Copy the line and save it.</p>
+<p><br>
+<br>
+<br></p>
+<h1 id="phase-3-configuring-the-tld-server-com">Phase 3: Configuring the TLD Server (.com)</h1>
+<p>The TLD Server (10.0.1.1) hosts the com zone and needs the DS record from the Authoritative server.</p>
+<h3 id="step-31-basic-zone-setup">Step 3.1: Basic Zone Setup</h3>
+<p>On the <strong>TLD Server</strong>,</p>
+<p>1 - Define the Zone in <code>named.conf.local</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="n">zone</span> <span class="s2">&quot;com&quot;</span> <span class="p">{</span>
+    <span class="nb">type</span> <span class="n">master</span><span class="p">;</span>
+    <span class="n">file</span> <span class="s2">&quot;/etc/bind/db.com&quot;</span><span class="p">;</span>
+    <span class="n">allow</span><span class="o">-</span><span class="n">update</span> <span class="p">{</span> <span class="n">none</span><span class="p">;</span> <span class="p">};</span>
+    <span class="n">check</span><span class="o">-</span><span class="n">names</span> <span class="n">ignore</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><br></p>
+<p>2 - Create <code>db.com</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="err">$</span><span class="n">TTL</span> <span class="mi">1</span><span class="n">h</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">SOA</span>     <span class="n">tld</span><span class="o">.</span><span class="n">com</span><span class="o">.</span> <span class="n">admin</span><span class="o">.</span><span class="n">com</span><span class="o">.</span> <span class="p">(</span>
+                <span class="mi">2026090803</span> <span class="p">;</span> <span class="n">serial</span>
+                <span class="mi">3</span><span class="n">H</span>         <span class="p">;</span> <span class="n">refresh</span>
+                <span class="mi">15</span><span class="n">M</span>        <span class="p">;</span> <span class="n">retry</span>
+                <span class="mi">1</span><span class="n">W</span>         <span class="p">;</span> <span class="n">expire</span>
+                <span class="mi">1</span><span class="n">H</span> <span class="p">)</span>       <span class="p">;</span> <span class="n">minimum</span>
+
+        <span class="n">IN</span>      <span class="n">NS</span>      <span class="n">tld</span><span class="o">.</span><span class="n">com</span><span class="o">.</span>
+<span class="n">tld</span>     <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">10.0.1.1</span>
+
+<span class="n">example</span><span class="o">.</span><span class="n">com</span><span class="o">.</span> <span class="n">IN</span> <span class="n">NS</span>      <span class="n">auth</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span><span class="o">.</span>
+<span class="n">auth</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span><span class="o">.</span> <span class="n">IN</span> <span class="n">A</span>  <span class="mf">10.0.2.1</span>
+</code></pre></div>
+<p><br>
+<br></p>
+<h3 id="step-32-signing-the-tld-zone">Step 3.2: Signing the TLD Zone</h3>
+<p>This process is identical to Phase 2, but for the com TLD zone.</p>
+<p>On the <strong>TLD Server</strong>,</p>
+<p>1 - Generate Keys (KSK and ZSK):</p>
+<div class="highlight"><pre><span></span><code><span class="n">cd</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">bind</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">dnssec</span><span class="o">-</span><span class="n">keygen</span> <span class="o">-</span><span class="n">a</span> <span class="n">ECDSAP256SHA256</span> <span class="o">-</span><span class="n">b</span> <span class="mi">256</span> <span class="o">-</span><span class="n">n</span> <span class="n">ZONE</span> <span class="n">com</span>
+</code></pre></div>
+<p><div class="highlight"><pre><span></span><code><span class="n">dnssec</span><span class="o">-</span><span class="n">keygen</span> <span class="o">-</span><span class="n">a</span> <span class="n">ECDSAP256SHA256</span> <span class="o">-</span><span class="n">b</span> <span class="mi">256</span> <span class="o">-</span><span class="n">n</span> <span class="n">ZONE</span> <span class="o">-</span><span class="n">f</span> <span class="n">KSK</span> <span class="n">com</span>       
+</code></pre></div>
+Note their IDs: <code>&lt;com_ZSK_ID&gt;</code> and <code>&lt;com_KSK_ID&gt;</code>, respectively.</p>
+<p><br></p>
+<p>2 - Include Keys in <code>db.com</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="err">$</span><span class="n">INCLUDE</span> <span class="n">Kcom</span><span class="o">.+</span><span class="mi">013</span><span class="o">&lt;</span><span class="n">com_ZSK_ID</span><span class="o">&gt;.</span><span class="n">key</span> <span class="p">;</span> <span class="n">ZSK</span>
+</code></pre></div>
+<p><div class="highlight"><pre><span></span><code><span class="err">$</span><span class="n">INCLUDE</span> <span class="n">Kcom</span><span class="o">.+</span><span class="mi">013</span><span class="o">+&lt;</span><span class="n">com_KSK_ID</span><span class="o">&gt;.</span><span class="n">key</span> <span class="p">;</span> <span class="n">KSK</span> 
+</code></pre></div>
+Add includes below <code>$TTL</code>, using the new key IDs.</p>
+<p><br></p>
+<p>3 - Sign the Zone and Update <code>named.conf.local</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="n">dnssec</span><span class="o">-</span><span class="n">signzone</span> <span class="o">-</span><span class="n">o</span> <span class="n">com</span> <span class="o">-</span><span class="n">k</span> <span class="n">Kcom</span><span class="o">.+</span><span class="mi">013</span><span class="o">+&lt;</span><span class="n">com_KSK_ID</span><span class="o">&gt;.</span><span class="n">key</span> <span class="o">-</span><span class="n">N</span> <span class="n">increment</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">bind</span><span class="o">/</span><span class="n">db</span><span class="o">.</span><span class="n">com</span> <span class="n">Kcom</span><span class="o">.+</span><span class="mi">013</span><span class="o">+&lt;</span><span class="n">com_ZSK_ID</span><span class="o">&gt;.</span><span class="n">key</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">nano</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">bind</span><span class="o">/</span><span class="n">named</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">local</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1"># Change:</span>
+<span class="n">file</span> <span class="s2">&quot;/etc/bind/db.com&quot;</span><span class="p">;</span>
+<span class="c1"># TO:</span>
+<span class="n">file</span> <span class="s2">&quot;/etc/bind/db.com.signed&quot;</span><span class="p">;</span>
+</code></pre></div>
+<p>Changes the file entry to point to the signed file.  </p>
+<p><br>
+<br></p>
+<h3 id="step-33-publish-the-childs-ds-record">Step 3.3: Publish the Child's DS Record</h3>
+<p>Paste the DS record generated in Step 2.4 into the <code>db.com</code> file.</p>
+<p>On the <strong>TLD Server</strong>,</p>
+<p>1 - Edit <code>db.com</code>:</p>
+<p>Go to the end and paste the DS record from the Authoritative server (Step 2.4)</p>
+<p>Example: <code>example.com. IN DS 12345 13 2 9AAF96127BFE1C5BE61DC60E5776561556145B</code></p>
+<p><strong>IMPORTANT:</strong> Increment the SOA serial number (e.g., from 2026090803 to 2026090804).</p>
+<p><br> </p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>Why must we increment the SOA serial number after making changes to the zone file?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>It is a good practice, that signals to other DNS servers that the zone data has been updated and needs to be reloaded/transferred.</p>
+</details>
+<p><br> </p>
+<p>2 - Re-sign and Restart BIND:</p>
+<p>The <code>db.com</code> file has changed, so the signed file must be regenerated.  </p>
+<div class="highlight"><pre><span></span><code><span class="n">dnssec</span><span class="o">-</span><span class="n">signzone</span> <span class="o">-</span><span class="n">o</span> <span class="n">com</span> <span class="o">-</span><span class="n">k</span> <span class="n">Kcom</span><span class="o">.+</span><span class="mi">013</span><span class="o">+&lt;</span><span class="n">com_KSK_ID</span><span class="o">&gt;.</span><span class="n">key</span> <span class="o">-</span><span class="n">N</span> <span class="n">increment</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">bind</span><span class="o">/</span><span class="n">db</span><span class="o">.</span><span class="n">com</span> <span class="n">Kcom</span><span class="o">.+</span><span class="mi">013</span><span class="o">+&lt;</span><span class="n">com_ZSK_ID</span><span class="o">&gt;.</span><span class="n">key</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">pkill</span> <span class="n">named</span> <span class="o">&amp;&amp;</span> <span class="n">named</span> <span class="o">-</span><span class="n">c</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">bind</span><span class="o">/</span><span class="n">named</span><span class="o">.</span><span class="n">conf</span>
+</code></pre></div>
+<p><br></p>
+<h3 id="step-34-generate-the-tld-ds-record">Step 3.4: Generate the TLD DS Record</h3>
+<p>Generate the DS record for the com zone using its KSK public key. This will be provided to the Root server.</p>
+<p>On the <strong>TLD Server</strong>,</p>
+<p>1 - Generate DS record (using TLD KSK public key):</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">dnssec</span><span class="o">-</span><span class="n">dsfromkey</span> <span class="n">Kcom</span><span class="o">.+</span><span class="mi">013</span><span class="o">+&lt;</span><span class="n">com_KSK_ID</span><span class="o">&gt;.</span><span class="n">key</span>
+</code></pre></div>
+Copy this resulting line.</p>
+<p><br>
+<br></p>
+<h1 id="phase-4-configuring-the-root-server">Phase 4: Configuring the Root Server (.)</h1>
+<p>The Root Server (10.0.0.1) hosts the Root zone (.) and needs the DS record from the TLD.</p>
+<h3 id="step-41-basic-zone-setup">Step 4.1: Basic Zone Setup</h3>
+<p>On the <strong>Root Server</strong>,</p>
+<p>1 - Define the Zone in <code>named.conf.local</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="n">zone</span> <span class="s2">&quot;.&quot;</span> <span class="p">{</span>
+    <span class="nb">type</span> <span class="n">master</span><span class="p">;</span>
+    <span class="n">file</span> <span class="s2">&quot;/etc/bind/db.root&quot;</span><span class="p">;</span>
+    <span class="n">allow</span><span class="o">-</span><span class="n">update</span> <span class="p">{</span> <span class="n">none</span><span class="p">;</span> <span class="p">};</span>
+    <span class="n">check</span><span class="o">-</span><span class="n">names</span> <span class="n">ignore</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+<p><br></p>
+<p>2 - Create <code>db.root</code>:</p>
+<p><div class="highlight"><pre><span></span><code><span class="err">$</span><span class="n">TTL</span> <span class="mi">1</span><span class="n">h</span>
+<span class="o">@</span>       <span class="n">IN</span>      <span class="n">SOA</span>     <span class="n">root</span><span class="o">.</span> <span class="n">root</span><span class="o">.</span> <span class="p">(</span>
+                <span class="mi">2026090801</span> <span class="p">;</span> <span class="n">serial</span>
+                <span class="mi">3</span><span class="n">H</span>         <span class="p">;</span> <span class="n">refresh</span>
+                <span class="mi">15</span><span class="n">M</span>        <span class="p">;</span> <span class="n">retry</span>
+                <span class="mi">1</span><span class="n">W</span>         <span class="p">;</span> <span class="n">expire</span>
+                <span class="mi">1</span><span class="n">H</span> <span class="p">)</span>       <span class="p">;</span> <span class="n">minimum</span>
+
+        <span class="n">IN</span>      <span class="n">NS</span>      <span class="n">root</span><span class="o">.</span>
+
+<span class="n">root</span><span class="o">.</span>   <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">10.0.0.1</span>
+
+<span class="n">com</span><span class="o">.</span>    <span class="n">IN</span>      <span class="n">NS</span>      <span class="n">tld</span><span class="o">.</span><span class="n">com</span><span class="o">.</span>
+<span class="n">tld</span><span class="o">.</span><span class="n">com</span><span class="o">.</span> <span class="n">IN</span>     <span class="n">A</span>       <span class="mf">10.0.1.1</span>
+</code></pre></div>
+ This defines the delegation for the TLD (com). You can change the serial number to the current date plus two digits like the example below.</p>
+<p><br>
+<br></p>
+<h3 id="step-42-signing-the-root-zone">Step 4.2: Signing the Root Zone</h3>
+<p>Generate the Root keys, sign the zone, and publish the TLD DS record.</p>
+<p>On the <strong>Root Server</strong>,</p>
+<p>1 - Generate Keys (KSK and ZSK):</p>
+<div class="highlight"><pre><span></span><code><span class="n">cd</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">bind</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">dnssec</span><span class="o">-</span><span class="n">keygen</span> <span class="o">-</span><span class="n">a</span> <span class="n">ECDSAP256SHA256</span> <span class="o">-</span><span class="n">b</span> <span class="mi">256</span> <span class="o">-</span><span class="n">n</span> <span class="n">ZONE</span> <span class="o">.</span>
+</code></pre></div>
+<p><div class="highlight"><pre><span></span><code><span class="n">dnssec</span><span class="o">-</span><span class="n">keygen</span> <span class="o">-</span><span class="n">a</span> <span class="n">ECDSAP256SHA256</span> <span class="o">-</span><span class="n">b</span> <span class="mi">256</span> <span class="o">-</span><span class="n">n</span> <span class="n">ZONE</span> <span class="o">-</span><span class="n">f</span> <span class="n">KSK</span> <span class="o">.</span>
+</code></pre></div>
+Note their IDs: <code>&lt;root_ZSK_ID&gt;</code> and <code>&lt;root_KSK_ID&gt;</code>, respectively</p>
+<p><br></p>
+<p>2 - Include Keys in <code>db.root</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="err">$</span><span class="n">INCLUDE</span> <span class="n">Kcom</span><span class="o">.+</span><span class="mi">013</span><span class="o">&lt;</span><span class="n">root_ZSK_ID</span><span class="o">&gt;.</span><span class="n">key</span> <span class="p">;</span> <span class="n">ZSK</span>
+</code></pre></div>
+<p><div class="highlight"><pre><span></span><code><span class="err">$</span><span class="n">INCLUDE</span> <span class="n">Kcom</span><span class="o">.+</span><span class="mi">013</span><span class="o">+&lt;</span><span class="n">root_KSK_ID</span><span class="o">&gt;.</span><span class="n">key</span> <span class="p">;</span> <span class="n">KSK</span> 
+</code></pre></div>
+Add includes below <code>$TTL</code>, using the new key IDs.</p>
+<p><br></p>
+<p>3 - Publish the TLD's DS Record (from Step 3.4) in <code>db.root</code>:</p>
+<p>Example: <code>com. IN DS 64646 13 2 CC761F2D5768B440B5E827AF3EF3D1A77D91EE6C0DC62FDB422C39BE20E77628</code></p>
+<p><strong>IMPORTANT</strong>: Increment the SOA serial number.</p>
+<p><br></p>
+<p>4 - Sign the Zone and Update <code>named.conf.local</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="n">dnssec</span><span class="o">-</span><span class="n">signzone</span> <span class="o">-</span><span class="n">o</span> <span class="o">.</span> <span class="o">-</span><span class="n">k</span> <span class="n">K</span><span class="o">.+</span><span class="mi">013</span><span class="o">+&lt;</span><span class="n">root_KSK_ID</span><span class="o">&gt;.</span><span class="n">key</span> <span class="o">-</span><span class="n">N</span> <span class="n">increment</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">bind</span><span class="o">/</span><span class="n">db</span><span class="o">.</span><span class="n">root</span> <span class="n">K</span><span class="o">.+</span><span class="mi">013</span><span class="o">+&lt;</span><span class="n">root_ZSK_ID</span><span class="o">&gt;.</span><span class="n">key</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">nano</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">bind</span><span class="o">/</span><span class="n">named</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">local</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="c1"># Change:</span>
+<span class="n">file</span> <span class="s2">&quot;/etc/bind/db.root&quot;</span><span class="p">;</span>
+<span class="c1"># TO:</span>
+<span class="n">file</span> <span class="s2">&quot;/etc/bind/db.root.signed&quot;</span><span class="p">;</span>
+</code></pre></div>
+<p><br></p>
+<p>5 - Restart BIND:</p>
+<div class="highlight"><pre><span></span><code><span class="n">pkill</span> <span class="n">named</span> <span class="o">&amp;&amp;</span> <span class="n">named</span> <span class="o">-</span><span class="n">c</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">bind</span><span class="o">/</span><span class="n">named</span><span class="o">.</span><span class="n">conf</span>
+</code></pre></div>
+<p><br>
+<br></p>
+<h3 id="step-43-extract-the-root-trust-anchor">Step 4.3: Extract the Root Trust Anchor</h3>
+<p>The Root KSK is the <strong>Trust Anchor</strong> for the entire DNSSEC hierarchy. The Resolver must be configured to trust it.</p>
+<p>On the <strong>Root Server</strong>,</p>
+<p>1 - Display the KSK public key data:</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">cat</span> <span class="n">K</span><span class="o">.+</span><span class="mi">013</span><span class="o">+&lt;</span><span class="n">root_KSK_ID</span><span class="o">&gt;.</span><span class="n">key</span>
+</code></pre></div>
+Expected Output: <code>. IN DNSKEY 257 3 13 &lt;LONG_STRING_OF_RANDOM_CHARACTERS_KEY_DATA&gt;</code></p>
+<p>Copy the last line of the output (the one containing the random characters key string).</p>
+<p><br>
+<br>
+<br></p>
+<h1 id="phase-5-configuring-the-resolver-and-dnssec-validation">Phase 5: Configuring the Resolver and DNSSEC Validation</h1>
+<p>The Resolver (10.0.5.1) is the recursive server that will perform DNSSEC validation. This machine needs to know what Root machine to trust in order to then trust the subsequent chain-of-trust.</p>
+<h3 id="step-51-configure-root-hints-and-bind-options">Step 5.1:  Configure Root Hints and BIND Options</h3>
+<p>On the <strong>Resolver</strong>,</p>
+<p>1 - Configure Root Hint File <code>db.root</code>:</p>
+<p>By default, BIND uses standard hints. We must structure it to use our simulated Root.</p>
+<div class="highlight"><pre><span></span><code><span class="o">.</span>       <span class="mi">3600000</span> <span class="n">IN</span>      <span class="n">NS</span>      <span class="o">.</span>
+<span class="o">.</span>       <span class="mi">3600000</span> <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">10.0.0.1</span>
+</code></pre></div>
+<p>The <code>named.conf.default-zones</code> should already contain the <code>zone "." { type hint; file "/etc/bind/db.root"; };</code> entry.</p>
+<p><br></p>
+<p>2 - Configure BIND options file, <code>named.conf.options</code>:</p>
+<p>Insert these lines inside the <code>options</code> block.</p>
+<div class="highlight"><pre><span></span><code><span class="n">recursion</span> <span class="n">yes</span><span class="p">;</span>
+<span class="n">allow</span><span class="o">-</span><span class="n">recursion</span> <span class="p">{</span> <span class="nb">any</span><span class="p">;</span> <span class="p">};</span>
+<span class="n">allow</span><span class="o">-</span><span class="n">query</span> <span class="p">{</span> <span class="nb">any</span><span class="p">;</span> <span class="p">};</span>
+<span class="n">listen</span><span class="o">-</span><span class="n">on</span> <span class="p">{</span> <span class="nb">any</span><span class="p">;</span> <span class="p">};</span>
+<span class="n">dnssec</span><span class="o">-</span><span class="n">validation</span> <span class="n">auto</span><span class="p">;</span>
+</code></pre></div>
+<p><br></p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>What does the directive <code>dnssec-validation auto;</code> do?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>It instructs BIND to automatically attempt to validate all DNS responses using DNSSEC and reject (return SERVFAIL) unvalidated or broken responses, relying on trust anchors loaded via managed-keys or bind.keys.</p>
+</details>
+<p><br>
+<br></p>
+<h3 id="step-52-install-the-root-trust-anchor">Step 5.2: Install the Root Trust Anchor</h3>
+<p>On the <strong>Resolver</strong>,</p>
+<p>1 - Create a <code>bind.keys</code> file and paste the Root KSK (Trust Anchor) copied in Step 4.3 :</p>
+<div class="highlight"><pre><span></span><code><span class="n">nano</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">bind</span><span class="o">/</span><span class="n">bind</span><span class="o">.</span><span class="n">keys</span>
+</code></pre></div>
+<p>Example format:  <code>. initial-key  257 3 13 “&lt;LONG_STRING_OF_RANDOM_CHARACTERS_KEY_DATA&gt;”;</code> </p>
+<p><br></p>
+<p>2 - Restart BIND:</p>
+<div class="highlight"><pre><span></span><code><span class="n">pkill</span> <span class="n">named</span> <span class="o">&amp;&amp;</span> <span class="n">named</span> <span class="o">-</span><span class="n">c</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">bind</span><span class="o">/</span><span class="n">named</span><span class="o">.</span><span class="n">conf</span>
+</code></pre></div>
+<p><br>
+<br></p>
+<h1 id="phase-6-final-validation-test">Phase 6: Final Validation Test</h1>
+<p>The User machine or the Resolver itself should now be able to query the system and verify the authenticity of DNS Messages using the DNSSEC chain of trust.</p>
+<h3 id="step-61-run-the-dnssec-query">Step 6.1: Run the DNSSEC Query</h3>
+<p>Query for a record in the signed zone, forcing DNSSEC details to be shown. Be sure to use a Wireshark capture between the Resolver and the central Router to see the various messages traded between the Resolver and the DNS hierarchy.</p>
+<p>On the <strong>Resolver</strong> or <strong>User</strong>,</p>
+<p>1 - Run a query
+<div class="highlight"><pre><span></span><code><span class="n">dig</span> <span class="n">www</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span> <span class="o">@</span><span class="mf">10.0.5.1</span> <span class="o">+</span><span class="n">dnssec</span> <span class="o">+</span><span class="n">multi</span>
+</code></pre></div></p>
+<p>Look at the DNS header flags in the response. If the DNSSEC chain is valid, the response should include the <code>ad</code> (Authenticated Data) flag.</p>
+<div class="highlight"><pre><span></span><code><span class="p">;;</span> <span class="o">-&gt;&gt;</span><span class="n">HEADER</span><span class="o">&lt;&lt;-</span> <span class="n">opcode</span><span class="p">:</span> <span class="n">QUERY</span><span class="p">,</span> <span class="n">status</span><span class="p">:</span> <span class="n">NOERROR</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="n">XXXX</span>
+<span class="p">;;</span> <span class="n">flags</span><span class="p">:</span> <span class="n">qr</span> <span class="n">rd</span> <span class="n">ra</span> <span class="n">ad</span><span class="p">;</span> <span class="n">QUERY</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ANSWER</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="n">AUTHORITY</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="n">ADDITIONAL</span><span class="p">:</span> <span class="mi">5</span>
+</code></pre></div>
+<p>Notice the difference in quantity between a normal DNS lookup and a DNSSEC lookup.</p>
+<p><br></p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>If the query fails or returns a SERVFAIL status, where in the hierarchy is the most likely location of the DNSSEC error?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>The most likely error is a mismatch between a DS record in the parent zone and the KSK key in the child zone, or the Trust Anchor on the Resolver is incorrect.</p>
+</details>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>Do you think the quantity of DNS Message necessary for DNSSEC to work influenced its adoption in the real world? Why or why not?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>Yes, the increased quantity of DNS messages required by DNSSEC—due to larger responses and additional validation steps—has likely slowed its adoption. The overhead can strain networks, increase latency, and complicate deployment, especially for resource-constrained systems. Many organizations weigh these costs against the security benefits, often opting for simpler alternatives. Complexity and performance trade-offs remain key barriers.</p>
+</details>
+<p><br>
+<br></p>
+<h3 id="step-62-servfail-troubleshooting">Step 6.2: SERVFAIL troubleshooting</h3>
+<p>If the query returns a SERVFAIL, first verify if every machine on the DNS hierarchy is working properly. </p>
+<p>On each nameserver,</p>
+<p>1 - Check if BIND is active
+<div class="highlight"><pre><span></span><code><span class="n">netstat</span> <span class="o">-</span><span class="n">tulnp</span> <span class="o">|</span> <span class="n">grep</span> <span class="mi">53</span>
+</code></pre></div></p>
+<p>It should show some ports with the tag “LISTEN”</p>
+<p><br></p>
+<p>2 - Check BIND debugging info:</p>
+<p>If nothing was returned then check why the service isn't working:</p>
+<div class="highlight"><pre><span></span><code><span class="n">named</span> <span class="o">-</span><span class="n">c</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">bind</span><span class="o">/</span><span class="n">named</span><span class="o">.</span><span class="n">conf</span> <span class="o">-</span><span class="n">g</span> <span class="o">-</span><span class="n">d</span> <span class="mi">9</span>
+</code></pre></div>
+<p><br></p>
+<p>3 - Fix issues:</p>
+<p>Most probably there was so problem in generating the keys, signing the zone files or with the DS records passed on to other DNS Hierarchy servers, fix those issues by repeating the steps respective to the configuration of the faulty machine.</p>
+<p><br></p>
+<p>4 - Restart BIND:</p>
+<p>After the issue is fixed, kill the previous BIND service running (if any) and restart a new one, run:</p>
+<div class="highlight"><pre><span></span><code><span class="n">pkill</span> <span class="n">named</span> <span class="o">&amp;&amp;</span> <span class="n">named</span> <span class="o">-</span><span class="n">c</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">bind</span><span class="o">/</span><span class="n">named</span><span class="o">.</span><span class="n">conf</span>
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.tabs", "navigation.indexes", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

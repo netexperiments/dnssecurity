@@ -1,0 +1,1511 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://netexperiments.github.io/dnssecurity/attacks/server/cache-poisoning/">
+      
+      
+        <link rel="prev" href="../nxdomain-ddos/">
+      
+      
+        <link rel="next" href="../kaminsky/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>DNS Cache Poisoning - DNS Security</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="DNS Security" class="md-header__button md-logo" aria-label="DNS Security" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            DNS Security
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              DNS Cache Poisoning
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../setup/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Lab Setup
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../enhancements/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  DNS Security and Privacy Enhancements
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  DNS Attacks and Countermeasures
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="DNS Security" class="md-nav__button md-logo" aria-label="DNS Security" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    DNS Security
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../enhancements/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Security and Privacy Enhancements
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Security and Privacy Enhancements
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../enhancements/dnssec/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNSSEC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../enhancements/doh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS-over-HTTPS (DoH)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Attacks and Countermeasures
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Attacks and Countermeasures
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../protocol/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Protocol and Resolution Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_2" id="__nav_4_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Protocol and Resolution Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../protocol/rebinding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Rebinding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../protocol/dhcp-dns-spoofing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DHCP DNS Spoofing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Server and Infrastructure Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_3" id="__nav_4_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Server and Infrastructure Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nxdomain-ddos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NXDOMAIN DDoS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Cache Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kaminsky/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kaminsky Cache Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../zone-transfer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unauthorized Zone Transfer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dns-arp-poisoning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS ARP Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../abuse-misuse/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Abuse/Misuse Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_4" id="__nav_4_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Abuse/Misuse Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/amplification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Amplification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/ff-single/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Fast Flux Single-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/ff-double/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Fast Flux Double-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/tunneling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Tunneling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/dgas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DGA-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/ff-dgas-tunneling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fast Flux and DGA-based Tunneling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="background">Background</h1>
+<p>A DNS Cache Poisoning attack aims to insert false DNS information into the cache of a DNS resolver, such that users are redirected to malicious websites even when requesting legitimate domains. It is sometimes also referred to as DNS Spoofing, but this term doesn't emphasize the role of poisoning the cache in the outcome of the attack.</p>
+<p>In a basic DNS cache poisoning attack, the attacker waits for a DNS resolver to send a query for a domain (in this case, www.example.com). The attacker cannot directly control when such a query is made, but if they are on the same LAN as the resolver, they can observe the query in real time. This gives the attacker a critical advantage: visibility into the transaction ID used in the query packet.</p>
+<p>DNS responses must contain the same transaction ID as the query, and because this ID is typically randomly generated and 16 bits in length, guessing it blindly is difficult. However, once the attacker sees the query, they can forge a response with the correct transaction ID and malicious DNS data, and send it back to the DNS resolver before the legitimate response arrives.</p>
+<p>If the attacker's forged response arrives first and is accepted by the resolver, the false information is cached and served to other clients for the duration of the Time-To-Live (TTL). During this cache period, the resolver will not issue another query for the same domain, and the attacker cannot attempt the same trick until the cache expires. This delay can significantly hinder the attack's success rate.</p>
+<p>DNS poisoning attacks become much harder when the attacker is not on the same LAN as the resolver, since they cannot see the original query and must blindly guess the transaction ID. Still, due to the small size of the Transaction/Query ID (QID) space of 16 bits, if the attacker can forge K responses within the attack window, namely, before the legitimate response arrives, the probability of success is K over (2^{16}). Attackers can send hundreds or thousands of forged responses to increase their chances of success. But if they fail to guess correctly before the real response is received, the correct data is cached, and the attacker must wait for the cache to time out before trying again.</p>
+<figure id="figure-1">
+<p><img alt="Figure 1: DNS Tunneling attack" src="../../../images/background/CachePoisoning.png" width="600" />
+  </p>
+<figcaption>Figure 1: DNS Cache Poisoning attack</figcaption>
+</figure>
+<p><a href="#figure-1">Figure 1</a> shows a DNS Cache Poisoning scenario where the Victim DNS Server has no record of the domain <strong>example.com</strong>, and the attacker has a fast connection to the DNS Server. The attack's steps are the following:  </p>
+<ul>
+<li><strong>Step 1:</strong> The attacker triggers the Resolver to look up the A record for example.com</li>
+<li><strong>Step 2:</strong> Because no cached A record for example.com is available, the Resolver initiates an upstream lookup. If the required delegation information is also absent, a complete recursive lookup may first involve root and TLD servers; for simplicity, the figure omits those intermediate exchanges and shows only the query sent to the authoritative DNS server for example.com, using transaction ID 101.</li>
+<li><strong>Step 3:</strong> While the upstream query remains outstanding, the attacker floods the Resolver with forged responses that reproduce the question and claim that example.com resolves to the attacker-controlled address 192.0.2.2. The responses contain different transaction-ID guesses, illustrated in the figure by QID=100, QID=101, and QID=102, and pretend to originate from the queried authoritative server.</li>
+<li><strong>Step 4:</strong> The forged response containing QID=101 arrives first and matches the outstanding query. The Resolver therefore processes the response and caches its direct Answer-section record, creating the false mapping example.com A 192.0.2.2 shown in the cache box.</li>
+<li><strong>Step 5:</strong> The legitimate authoritative server returns the correct response, example.com A 212.0.0.1, also using QID=101. However, this response arrives too late and is ignored because the outstanding query has already been
+completed. Consequently, subsequent clients using the Resolver receive the poisoned mapping and may be redirected to the attacker-controlled server at 192.0.2.2 until the cache entry expires. If the legitimate response arrives before the matching forged response, the Resolver instead caches the correct mapping, and the attacker must normally wait for its TTL to expire before attempting to poison the same name again.</li>
+</ul>
+<p><br>
+<br></p>
+<h1 id="objectives">Objectives</h1>
+<p>This lab demonstrates how attackers can exploit the lack of authentication in the DNS protocol to poison the cache of a recursive resolver and silently redirect users to a malicious destination. You will act as the attacker executing a script to capture outgoing DNS queries and injecting a forged response before the legitimate authoritative nameserver can reply.</p>
+<p><br>
+<br></p>
+<h1 id="lab-prerequisites-network-configuration">Lab Prerequisites &amp; Network Configuration</h1>
+<figure id="figure-2">
+<p><img alt="Figure 2: GNS3 Lab Topology" src="../../../images/cache-poisoning-1.png" />
+  </p>
+<figcaption>Figure 2: Cache Poisoning GNS3 Lab Topology</figcaption>
+</figure>
+<p>In the GNS3 project showed in <a href="#figure-2">Figure 2</a>, you will need to add in the following topology that uses five key nodes (be sure to previously check the <a href="../../../setup/" target="_blank">Lab Setup Guide</a>):</p>
+<table>
+<thead>
+<tr>
+<th>Node Name</th>
+<th>Role</th>
+<th>IP Address</th>
+<th>Subnet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Root Server</strong></td>
+<td>Root Zone ( .)</td>
+<td><strong>10.0.0.1</strong></td>
+<td>10.0.0.0/24</td>
+</tr>
+<tr>
+<td><strong>TLD (Top Level Domain) Server</strong></td>
+<td>Top-Level Domain (.com)</td>
+<td><strong>10.0.1.1</strong></td>
+<td>10.0.1.0/24</td>
+</tr>
+<tr>
+<td><strong>Authoritative Server</strong></td>
+<td>Authoritative nameserver for example.com</td>
+<td><strong>10.0.2.1</strong></td>
+<td>10.0.2.0/24</td>
+</tr>
+<tr>
+<td><strong>Resolver</strong></td>
+<td>Recursive DNS Server. Attack victim</td>
+<td><strong>10.0.5.1</strong></td>
+<td>10.0.5.0/24</td>
+</tr>
+<tr>
+<td><strong>Attacker</strong></td>
+<td>Implements attack</td>
+<td><strong>10.0.5.100</strong></td>
+<td>10.0.5.0/24</td>
+</tr>
+</tbody>
+</table>
+<p>Note that the Resolver and the Attacker share the same subnet (10.0.5.0/24). This is intentional and is the key topological assumption of this lab. Transaction ID randomisation, present in all current DNS software by default, makes blind off-path forgery statistically impractical: an attacker who cannot observe the resolver's outgoing packets must simultaneously guess a 16-bit transaction ID (or QID) and an ephemeral source port within a narrow time window. By placing the attacker on the same LAN, both values become directly observable in plaintext from a single packet capture, reducing the attack to a race condition rather than a guessing game. Any attacker position that does not afford visibility into the resolver's outgoing DNS traffic, such as a different subnet with no routing path through the LAN segment, would make this attack infeasible against a resolver using standard QID and port randomisation.</p>
+<p>We will add a delay in the connection between the router and the Authoritative Server to be able to simulate the latency observed between the resolver´s network and DNS infrastructure outside of it. 
+Right-Click on the connection and select <code>Packet Filters</code>, and in <code>Delay</code> add 600ms of latency.</p>
+<p><br></p>
+<p>The following script was used in this lab:</p>
+<ul>
+<li><a href="../../../scripts/cache_poisoning.py" download>cache_poisoning.py</a></li>
+</ul>
+<p><br>
+<br></p>
+<h1 id="phase-1-setting-up-the-attackers-infrastructure">Phase 1: Setting up the Attacker's Infrastructure</h1>
+<p>The attacker machine runs a packet-sniffing script that passively monitors the LAN for outgoing DNS queries from the victim resolver and immediately races to inject a forged response.</p>
+<h3 id="step-11-prepare-the-script">Step 1.1: Prepare the Script</h3>
+<p>On the <strong>Attacker</strong> machine, add the script <code>cache_poisoning.py</code>:</p>
+<div class="highlight"><pre><span></span><code>nano<span class="w"> </span>/home/cache_poisoning.py
+</code></pre></div>
+<p>The <code>cache_poisoning.py</code> script on the Attacker machine captures outgoing DNS queries from the victim resolver, whose IP address is specified as a command-line argument when executing the script, and races to inject a forged response before the legitimate authoritative nameserver can reply.</p>
+<p>This script has two concurrent responsibilities, handled via a packet filter and a response callback: <strong>Packet sniffing</strong> (main thread), using <code>Scapy</code>, it listens on <code>UDP port 53</code> for all outgoing DNS queries originating from the victim resolver. For every packet, it checks whether it's an A-record query (query type 1, qr == 0 meaning it's a question not a response) directed toward the legitimate authoritative nameserver for the target domain <code>www.example.com</code>. When it finds one, it extracts the <strong>transaction ID</strong>, the resolver's ephemeral source port, and the original question section, all of which are required to craft a convincing forgery; and <strong>Response injection</strong> (callback spoof_dns_response), in which, for each matching query it intercepts, it immediately constructs and sends a spoofed UDP packet whose source IP is spoofed as being the legitimate authoritative nameserver's and whose destination is the resolver's ephemeral port. The forged DNS layer mirrors the original transaction ID and plants a poisoned A record pointing www.example.com to the attacker's own IP (10.0.5.100) with a 604800-second TTL (1 week) causing the resolver to cache and serve the attacker's address to any downstream client that queries it.</p>
+<p><br></p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>Why does the script need to extract the resolver's ephemeral source port as well as the transaction ID from the intercepted query? Would matching just the transaction ID be sufficient for the forged response to be accepted?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>No, matching only the transaction ID is not sufficient. A DNS resolver accepts a response only if both the transaction ID and the destination UDP port match the values used in the original query. The resolver opens an ephemeral (randomly chosen, high-numbered) source port when sending the query; the legitimate response is expected to arrive back on that exact port. The script must therefore extract the source port from the sniffed query packet and use it as the destination port of the forged response. This is also why source port randomisation (RFC 5452) was introduced as a defence: even if an off-path attacker can guess the 16-bit transaction ID, they also need to guess the correct port from a pool of up to ~64,000 possibilities, which reduces the probability of a successful blind forgery dramatically. In this lab the attacker is on-path (same LAN), so both values are directly observable and the defence provided by port randomisation is bypassed entirely.</p>
+</details>
+<p><br>
+<br></p>
+<h1 id="phase-2-validation-and-analysis">Phase 2: Validation and Analysis</h1>
+<p>You can now execute the attack and observe the results. Do a Wireshark capture right next to the Resolver interface (as a tip, use a <code>dns</code> filter to better analyze the relevant DNS packets).</p>
+<h3 id="step-21-test-dns-resolution">Step 2.1: Test DNS Resolution</h3>
+<p>On the <strong>Attacker</strong> machine, run:</p>
+<div class="highlight"><pre><span></span><code>dig<span class="w"> </span>testa.example.com
+</code></pre></div>
+<p>Make sure it receives a correct response. If not, restart BIND on the <strong>Resolver</strong> machine.</p>
+<h3 id="step-22-run-the-attack">Step 2.2: Run the attack</h3>
+<p>On the <strong>Attacker</strong> machine, run:</p>
+<div class="highlight"><pre><span></span><code>python3<span class="w"> </span>/home/cache_poisoning.py<span class="w"> </span><span class="m">10</span>.0.5.1
+</code></pre></div>
+<p>The script will begin silently sniffing the LAN. Now, trigger a DNS lookup from the Resolver to cause the resolver to send a fresh query for <code>www.example.com</code>.</p>
+<p>On the <strong>Resolver</strong>, run:</p>
+<div class="highlight"><pre><span></span><code>dig<span class="w"> </span>www.example.com
+</code></pre></div>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>Looking at the Wireshark capture taken at the Resolver interface, you will see both the forged response from the attacker and the legitimate response from the Authoritative Server. What determines which response the resolver accepts, and what happens to the other one? What does the relative timing of the two responses tell you about the role the 600ms artificial delay plays in this lab?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>The resolver applies a first-come, first-served rule meaning it accepts the very first response that arrives with a matching transaction ID and destination port, and discards any subsequent response for the same query, including the legitimate one. In the Wireshark capture you should observe the attacker's forged response arriving measurably earlier than the legitimate response from the Authoritative Server. The 600ms artificial delay on the link to the Authoritative Server is what makes this timing gap reliable in the lab: it models the real-world latency that would exist between the resolver's LAN and an external authoritative nameserver, giving the attacker (who is local to the resolver) a consistent and comfortable time window in which to inject the forged packet. Without the delay, the legitimate response might arrive first depending on the machine's processing speed, and the poisoning attempt would fail.</p>
+</details>
+<p><br>
+<br>
+<br>
+<br>
+<br></p>
+<h1 id="countermeasure">Countermeasure</h1>
+<p>DNSSEC defends against DNS cache poisoning by cryptographically signing DNS records, forcing resolvers to verify the authenticity of every response before caching it. This countermeasure leverages the fact that a poisoning attack depends entirely on the resolver blindly trusting whichever response arrives first, as it has no native way to distinguish a forged packet from a legitimate one. The defender's goal is to make every DNS response verifiably traceable back to the zone's legitimate owner, so that even a perfectly timed spoofed packet is rejected outright.</p>
+<p>A defining characteristic of this defense is that it addresses the root vulnerability of the DNS protocol: the absence of authentication. Since every record in a DNSSEC-signed zone is accompanied by a digital signature (RRSIG record), a resolver can use the zone's published public key (DNSKEY record) to verify that the answer was produced by the legitimate authoritative nameserver and has not been tampered with in transit. A forged response like the one injected by <code>cache_poisoning.py</code> script (which impersonates the authoritative nameserver and plants a poisoned A record) would carry no valid RRSIG, causing a validating resolver to discard it immediately, regardless of whether the transaction ID and source port matched perfectly.</p>
+<p><br></p>
+<h3 id="step-1-configure-dnssec">Step 1: Configure DNSSEC</h3>
+<p>To configure DNSSEC in the DNS hierarchy follow the <a href="../../../enhancements/dnssec/" target="_blank">DNNSEC lab guide</a>.</p>
+<p>Once DNSSEC is fully configured, the resolver will have dnssec-validation auto; enabled in its BIND options and a valid root trust anchor installed in /etc/bind/bind.keys file.</p>
+<p><br></p>
+<h3 id="step-2-re-run-the-attack">Step 2:  Re-run the attack</h3>
+<p>Do a Wireshark capture like before, right next to the Resolver to be able to see the influence of the countermeasure.</p>
+<p>On the <strong>Resolver</strong>, restart the BIND service (named):</p>
+<div class="highlight"><pre><span></span><code><span class="go">pkill named &amp;&amp; named -c /etc/bind/named.conf</span>
+</code></pre></div>
+<p>On the <strong>Attacker</strong> machine, run:</p>
+<div class="highlight"><pre><span></span><code>python3<span class="w"> </span>/home/cache_poisoning.py<span class="w"> </span><span class="m">10</span>.0.5.1
+</code></pre></div>
+<p>Then, on the <strong>Resolver</strong>, trigger a fresh lookup:</p>
+<div class="highlight"><pre><span></span><code>dig<span class="w"> </span>www.example.com
+</code></pre></div>
+<p>To inspect the cache of the BIND <strong>Resolver</strong> to view cached DNS records, including DNSSEC-signed responses, run:</p>
+<div class="highlight"><pre><span></span><code>rndc<span class="w"> </span>dumpdb<span class="w"> </span>-cache
+nano<span class="w"> </span>/var/cache/bind/named_dump.db
+</code></pre></div>
+<p><br></p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>After enabling DNSSEC, the attacker's forged response still arrives at the resolver before the legitimate one. Despite this, the poisoning attempt fails. What exactly does the resolver check in the forged response that causes it to reject it, and at what point in the DNSSEC validation chain does the verification fail?? </p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>When DNSSEC validation is enabled, the resolver does not simply accept the first response that matches the transaction ID and port. Before caching any answer, it verifies the <code>RRSIG</code> record attached to the returned <code>RRset</code> by checking the digital signature against the zone's <code>public ZSK</code> (obtained from the <code>DNSKEY</code> record, which is itself verified via the chain of trust from the root). The forged response crafted by <code>cache_poisoning.py</code> contains a plain <code>A record</code> with no accompanying RRSIG, because the attacker does not possess the private ZSK for <code>example.com</code> and therefore cannot produce a valid signature. The resolver detects the absence of a valid RRSIG for the A record RRset, determines that the response fails DNSSEC validation, and discards it returning <code>SERVFAIL</code> to the client. The validation failure occurs at the lowest link in the chain, the verification of the A record's RRSIG against the example.com ZSK.</p>
+</details>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>Could an attacker defeat DNSSEC by also forging the RRSIG record in the spoofed response? What would the attacker need in order to produce a valid RRSIG?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>No. To forge a valid <code>RRSIG</code>, the attacker would need access to the <code>private ZSK</code> of the <code>example.com</code> zone, which is kept secret by the legitimate zone operator and never published in DNS. RRSIG records are produced by signing the RRset with the private ZSK. The resolver verifies the signature using only the public ZSK, which is published in the DNSKEY record and anchored to the chain of trust via the parent DS record. Without the private key, producing a signature that verifies correctly against the published public key is computationally infeasible. </p>
+</details>
+<p><br></p>
+<h3 id="step-3-dnssec-as-a-denial-of-service-vector">Step 3: DNSSEC as a denial-of-service vector</h3>
+<p>Although DNSSEC prevents cache poisoning, since the attacker can no longer redirect users to a malicious IP, they can still cause DNS resolution for the targeted domain to become unavailable for a period of time.</p>
+<p>In a scenario where the attacker sends a forged response that arrives first and carries a poisoned record which the resolver attempts to validate, the resolver returns SERVFAIL to the client immediately, it also typically caches the negative result (a validation failure for that query) during which it will not re-query the authoritative server for the same name. During this window, the domain is effectively unreachable from the resolver's clients even though the DNS infrastructure itself is functioning correctly. The attack does not pollute the cache with a false IP, but it temporarily denies service to legitimate users, an outcome the attacker can sustain by re-triggering the attack each time the negative TTL expires.</p>
+<p>With DNSSEC still enabled and the 600ms delay still in place, restart the BIND service and run the attack again:</p>
+<p>On the <strong>Resolver</strong>:
+<div class="highlight"><pre><span></span><code>pkill<span class="w"> </span>named<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>named<span class="w"> </span>-c<span class="w"> </span>/etc/bind/named.conf
+</code></pre></div>
+On the <strong>Attacker</strong> machine:
+<div class="highlight"><pre><span></span><code>python3<span class="w"> </span>/home/cache_poisoning.py<span class="w"> </span><span class="m">10</span>.0.5.1
+</code></pre></div></p>
+<p>Then on the <strong>Resolver</strong> trigger a lookup immediately:</p>
+<p><div class="highlight"><pre><span></span><code>dig<span class="w"> </span>www.example.com<span class="w"> </span>
+</code></pre></div>
+Observe that the response received in previous step is SERVFAIL. </p>
+<p>Inspect the cache of the BIND <strong>Resolver</strong> to view cached DNS records of <code>www.example.com</code>, run:</p>
+<div class="highlight"><pre><span></span><code>rndc<span class="w"> </span>dumpdb<span class="w"> </span>-cache
+nano<span class="w"> </span>/var/cache/bind/named_dump.db
+</code></pre></div>
+<p><br></p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>In this scenario, DNSSEC successfully prevents the attacker from poisoning the resolver's cache with a false IP address. However, the attacker is still able to cause harm. What is the nature of that harm, and how does it differ from a successful cache poisoning attack in terms of impact on the end user?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>The harm is a temporary denial of service for the targeted domain. Rather than being silently redirected to a malicious server, end users receive a <code>SERVFAIL</code> error and are unable to reach the domain at all until the resolver's <code>negative TTL</code> expires and it is willing to retry the query. The two outcomes differ in a key way: cache poisoning is stealthy and dangerous precisely because the user has no indication that anything is wrong, while the denial-of-service effect caused by DNSSEC's rejection of the forged response is immediately visible as a resolution failure. The <code>SERVFAIL</code> is disruptive but transparent; the poisoned cache is subtle and potentially far more damaging because it enables credential theft, phishing, or traffic interception without the user's knowledge.</p>
+</details>
+<p><br></p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>An attacker who understands that DNSSEC will block cache poisoning might deliberately use the denial-of-service effect as their primary goal. What could they do to maximise the duration of the service disruption, and what would limit their ability to do so indefinitely?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>To maximise disruption, the attacker could monitor the resolver and re-trigger the attack each time the <code>negative TTL</code> expires, continuously racing a new forged response ahead of each fresh legitimate lookup to cause a new validation failure and reset the negative cache timer. The main limits on this strategy are: (1) the attacker must remain on the same LAN as the resolver and keep the sniffing script running continuously — losing network access ends the attack; (2) the 600ms artificial delay is what makes the race winnable in our lab scenario; in a real network, link latency to the authoritative server may be low enough that the legitimate response sometimes arrives first, causing the attack to fail intermittently; and (3) a network administrator who notices persistent <code>SERVFAIL</code> responses for a specific domain could investigate and detect the anomalous forged packets in a traffic capture, potentially leading to the attacker being identified and removed from the network.</p>
+</details>
+<p><br>
+<br></p>
+<h3 id="step-4-remove-the-latency-delay">Step 4: Remove the latency delay</h3>
+<p>So far, the 600ms artificial delay on the link to the Authoritative Server has been what makes the race condition consistently winnable for the attacker. In a real-world scenario, the authoritative server for a domain may be geographically close to the resolver, or the network path may be fast enough that the legitimate response arrives before the attacker can inject a forged one. This step simulates that scenario by removing the delay and observing the result.</p>
+<p>In GNS3, right-click on the connection between the router and the Authoritative Server, select Packet Filters, and remove the 600ms delay (set it back to 0).</p>
+<p>Do a Wireshark capture like before, right next to the Resolve.
+Flush the resolver cache by restarting the BIND service and run the attack again:</p>
+<p>On the <strong>Resolver</strong>:
+<div class="highlight"><pre><span></span><code>pkill<span class="w"> </span>named<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>named<span class="w"> </span>-c<span class="w"> </span>/etc/bind/named.conf
+</code></pre></div>
+On the <strong>Attacker</strong> machine:
+<div class="highlight"><pre><span></span><code>python3<span class="w"> </span>/home/cache_poisoning.py<span class="w"> </span><span class="m">10</span>.0.5.1
+</code></pre></div></p>
+<p>Then on the <strong>Resolver</strong> trigger a lookup immediately:</p>
+<div class="highlight"><pre><span></span><code>dig<span class="w"> </span>www.example.com<span class="w"> </span>
+</code></pre></div>
+<p>You can also use <code>+dnssec</code> in the dig command to see the associated RRSIG to the A record answer.</p>
+<p>This time, the legitimate response from the Authoritative Server arrives at the resolver before the attacker's forged packet. The resolver processes the legitimate response first, validates it successfully against the DNSSEC chain of trust (the <code>ad</code> flag will be set in the response), and caches the correct <code>A record</code>. The attacker's forged response arrives afterwards and is discarded, both because its transaction ID no longer matches an open query (the query has already been answered) and because it carries no valid <code>RRSIG</code>. The dig response should show the correct IP address (10.0.3.1) and the ad flag confirming authenticated resolution.</p>
+<p><br>
+<br></p>
+<h1 id="conclusion">Conclusion</h1>
+<p>As we saw, after enabling DNSSEC on the DNS Hierarchy, the cache poisoning attack was neutralised even though the underlying race condition, and the attacker's ability to inject a forged response before the legitimate one arrives, remained entirely unchanged. The forged packet still reached the resolver first, but the resolver's DNSSEC validation logic detected the absence of a valid RRSIG and discarded the response outright, preventing the poisoned record from ever entering the cache.</p>
+<p>This demonstrates that DNSSEC does not prevent the attacker from sending forged packets, but it makes those packets cryptographically unacceptable, removing the resolver's blind trust in whichever response arrives first. The countermeasure therefore addresses the root cause of the vulnerability, the lack of origin authentication in the DNS protocol, rather than merely making the attack harder to time correctly.
+<br></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.tabs", "navigation.indexes", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1449 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://netexperiments.github.io/dnssecurity/attacks/protocol/rebinding/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../dhcp-dns-spoofing/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>DNS Rebinding - DNS Security</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="DNS Security" class="md-header__button md-logo" aria-label="DNS Security" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            DNS Security
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              DNS Rebinding
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../setup/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Lab Setup
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../enhancements/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  DNS Security and Privacy Enhancements
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  DNS Attacks and Countermeasures
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="DNS Security" class="md-nav__button md-logo" aria-label="DNS Security" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    DNS Security
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../enhancements/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Security and Privacy Enhancements
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Security and Privacy Enhancements
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../enhancements/dnssec/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNSSEC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../enhancements/doh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS-over-HTTPS (DoH)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Attacks and Countermeasures
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Attacks and Countermeasures
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Protocol and Resolution Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_2" id="__nav_4_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Protocol and Resolution Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Rebinding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dhcp-dns-spoofing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DHCP DNS Spoofing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../server/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Server and Infrastructure Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_3" id="__nav_4_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Server and Infrastructure Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/nxdomain-ddos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NXDOMAIN DDoS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/cache-poisoning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Cache Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/kaminsky/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kaminsky Cache Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/zone-transfer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unauthorized Zone Transfer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/dns-arp-poisoning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS ARP Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../abuse-misuse/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Abuse/Misuse Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_4" id="__nav_4_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Abuse/Misuse Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/amplification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Amplification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/ff-single/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Fast Flux Single-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/ff-double/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Fast Flux Double-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/tunneling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Tunneling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/dgas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DGA-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/ff-dgas-tunneling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fast Flux and DGA-based Tunneling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="background">Background</h1>
+<p>DNS Rebinding is a technique that allows an attacker to bypass the same-origin policy in web browsers, enabling malicious scripts to interact with private network services as if they originated from within the trusted network. There are two primary ways to carry out the attack:</p>
+<p>Client-side rebinding via a malicious website: In the most common form of the attack, the attacker tricks the victim into visiting a malicious website such as attacker.com, which the attacker controls. When the victim's browser loads the page, it performs a DNS lookup for attacker.com, and the attacker’s DNS server responds with an IP address pointing to an attacker-controlled web server on the internet. The browser loads malicious JavaScript from this server. Later, when the JavaScript makes another request to attacker.com, the attacker responds with a different IP address, for example, a private IP such as 192.168.0.2. Because the domain name remains the same, the browser still considers the request to be the same origin. This allows the malicious script to access internal network resources as if they were part of attacker.com, breaching the network’s perimeter defenses.</p>
+<p>Rebinding via a compromised local DNS resolver: A more difficult but potentially more powerful variation of the attack involves the attacker gaining control of the DNS resolver used by the victim’s network — for example, through malware or misconfiguration. If the attacker controls the resolver, they can manipulate DNS responses without needing the victim to visit a malicious website. This allows for DNS rebinding attacks to be launched passively or on-demand, targeting devices inside the local network without user interaction.</p>
+<figure>
+<p><img alt="Figure 1: DGA-based C&amp;C attack" src="../../../images/background/Rebinding.png" width="600" />
+  </p>
+<figcaption>Figure 1: DNS Rebinding attack</figcaption>
+</figure>
+<p>Figure 1 illustrates a scenario based on "Client-side rebinding via a malicious website", in which the victim visits a malicious website controlled by the attacker (<strong>www.attacker.com</strong>). The victim also has a private web server on their local network that is normally inaccessible from the internet. The attacker, who has access to a compromised DNS Server, can control the DNS records for their domain and knows the private IP of the victim’s internal service, launches the attack as follows:</p>
+<ul>
+<li><strong>Step 1:</strong> The victim’s browser sends a DNS query for <strong>www.attacker.com</strong>. </li>
+<li><strong>Step 2:</strong> The attacker-controlled DNS server replies with the public IP address of the attacker’s web server, for example <strong>198.51.100.10</strong>. </li>
+<li><strong>Step 3:</strong> The browser retrieves the malicious web page from that server over HTTP.</li>
+<li><strong>Step 4:</strong> The browser executes the malicious JavaScript contained in the page. </li>
+<li><strong>Step 5:</strong> The script causes a new access to www.attacker.com, which leads the browser to perform another DNS lookup for the same hostname.</li>
+<li><strong>Step 6:</strong> The attacker-controlled DNS server now returns the IP address of the target internal web server, for example <strong>192.168.0.2</strong>.</li>
+<li><strong>Step 7:</strong> The malicious script sends HTTP requests to that internal server. Because the browser still associates those requests with the hostname www.attacker.com, it may allow the interaction under the same-origin policy, thereby exposing the internal service to attacker-controlled requests.</li>
+</ul>
+<p><br>
+<br></p>
+<h1 id="objectives">Objectives</h1>
+<p>Our goal with the following configurations is to simulate a DNS Rebinding attack. This lab demonstrates how attackers use low-TTL DNS records and browser same-origin policy assumptions to pivot from a public-facing malicious website into a victim's private local network. </p>
+<p><br>
+<br></p>
+<h1 id="lab-prerequisites-network-configuration">Lab Prerequisites &amp; Network Configuration</h1>
+<figure>
+<p><img alt="Figure 2: GNS3 Lab Topology" src="../../../images/rebinding-1.png" />
+  </p>
+<figcaption>Figure 2: DNS Rebinding GNS3 Lab Topology</figcaption>
+</figure>
+<p>In the GNS3 project showed in Figure 2, you will need to add in the following topology that uses four key nodes (be sure to previously check the <a href="../../../setup/" target="_blank">Lab Setup Guide</a>):</p>
+<table>
+<thead>
+<tr>
+<th>Node Name</th>
+<th>Role</th>
+<th>IP Address</th>
+<th>Subnet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Victim Browser</strong></td>
+<td>Target Browser</td>
+<td><strong>10.0.2.1</strong></td>
+<td>10.0.2.0/24</td>
+</tr>
+<tr>
+<td><strong>Victim Server</strong></td>
+<td>Target Webserver</td>
+<td><strong>10.0.2.2</strong></td>
+<td>10.0.2.0/24</td>
+</tr>
+<tr>
+<td><strong>DNS Server</strong></td>
+<td>DNS Server (BIND)</td>
+<td><strong>210.0.0.1</strong></td>
+<td>210.0.0.0/24</td>
+</tr>
+<tr>
+<td><strong>Malicious Website</strong></td>
+<td>Attacker Webserver</td>
+<td><strong>220.0.0.1</strong></td>
+<td>220.0.0.0/24</td>
+</tr>
+</tbody>
+</table>
+<p>The <strong>Victim Server</strong>, the <strong>Malicious Website</strong>, and <strong>DNS Server</strong> machines are implemented with Docker containers available at the Docker Hub. For the <strong>Victim Server</strong> install at GNS3 the container 0xdrogon/dns-
+rebinding-victim, for the <strong>Malicious Website</strong> install 0xdrogon/dns-rebinding-malware and for the <strong>DNS Server</strong> install 0xdrogon/dns-rebinding-bind9.</p>
+<p>For the <strong>Victim Browser</strong> use the <strong>Ubuntu Desktop Guest</strong> appliance of GNS3 (22.04 version was the one used in this lab, includes Firefox). To log in, use credentials: <code>Username: osboxes.org</code>, <code>Password: osboxes.org</code>.</p>
+<p><br>
+<br></p>
+<h1 id="phase-1-setup">Phase 1: Setup</h1>
+<p>The <strong>DNS Server</strong>, <strong>Victim Server</strong> and <strong>Malicious Website</strong> machines are ready. Only the <strong>Victim Browser</strong> needs setup.</p>
+<p>The <strong>DNS Server</strong> runs a Python script <code>sniffer.py</code> in the background that uses Scapy to listen for DNS requests to <code>www.dnsrebindingmalware.com</code>. When the victim makes the first request, it calls a bash script to change the name-to-IP mapping to the Victim Server (10.0.2.2) in the BIND 9 configuration files and, afterwards, it calls a second bash script to change the mapping back to the Malicious Website (220.0.0.1).</p>
+<p>The <strong>Victim Server</strong> is a Python web server, <code>victim.py</code>, that changes the state of the lights at the
+victim’s house. In the attack, the attacker gains access to the Victim Server and turns on all lights.
+The Victim Server uses a simple form of authentication based on one-time passwords. The user must
+first send a <code>GET</code> request to the <code>/password</code> endpoint, to obtain the password that must be included in
+the POST request that turns on a specific light. This mechanism aims at defeating <strong>Cross-site request forgery (CSRF) attacks</strong>.</p>
+<p>The <strong>Malicious Website</strong> runs a Python web server, <code>malware.py</code>,  with a simple Web page that includes malicious JavaScript code. The JavaScript code uses the <code>XMLHttpRequest</code> object to make requests to the Victim Server that turn on all the lights in the victim’s house. The Web page also has a ten second countdown timer; the attack is only launched when the timer reaches zero. This countdown works as a waiting period to allow the change of name-to-IP mapping at the DNS Server. The malicious JavaScript code that is executed by the Victim Browser turns on all the lights in the victim’s house. To achieve that, it makes five requests to the <code>/password</code> endpoint, each followed by a request to the <code>/lights</code> endpoint.</p>
+<h3 id="step-11-victim-browser-configuration">Step 1.1: Victim Browser Configuration</h3>
+<p>On the <strong>Victim Browser</strong> machine:</p>
+<ul>
+<li>
+<p>Go to <code>Settings&gt;Network&gt;Wired&gt;IPv4</code>. There, fill in the IP address (10.0.2.1), netmask (255.255.255.0) and gateway (10.0.2.254), and DNS (210.0.0.1) fields.</p>
+</li>
+<li>
+<p>Check if you can change the lights by visiting:
+    <div class="highlight"><pre><span></span><code><span class="go">http://10.0.2.2</span>
+</code></pre></div>
+    You can check the state at <code>http://10.0.2.2/lights</code>. Leave them all turned off.</p>
+</li>
+<li>
+<p>Open Firefox browser, type <code>about:config</code> on the URL field, and search for <code>dnsCache</code> and change the value of the following entries:</p>
+<div class="highlight"><pre><span></span><code><span class="go">network. dnsCacheExpiration: 2</span>
+<span class="go">network. dnsCacheExpirationGracePeriod: 0</span>
+</code></pre></div>
+</li>
+<li>
+<p>Disable the Firefox prefetching. Set to false the <code>network.prefetch-next</code> and <code>network.dns.disablePrefetch</code> options. These settings are not required for the success of the attack but ease the interpretation of the DNS messages.</p>
+</li>
+</ul>
+<p><br>
+<br>
+<br></p>
+<h1 id="phase-2-attack-execution">Phase 2: Attack Execution</h1>
+<h3 id="step-21-start-the-attack">Step 2.1: Start the Attack</h3>
+<p>Do a Wireshark capture at the connection between the Victim Browser and the switch, use the filter <code>dns.qry.name contains "dnsrebindingmalware" or http</code>.</p>
+<p>On the <strong>Victim Browser</strong>, on the URL field, type:</p>
+<div class="highlight"><pre><span></span><code>www.dnsrebindingmalware.com
+</code></pre></div>
+<p>A window with title “DNS Rebinding Attack” must appear together with a countdown timer. The attack is performed when the countdown timer finishes, at that instant open a different tab on the same domain.</p>
+<p>You should be able to access 10.0.2.2 through <code>www.dnsrebindingmalware.com</code> now. The switches should be all turned on, nut if not you can do it manually. </p>
+<p>Go to <code>http://10.0.2.2/lights</code> to confirm if the attack really was sucessful.</p>
+<p><br></p>
+<h3 id="step-22-repeat-the-attack">Step 2.2: Repeat the attack</h3>
+<p>If the attack was not sucessful, which can happen, you can repeat the attack. Go to firefox's settings and remove all history, cache and site data. Note that the <strong>DNS Server</strong> must be restarted every time the experiment is repeated. As an alternative, access the auxiliary console of the <strong>DNS Server</strong>, and run:</p>
+<div class="highlight"><pre><span></span><code>python3<span class="w"> </span>/var/dns-rebinding/sniffer.py<span class="w"> </span><span class="m">10</span>.0.2.1
+</code></pre></div>
+<p>This way you can see if the sniffer script is working properly or not.</p>
+<p><br></p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>Examine the Wireshark capture. How many DNS queries for www.dnsrebindingmalware.com do you observe, and what are the IP addresses returned in each response? What does the change in resolved IP address tell you about the rebinding mechanism?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>You should observe at least two DNS queries for <code>www.dnsrebindingmalware.com</code>: <strong>First query:</strong> The DNS server responds with <code>220.0.0.1</code> — the IP of the Malicious Website. This is the initial resolution that allows the browser to load the attacker's web page and execute the malicious JavaScript; <strong>Second query (after ~10 seconds):</strong> The DNS server responds with <code>10.0.2.2</code> — the IP of the Victim Server on the private network. This is the rebind step: after the browser's short DNS cache (set to 2 seconds) expires and the countdown timer on the malicious page fires a new request to the same domain, the sniffer script on the DNS Server has already switched the DNS record to point to the internal host. The change in resolved IP is the core of the attack: the <strong>domain name stays the same</strong> (<code>www.dnsrebindingmalware.com</code>), so the browser considers both responses as belonging to the same origin. This tricks the browser into allowing the malicious JavaScript — loaded from the attacker's server — to make XMLHttpRequests directly to the private Victim Server, completely bypassing the Same-Origin Policy.</p>
+</details>
+<p><br>
+<br>
+<br></p>
+<h1 id="countermeasure">Countermeasure</h1>
+<p>After performing the attack, we now pass on to the countermeasure phase. To combat DNS Rebinding attacks, one of the most commonly used countermeasures in web browsers is DNS Pinning. This method ensures that the browser caches DNS resolutions for a predetermined period, regardless of the Time To Live (TTL) value specified by the DNS server. This is particularly effective against attackers who set extremely low TTL values for their malicious hostnames, as browsers will override these values with a default setting.</p>
+<p><br></p>
+<h2 id="dns-pinning">DNS Pinning</h2>
+<h3 id="step-1-configuration">Step 1: Configuration</h3>
+<p>On the <strong>Victim Browser</strong> machine, inside Firefox type <code>about:config</code> on the URL field, and search for <code>dnsCache</code> and change the value of the following entries:</p>
+<div class="highlight"><pre><span></span><code><span class="go">network. dnsCacheExpiration: 600</span>
+<span class="go">network. dnsCacheExpirationGracePeriod: 10</span>
+</code></pre></div>
+<p>These values configure Firefox to cache DNS entries for 600 seconds (10 minutes) and to apply a 10-second grace period after expiration before discarding the entry entirely. Since modern browsers already apply DNS pinning techniques by default, this step restores Firefox to behavior closer to its production defaults — which were deliberately weakened at the start of Phase 1 to enable the attack to succeed.</p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>Why did we need to set <code>dnsCacheExpiration</code> to just 2 seconds at the beginning of the lab (Phase 1, Step 1.1)? What would have happened if we had left Firefox at its default caching duration of 600 seconds throughout the entire experiment?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>The DNS Rebinding attack depends entirely on the victim's browser performing a second DNS lookup for <code>www.dnsrebindingmalware.com</code> after the DNS Server has switched the record to point to the Victim Server (10.0.2.2). This second lookup can only happen once the browser's DNS cache entry for the domain expires. With the default 600-second cache lifetime, the browser would have continued resolving <code>www.dnsrebindingmalware.com</code> to <code>220.0.0.1</code> (the attacker's server) for up to 10 minutes, even though the DNS Server had already changed the record. The malicious JavaScript's <code>XMLHttpRequests</code> would therefore continue going to the attacker's own server, not the private Victim Server, and the rebind would never occur.</p>
+</details>
+<p><br></p>
+<h3 id="step-2-re-run-the-attack">Step 2: Re-run the attack.</h3>
+<p>Clear all browser history, cache, and site data in Firefox. Restart the DNS Server sniffer script as in Step 2.2. Then repeat the steps from Phase 2, Step 2.1 — navigate to <code>www.dnsrebindingmalware.com</code> and wait for the countdown to finish.</p>
+<p>Be sure to also capture the network traffic as before.</p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>After applying the DNS Pinning countermeasure, was the attack successful? Examine the Wireshark capture. How does the DNS traffic differ from what you observed in Phase 2? What do you observe about the IP address returned for the second DNS query (if one occurs at all)? </p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>With DNS Pinning enabled (600-second cache), the attack fails. The lights on the Victim Server should remain off after the countdown, and <code>http://10.0.2.2/lights</code> should confirm no state change occurred. In the Wireshark capture, you should observe a key difference in DNS behavior: <strong>First DNS query:</strong> As before, <code>www.dnsrebindingmalware.com</code> resolves to <code>220.0.0.1</code>. The malicious page loads and the countdown timer begins; <strong>Second DNS query (after ~10 seconds):</strong> A second query may <strong>not appear at all</strong>, or if it does, Firefox ignores the new DNS response and continues using the originally cached IP (<code>220.0.0.1</code>). Because the DNS cache entry is pinned for 600 seconds, the browser does not accept the updated record pointing to <code>10.0.2.2</code>. As a result, when the malicious JavaScript fires its XMLHttpRequests to <code>www.dnsrebindingmalware.com</code>, they are sent to the <strong>attacker's own server</strong> (<code>220.0.0.1</code>), not the Victim Server. The Same-Origin Policy is never bypassed with respect to the private network, so the <code>/password</code> and <code>/lights</code> endpoints of the Victim Server are never reached.</p>
+</details>
+<p><br>
+<br>
+<br></p>
+<h1 id="conclusion">Conclusion</h1>
+<p>As we saw, after we configured DNS Pinning in the browser, the DNS Rebinding attack was effectively neutralized. By caching the initial DNS resolution for a longer period (600 seconds), Firefox prevented the browser from accepting the attacker's forged second DNS response that redirected the domain to the Victim Server's private IP address. This meant the malicious JavaScript could never establish a same-origin context with the internal service, and the <code>/password</code> and <code>/lights</code> endpoints of the Victim Server remained inaccessible from the attack page. </p>
+<p>The Same-Origin Policy is designed to protect users, but it relies on the assumption that a domain name consistently maps to a single origin. DNS Rebinding exploits the moment when this assumption breaks down, when a domain's DNS record changes between requests. The attack is particularly dangerous because it requires no vulnerability in the target application itself since it abuses a legitimate browser mechanism.</p>
+<p><br></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.tabs", "navigation.indexes", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1519 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://netexperiments.github.io/dnssecurity/attacks/protocol/dhcp-dns-spoofing/">
+      
+      
+        <link rel="prev" href="../rebinding/">
+      
+      
+        <link rel="next" href="../../server/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>DHCP DNS Spoofing - DNS Security</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="DNS Security" class="md-header__button md-logo" aria-label="DNS Security" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            DNS Security
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              DHCP DNS Spoofing
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../setup/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Lab Setup
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../enhancements/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  DNS Security and Privacy Enhancements
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  DNS Attacks and Countermeasures
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="DNS Security" class="md-nav__button md-logo" aria-label="DNS Security" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    DNS Security
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../enhancements/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Security and Privacy Enhancements
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Security and Privacy Enhancements
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../enhancements/dnssec/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNSSEC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../enhancements/doh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS-over-HTTPS (DoH)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Attacks and Countermeasures
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Attacks and Countermeasures
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Protocol and Resolution Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_2" id="__nav_4_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Protocol and Resolution Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rebinding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Rebinding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DHCP DNS Spoofing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../server/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Server and Infrastructure Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_3" id="__nav_4_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Server and Infrastructure Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/nxdomain-ddos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NXDOMAIN DDoS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/cache-poisoning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Cache Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/kaminsky/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kaminsky Cache Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/zone-transfer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unauthorized Zone Transfer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/dns-arp-poisoning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS ARP Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../abuse-misuse/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Abuse/Misuse Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_4" id="__nav_4_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Abuse/Misuse Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/amplification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Amplification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/ff-single/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Fast Flux Single-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/ff-double/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Fast Flux Double-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/tunneling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Tunneling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/dgas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DGA-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/ff-dgas-tunneling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fast Flux and DGA-based Tunneling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="background">Background</h1>
+<p>DHCP DNS Spoofing is a cyberattack technique that manipulates the Dynamic Host Configuration Protocol (DHCP) and Domain Name System (DNS) to redirect or intercept network traffic. This attack exploits the trust-based nature of DHCP and DNS to deceive clients into using malicious or unauthorized DNS servers. which allows attackers to redirect victims to fraudulent websites, intercept sensitive data, or launch further attacks, all while evading direct detection.</p>
+<p>This technique leverages the lack of authentication in DHCP and DNS responses, combined with the ability to inject false information into network communications. The attack involves intercepting or forging DHCP responses to assign a rogue DNS server to clients, thereby controlling their DNS resolution process. DHCP DNS spoofing can be broken down into four main concepts: <strong>DHCP Request Interception</strong> and <strong>DNS Resolution Manipulation</strong>.</p>
+<p>Initially, the attacker monitors a network for DHCP requests from clients seeking IP configuration. When a legitimate DHCP Discover request is detected, the attacker races to respond with a forged DHCP offer before the legitimate DHCP server can. This spoofed offer contains the IP address of a malicious DNS server controlled by the attacker. If the client accepts the attacker's offer, it will use the rogue DNS server for all subsequent DNS queries. The attacker's DNS server then manipulates responses to redirect the victim's traffic, such as directing requests for legitimate websites to phishing pages or intercepting unencrypted communications. This redirection can lead to malware distribution, or man-in-the-middle attacks. The victim remains unaware of the manipulation, as the attack exploits the inherent trust in DHCP and DNS protocols, making it difficult to detect without proper network monitoring or security measures.</p>
+<figure id="figure-1">
+<p><img alt="Figure 1: DHCP DNS Spoofing attack" src="../../../images/background/DHCP_DNS_Spoofing.png" width="600" />
+  </p>
+<figcaption>Figure 1: DHCP DNS Spoofing attack</figcaption>
+</figure>
+<p><a href="#figure-1">Figure 1</a> shows a DHCP DNS spoofing scenario. These are the steps:</p>
+<ul>
+<li><strong>Step 1:</strong> The victim broadcasts a DHCPDISCOVER message in order to obtain network configuration parameters.</li>
+<li><strong>Step 2:</strong> The rogue DHCP server replies with a malicious DHCPOFFER/DHCPACK, providing the IP address <strong>198.51.100.53</strong> as the DNS server to be used by the victim. If the victim accepts this configuration, its subsequent DNS queries are directed to the attacker-controlled DNS server instead of to a legitimate resolver.</li>
+<li><strong>Step 3:</strong> The victim sends a DNS query for example.com to the malicious DNS server at <strong>198.51.100.53</strong>.</li>
+<li><strong>Step 4:</strong> The malicious DNS server returns a forged DNS reply mapping example.com to the attacker-controlled IP address <strong>192.0.2.1</strong>.</li>
+<li><strong>Step 5:</strong> The victim establishes a connection to the attacker-controlled server, believing that it corresponds to the legitimate destination originally requested.</li>
+</ul>
+<p>In this way, the attacker first corrupts the victim’s DNS configuration through rogue DHCP and then exploits that false configuration to control the DNS resolution process and redirect the victim’s subsequent communication.</p>
+<p><br>
+<br></p>
+<h1 id="objectives">Objectives</h1>
+<p>Our goal with the following configurations is to simulate a DHCP DNS Spoofing attack. This lab demonstrates how attackers can exploit the lack of authentication in DHCP to inject a rogue DNS server into victim network configurations, effectively hijacking all DNS resolution for those clients.</p>
+<p><br>
+<br></p>
+<h1 id="lab-prerequisites-network-configuration">Lab Prerequisites &amp; Network Configuration</h1>
+<figure id="figure-2">
+<p><img alt="Figure-2" src="../../../images/dhcp-dns-spoofing-1.png" />
+  </p>
+<figcaption>Figure 2: DHCP DNS Spoofing attack GNS3 Lab Topology</figcaption>
+</figure>
+<p>In the GNS3 project showed in <a href="#figure-2">Figure 2</a>, you will need to add in the following topology that uses five key nodes (be sure to previously check the <a href="../../../setup/" target="_blank">Lab Setup Guide</a>):</p>
+<table>
+<thead>
+<tr>
+<th>Node Name</th>
+<th>Role</th>
+<th>IP Address</th>
+<th>Subnet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>DNS Server</strong></td>
+<td>DNS Server authoritative for example.com.</td>
+<td><strong>10.0.1.1</strong></td>
+<td>10.0.1.0/24</td>
+</tr>
+<tr>
+<td><strong>DHCP Server</strong></td>
+<td>Router, also acting as DHCP server for network 10.0.2.0</td>
+<td><strong>f0/1: 10.0.1.254</strong> <strong>f0/0: 10.0.2.254</strong>  <strong>f1/0: 10.0.3.254</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Attacker DNS Server</strong></td>
+<td>Attacker-controlled DNS Server</td>
+<td><strong>10.0.3.1</strong></td>
+<td>10.0.3.0/24</td>
+</tr>
+<tr>
+<td><strong>Attacker DHCP Server</strong></td>
+<td>Attacker-controlled DHCP Server</td>
+<td><strong>10.0.2.21</strong></td>
+<td>10.0.2.0/24</td>
+</tr>
+<tr>
+<td><strong>Victim1</strong></td>
+<td>DHCP and DNS client machine</td>
+<td><strong>10.0.2.1</strong></td>
+<td>10.0.2.0/24</td>
+</tr>
+<tr>
+<td><strong>Victim2</strong></td>
+<td>DHCP and DNS client machine</td>
+<td><strong>10.0.2.2</strong></td>
+<td>10.0.2.0/24</td>
+</tr>
+</tbody>
+</table>
+<p>Configure the <strong>Attacker DNS Server</strong> machine identically to <strong>DNS Server</strong>. It should be configured to be authoritative for example.com as well.</p>
+<p>Use Cisco IOSvL2 switches for Sw1 and Sw2.</p>
+<p>Use this simple configuration for the <code>Edit config</code> option of the <strong>Victim1</strong> and <strong>Victim2</strong> machines options menu:</p>
+<div class="highlight"><pre><span></span><code><span class="n">auto</span> <span class="n">eth0</span>
+<span class="n">iface</span> <span class="n">eth0</span> <span class="n">inet</span> <span class="n">dhcp</span>
+</code></pre></div>
+<p><br></p>
+<p>The following script was used in this lab:</p>
+<ul>
+<li><a href="../../../scripts/dhcpspoof.py" download>dhcpspoof.py</a></li>
+</ul>
+<p><br>
+<br></p>
+<h1 id="phase-1-setting-up-dhcp-and-dns-servers">Phase 1: Setting up DHCP and DNS Servers</h1>
+<p>In this phase we configure the legitimate network infrastructure.</p>
+<h3 id="step-11-basic-dhcp-pool-setup">Step 1.1: Basic DHCP Pool Setup</h3>
+<p>On the <strong>DHCP Server</strong> router,</p>
+<p>1 - Run the following configuration commands:</p>
+<div class="highlight"><pre><span></span><code><span class="n">conf</span> <span class="n">t</span>
+<span class="n">ip</span> <span class="n">dhcp</span> <span class="n">pool</span> <span class="mi">0</span>
+<span class="n">network</span> <span class="mf">10.0.2.0</span> <span class="o">/</span><span class="mi">24</span>
+<span class="n">default</span><span class="o">-</span><span class="n">router</span> <span class="mf">10.0.2.254</span>
+<span class="n">dns</span><span class="o">-</span><span class="n">server</span> <span class="mf">10.0.1.1</span>
+</code></pre></div>
+<p>To confirm:</p>
+<div class="highlight"><pre><span></span><code><span class="n">show</span> <span class="n">ip</span> <span class="n">dhcp</span> <span class="n">pool</span>
+<span class="n">show</span> <span class="n">ip</span> <span class="n">dhcp</span> <span class="n">binding</span>
+</code></pre></div>
+<p>On the <strong>Switches</strong>, run:
+<div class="highlight"><pre><span></span><code><span class="n">enable</span>
+<span class="n">conf</span> <span class="n">t</span>
+<span class="n">no</span> <span class="n">cdp</span> <span class="n">advertise</span><span class="o">-</span><span class="n">v2</span>
+</code></pre></div></p>
+<h3 id="step-12-modify-examplecom-zone">Step 1.2: Modify <code>example.com</code> Zone</h3>
+<p>On the <strong>DNS Server</strong>,</p>
+<p>1 - Modify the <code>db.example</code> zone file:</p>
+<div class="highlight"><pre><span></span><code><span class="n">nano</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">bind</span><span class="o">/</span><span class="n">db</span><span class="o">.</span><span class="n">example</span>
+</code></pre></div>
+<p>At the end, add:</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">testa</span>            <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">10.0.10.1</span>
+<span class="n">testb</span>            <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">10.0.10.1</span>
+<span class="n">testc</span>            <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">10.0.10.1</span>
+</code></pre></div>
+ 3 - Restart the BIND service (named):</p>
+<p><div class="highlight"><pre><span></span><code>pkill<span class="w"> </span>named<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>named<span class="w"> </span>-c<span class="w"> </span>/etc/bind/named.conf
+</code></pre></div>
+<br>
+<br></p>
+<h1 id="phase-2-setting-up-the-attacker-dhcp-and-dns-servers">Phase 2: Setting up the Attacker DHCP and DNS Servers</h1>
+<p>The attacker's servers need to be configured to mirror and subvert the legitimate
+infrastructure.</p>
+<h3 id="step-21-basic-dhcp-pool-setup">Step 2.1: Basic DHCP Pool Setup</h3>
+<p>On the <strong>Attacker DHCP Server</strong>, add the <code>dhcpspoof.py</code> script:</p>
+<div class="highlight"><pre><span></span><code>nano<span class="w"> </span>/home/dhcpspoof.py
+</code></pre></div>
+<p>The script <code>dhcpspoof.py</code> uses the python library scapy to implement a rogue DHCP server. Its primary goal is to intercept requests from local devices and provide them with malicious controlled network settings such as a DNS server controlled by the attacker. The script operates by leveraging Scapy's <code>AnsweringMachine</code> class, which is a high-level framework designed to listen for specific packets and automatically generate replies. When the script starts, it takes several command-line arguments (<code>interface</code>, <code>IP pool</code>, <code>subnet mask</code>, <code>gateway</code>, and <code>DNS</code>). The script initializes by defining a "pool" of IP addresses and identifying itself as the server. It constantly sniffs the local network for <code>DHCP Discover</code> or <code>DHCP Request</code> packets (broadcasted on <code>UDP ports</code> 67 and 68). When a victim device asks for an IP address this script will respond immediately with a <code>DHCP Offer</code>. Rather than just giving the victim an IP address, it forces the victim to update its internal routing table with a Rogue DNS Server, which points the victim to a specific DNS server (<code>Option 6</code>). The script maintains a local database (<code>self.leases</code>) mapping the hardware MAC addresses of victims to the IP addresses it has handed out. This ensures that if a victim reconnects, they receive the same "poisoned" configuration, maintaining persistence.</p>
+<p><br></p>
+<h3 id="step-22-modify-examplecom-zone">Step 2.2: Modify <code>example.com</code> Zone</h3>
+<p>On the <strong>Attacker DNS Server</strong>,</p>
+<p>1 - Modify the <code>db.example</code> zone file:</p>
+<div class="highlight"><pre><span></span><code><span class="n">nano</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">bind</span><span class="o">/</span><span class="n">db</span><span class="o">.</span><span class="n">example</span>
+</code></pre></div>
+<p>At the end, add:</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">testa</span>            <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">10.0.20.1</span>
+<span class="n">testb</span>            <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">10.0.20.1</span>
+<span class="n">testc</span>            <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">10.0.20.1</span>
+</code></pre></div>
+ 3 - Restart the BIND service (named):</p>
+<p><div class="highlight"><pre><span></span><code>pkill<span class="w"> </span>named<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>named<span class="w"> </span>-c<span class="w"> </span>/etc/bind/named.conf
+</code></pre></div>
+<br>
+<br></p>
+<h1 id="phase-3-perform-attack">Phase 3: Perform Attack</h1>
+<p>The attacker is now fully set up and ready to intercept victim DHCP requests.</p>
+<h3 id="step-31-turn-off-the-victim-machines">Step 3.1: Turn off the Victim machines</h3>
+<p>Turn off both Victim machines. You might need to also manually enable the Switches by running <code>enable</code> in each console.</p>
+<h3 id="step-32-execute-the-spoofing-script">Step 3.2: Execute the Spoofing script</h3>
+<p>On the <strong>Attacker DHCP Server</strong>, run:</p>
+<div class="highlight"><pre><span></span><code>python3<span class="w"> </span>/home/dhcpspoof.py<span class="w"> </span>eth0<span class="w"> </span><span class="m">10</span>.0.2.1<span class="w"> </span><span class="m">10</span>.0.2.20<span class="w"> </span><span class="m">255</span>.255.255.0<span class="w"> </span><span class="m">10</span>.0.2.254<span class="w"> </span><span class="m">10</span>.0.3.1
+</code></pre></div>
+<p>By running <code>dhcpspoof.py</code> with the above parameters, we are setting the script to listen on interface <strong>eth0</strong>, hand out IP addresses from the pool <strong>10.0.2.1–10.0.2.20</strong> (since 10.0.2.21 is reserved for itself), use a subnet mask of <strong>255.255.255.0</strong>, set the default gateway to <strong>10.0.2.254</strong> (same as before), and push <strong>10.0.3.1</strong> (the Attacker DNS Server) as the DNS server to every victim that accepts its <code>DHCP offer</code>. Any client that receives this configuration will resolve all domain names through the attacker-controlled DNS server instead of the legitimate one at 10.0.1.1.
+<br></p>
+<h3 id="step-33-turn-on-the-victim-machines">Step 3.3: Turn on the Victim machines</h3>
+<p>Now turn on the <strong>Victim</strong> machines to force <code>DHCPDiscover</code> broadcasts. Do two Wireshark captures, directly next to each Victim's interface.</p>
+<p><br></p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>After turning on the Victim machines, inspect the Wireshark captures on both victims' interfaces. What NS server address was assigned to each Victim via DHCP? Does the DNS server differ from what the legitimate DHCP Server would have assigned? Run <code>dig testa.example.com</code> on each Victim and compare the resolved IP address against the legitimate DNS Server's records. What do you observe?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>Both Victim machines received <strong>10.0.3.1</strong> (the Attacker DNS Server) as their DNS
+server, instead of the legitimate <strong>10.0.1.1</strong>. This is visible in the Wireshark capture
+as DHCP Option 6 (DNS Server) inside the DHCP Offer sent by the Attacker DHCP Server. When running <code>dig testa.example.com</code>, victims receive <strong>10.0.20.1</strong>, the forged address configured in the Attacker DNS Server's zone file, instead of the legitimate <strong>10.0.10.1</strong> served by the real DNS Server. This confirms the attack was successful: the victims are transparently redirected to attacker-controlled infrastructure while believing they are accessing the legitimate service.</p>
+</details>
+<p><br>
+<br>
+<br>
+<br></p>
+<h1 id="countermeasure">Countermeasure</h1>
+<p>We now pass on to the countermeasure phase. DHCP spoofing abuses the DNS protocol's lack of built-in authentication by poisoning the source of DNS configuration before resolution even begins. Because standard DHCP has no mechanism to verify the identity or legitimacy of a responding DHCP server, any host on the same broadcast domain can race to answer a DHCPDISCOVER and win. The countermeasure must therefore be enforced at Layer 2, before rogue DHCP responses can reach clients.</p>
+<p>DHCP Snooping is a Layer 2 security feature implemented on managed switches that acts as a firewall between untrusted hosts and trusted DHCP servers. It works by classifying switch ports as either trusted or untrusted. DHCP Snooping also builds and maintains a DHCP Snooping Binding Table, a database that records the mapping between a client's IP address, its MAC address, the switch port it is connected to, and the VLAN. Every time a client successfully obtains an IP address via DHCP, an entry is created in this table. </p>
+<p>The countermeasure will be implemented in the Switches nodes. </p>
+<p><br></p>
+<h2 id="dhcp-snooping">DHCP Snooping</h2>
+<h3 id="step-1-configure-dhcp-snooping-on-sw1-and-sw2">Step 1: Configure DHCP Snooping on Sw1 and Sw2</h3>
+<p>In these configurations below, g0/0 of Sw1 is connected to the DHCP Server, and g0/2 of Sw2 is connected to Sw1. Adjust to suit your network topology.</p>
+<p>On the <strong>Sw1</strong>, run the following configurations:</p>
+<div class="highlight"><pre><span></span><code><span class="n">enable</span>
+<span class="n">configure</span> <span class="n">terminal</span>
+<span class="n">ip</span> <span class="n">dhcp</span> <span class="n">snooping</span>
+<span class="n">ip</span> <span class="n">dhcp</span> <span class="n">snooping</span> <span class="n">vlan</span> <span class="mi">1</span>
+<span class="n">no</span> <span class="n">ip</span> <span class="n">dhcp</span> <span class="n">snooping</span> <span class="n">information</span> <span class="n">option</span>
+<span class="n">interface</span> <span class="n">GigabitEthernet0</span><span class="o">/</span><span class="mi">0</span>
+ <span class="n">ip</span> <span class="n">dhcp</span> <span class="n">snooping</span> <span class="n">trust</span>
+<span class="n">interface</span> <span class="nb">range</span> <span class="n">GigabitEthernet0</span><span class="o">/</span><span class="mi">1</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="n">GigabitEthernet1</span><span class="o">/</span><span class="mi">0</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="n">GigabitEthernet2</span><span class="o">/</span><span class="mi">0</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="n">GigabitEthernet3</span><span class="o">/</span><span class="mi">0</span><span class="o">-</span><span class="mi">3</span>
+ <span class="n">ip</span> <span class="n">dhcp</span> <span class="n">snooping</span> <span class="n">limit</span> <span class="n">rate</span> <span class="mi">10</span>
+<span class="n">exit</span>
+<span class="n">end</span>
+</code></pre></div>
+<p>On the <strong>Sw2</strong>, run the following configurations:</p>
+<div class="highlight"><pre><span></span><code><span class="n">enable</span>
+<span class="n">configure</span> <span class="n">terminal</span>
+<span class="n">ip</span> <span class="n">dhcp</span> <span class="n">snooping</span>
+<span class="n">ip</span> <span class="n">dhcp</span> <span class="n">snooping</span> <span class="n">vlan</span> <span class="mi">1</span>
+<span class="n">no</span> <span class="n">ip</span> <span class="n">dhcp</span> <span class="n">snooping</span> <span class="n">information</span> <span class="n">option</span>
+<span class="n">interface</span> <span class="n">GigabitEthernet0</span><span class="o">/</span><span class="mi">2</span>
+ <span class="n">ip</span> <span class="n">dhcp</span> <span class="n">snooping</span> <span class="n">trust</span>
+<span class="n">interface</span> <span class="nb">range</span> <span class="n">GigabitEthernet0</span><span class="o">/</span><span class="mi">1</span><span class="p">,</span> <span class="n">GigabitEthernet0</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="n">GigabitEthernet1</span><span class="o">/</span><span class="mi">0</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="n">GigabitEthernet2</span><span class="o">/</span><span class="mi">0</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="n">GigabitEthernet3</span><span class="o">/</span><span class="mi">0</span><span class="o">-</span><span class="mi">3</span>
+ <span class="n">ip</span> <span class="n">dhcp</span> <span class="n">snooping</span> <span class="n">limit</span> <span class="n">rate</span> <span class="mi">10</span>
+<span class="n">exit</span>
+<span class="n">end</span>
+</code></pre></div>
+<h3 id="step-2-re-run-the-attack">Step 2:  Re-run the attack</h3>
+<p>Repeat Step 2.2 to re-run the attack. </p>
+<p>Perform two Wireshark captures right next to the Sw2 interfaces that link to Victim2 and to the Attacker DHCP Server. </p>
+<p><br></p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>After re-running the attack with DHCP Snooping enabled, inspect the Wireshark capture on the Sw2  interface facing the <strong>Attacker DHCP Server</strong>. Can you still see DHCP Offer packets originating from 10.0.2.21 being forwarded toward the victims? What does Sw2 do with those packets?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>Yes, the Attacker DHCP Server still sends DHCP Offer packets, which are visible arriving on Sw2's Gi0/1 interface. However, because that interface is configured as an <strong>untrusted</strong> port, Sw2 silently drops all DHCP server-originated messages (DHCP Offer, DHCP ACK) received on it. These packets never reach the victim-side ports. In the Wireshark capture on the Victim2-facing interface of Sw2, only DHCP Offers from the legitimate DHCP Server (arriving via the trusted uplink) are forwarded through.</p>
+</details>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>After DHCP Snooping is in place, what DNS server address do the Victim machines receive? Re-run <code>dig testa.example.com</code> on both victims. How do the results compare to the pre-countermeasure results, and what does this confirm about the effectiveness of DHCP Snooping against this attack?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>With DHCP Snooping active, both victims now receive <strong>10.0.1.1</strong> (the legitimate DNS Server) as their DNS server, assigned by the real DHCP Server. Running <code>dig testa.example.com</code> now returns <strong>10.0.10.1</strong>, which matches the authoritative record on the legitimate DNS Server.</p>
+<p>This confirms that DHCP Snooping successfully neutralises the DHCP DNS Spoofing attack. By classifying the attacker's port as untrusted and blocking DHCP server-type messages from it, the switch ensures that clients can only receive IP configuration from the trusted, legitimate DHCP Server — eliminating the attacker's ability to inject a rogue DNS server into victim configurations.</p>
+</details>
+<p><br>
+<br></p>
+<h1 id="conclusion">Conclusion</h1>
+<p>As we saw, DHCP DNS Spoofing is a potent attack that requires no prior foothold on victim machines. An attacker merely needs to be present on the same broadcast domain and respond to DHCP broadcasts faster than the legitimate server. By injecting a rogue DNS server address into DHCP offers, the attacker silently hijacks all DNS resolution for the victim, enabling traffic redirection, phishing, and man-in-the-middle attacks that are invisible to the victim at the application level.</p>
+<p>The countermeasure used, DHCP Snooping, addresses the root cause by enforcing trust boundaries at Layer 2. By designating only the uplink toward the legitimate DHCP Server as trusted, and rate-limiting or dropping DHCP server messages on all other ports, managed switches prevent rogue DHCP servers from ever reaching clients. The DHCP Snooping Binding Table that is built as a side effect also forms the foundation for additional protections such as Dynamic ARP Inspection (DAI), which can prevent ARP spoofing attacks using the
+same IP-to-MAC mappings validated during DHCP.</p>
+<p>Properly deploying DHCP Snooping across all access-layer switches in a network is therefore a critical baseline defence in any environment where Layer 2 trust cannot be assumed.</p>
+<p><br></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.tabs", "navigation.indexes", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

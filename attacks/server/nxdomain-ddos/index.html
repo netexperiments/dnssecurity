@@ -1,0 +1,1503 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://netexperiments.github.io/dnssecurity/attacks/server/nxdomain-ddos/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../cache-poisoning/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>NXDOMAIN DDoS - DNS Security</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="DNS Security" class="md-header__button md-logo" aria-label="DNS Security" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            DNS Security
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              NXDOMAIN DDoS
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../setup/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Lab Setup
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../enhancements/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  DNS Security and Privacy Enhancements
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  DNS Attacks and Countermeasures
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="DNS Security" class="md-nav__button md-logo" aria-label="DNS Security" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    DNS Security
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../enhancements/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Security and Privacy Enhancements
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Security and Privacy Enhancements
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../enhancements/dnssec/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNSSEC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../enhancements/doh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS-over-HTTPS (DoH)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Attacks and Countermeasures
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Attacks and Countermeasures
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../protocol/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Protocol and Resolution Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_2" id="__nav_4_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Protocol and Resolution Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../protocol/rebinding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Rebinding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../protocol/dhcp-dns-spoofing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DHCP DNS Spoofing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Server and Infrastructure Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_3" id="__nav_4_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Server and Infrastructure Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NXDOMAIN DDoS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cache-poisoning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Cache Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kaminsky/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kaminsky Cache Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../zone-transfer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unauthorized Zone Transfer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dns-arp-poisoning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS ARP Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../abuse-misuse/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Abuse/Misuse Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_4" id="__nav_4_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Abuse/Misuse Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/amplification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Amplification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/ff-single/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Fast Flux Single-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/ff-double/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Fast Flux Double-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/tunneling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Tunneling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/dgas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DGA-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../abuse-misuse/ff-dgas-tunneling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fast Flux and DGA-based Tunneling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="background">Background</h1>
+<p>An NXDOMAIN DDoS attack, also known as a DNS Water Torture attack, is a targeted form of Distributed Denial
+of Service (DDoS) that exploits vulnerabilities in the Domain Name System (DNS) infrastructure. This type of
+attack is specifically designed to overwhelm DNS servers by flooding them with a high volume of queries for non-existent or invalid domain names, leading to significant disruptions in service availability and performance. "NXDOMAIN" stands for Non-Existent Domain, which is a response code returned by a DNS server indicating that the queried domain name does not exist. Attackers leverage this mechanism by systematically generating a massive volume of DNS requests for fake domains, forcing resolvers to repeatedly search for and return NXDOMAIN responses. In an NXDOMAIN DDoS attack, the attacker generates a large number of DNS queries for such non-existent domains and sends them to one or more recursive DNS resolvers. </p>
+<p>What makes this attack particularly effective is its ability to amplify traffic. DNS responses, especially for non-existent domains, can be much larger than the original queries, allowing attackers to generate a disproportionate amount of traffic with minimal effort. Additionally, recursive resolvers must process each query, often performing multiple lookups before confirming the domain doesn’t exist, which consumes CPU, memory, and bandwidth. This leads to resource exhaustion, causing slowdowns or even complete outages for legitimate users. The attack is also difficult to mitigate because the queries appear legitimate, and attackers can randomize the fake domains, making traditional filtering methods like rate limiting or blacklisting less effective.</p>
+<p>In practice, attackers use botnets or compromised devices to send a flood of DNS queries for randomly generated subdomains (e.g., random12345.example.com). Since these domains don’t exist, recursive resolvers would not cache the responses and must repeatedly query authoritative DNS servers, further amplifying the attack’s impact. The result is a cascade of traffic that can overwhelm both recursive and authoritative DNS servers, disrupting access to websites and online services for legitimate users. Beyond immediate service disruptions, these attacks can damage an organization’s reputation and even cause collateral damage to upstream providers and other networks.</p>
+<figure id="figure-1">
+<p><img alt="Figure 1: DNS Tunneling attack" src="../../../images/background/NXDOMAINS.png" width="600" />
+  </p>
+<figcaption>Figure 1: NXDOMAIN DDoS attack</figcaption>
+</figure>
+<p><a href="#figure-1">Figure 1</a> shows an NXDOMAIN DDoS case example. All the bots are using the same two DNS resolvers which, of course, in a real-world scenario would not occur. These are the steps:</p>
+<ul>
+<li><strong>Step 1:</strong> The botnet sends a large number of DNS queries for randomized, non-existent subdomains of example.com to multiple resolvers.</li>
+<li><strong>Step 2:</strong> Because the queried names are unique and do not appear in cache, each resolver performs recursive resolution by forwarding the queries toward the authoritative DNS server for example.com, which then returns NXDOMAIN
+replies. Since this process is repeated at high rate and across many distinct names, both the resolvers and the authoritative server are burdened with a continuous stream of futile DNS work. As a consequence, legitimate DNS queries may be delayed, dropped, or time out, causing service degradation or denial of service for users that depend on the affected DNS infrastructure.</li>
+</ul>
+<p><br>
+<br></p>
+<h1 id="objectives">Objectives</h1>
+<p>This lab demonstrates how attackers can leverage the distributed nature of botnets to overwhelm recursive DNS resolvers and Authoritative servers by flooding them with a massive volume of queries for non-existent or invalid domain names.</p>
+<p><br>
+<br></p>
+<h1 id="lab-prerequisites-network-configuration">Lab Prerequisites &amp; Network Configuration</h1>
+<figure id="figure-2">
+<p><img alt="Figure 2: GNS3 Lab Topology" src="../../../images/nxdomain-ddos-1.png" />
+  </p>
+<figcaption>Figure 2: NXDOMAIN DDoS GNS3 Lab Topology</figcaption>
+</figure>
+<p>In the GNS3 project showed in <a href="#figure-2">Figure 2</a>, you will need to add in the following topology that uses nine key nodes (be sure to previously check the <a href="../../../setup/" target="_blank">Lab Setup Guide</a>):</p>
+<table>
+<thead>
+<tr>
+<th>Node Name</th>
+<th>Role</th>
+<th>IP Address</th>
+<th>Subnet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Victim Resolver1</strong></td>
+<td>Recursive DNS Server</td>
+<td><strong>10.0.0.1</strong></td>
+<td>10.0.0.0/24</td>
+</tr>
+<tr>
+<td><strong>Victim Resolver2</strong></td>
+<td>Recursive DNS Server</td>
+<td><strong>10.0.1.1</strong></td>
+<td>10.0.1.0/24</td>
+</tr>
+<tr>
+<td><strong>Authoritative Server</strong></td>
+<td>Authoritative nameserver for example.com</td>
+<td><strong>10.0.2.1</strong></td>
+<td>10.0.2.0/24</td>
+</tr>
+<tr>
+<td><strong>Client</strong></td>
+<td>DNS Client</td>
+<td><strong>10.0.3.1</strong></td>
+<td>10.0.3.0/24</td>
+</tr>
+<tr>
+<td><strong>Attacker</strong></td>
+<td>Coordinates attack</td>
+<td><strong>10.0.4.1</strong></td>
+<td>10.0.4.0/24</td>
+</tr>
+<tr>
+<td><strong>Bot1</strong></td>
+<td>Receives orders from Attacker. Acts as proxy</td>
+<td><strong>10.0.5.1</strong></td>
+<td>10.0.5.0/24</td>
+</tr>
+<tr>
+<td><strong>Bot2</strong></td>
+<td>Receives orders from Attacker. Acts as proxy</td>
+<td><strong>10.0.6.1</strong></td>
+<td>10.0.6.0/24</td>
+</tr>
+<tr>
+<td><strong>Bot3</strong></td>
+<td>Receives orders from Attacker. Acts as proxy</td>
+<td><strong>10.0.7.1</strong></td>
+<td>10.0.7.0/24</td>
+</tr>
+<tr>
+<td><strong>Bot4</strong></td>
+<td>Receives orders from Attacker. Acts as proxy</td>
+<td><strong>10.0.8.1</strong></td>
+<td>10.0.8.0/24</td>
+</tr>
+</tbody>
+</table>
+<p>Since there is no TLD server in this lab, the Resolver machine should be configured to host <code>.com</code> zone to be able to access the Authoritative Server. You can check the <a href="../../../setup/" target="_blank">Lab Setup Guide</a> to know how.</p>
+<p><br></p>
+<p>The following scripts were used in this lab:</p>
+<ul>
+<li><a href="../../../scripts/nxdomainddos_activate_bots.py" download>nxdomainddos_activate_bots.py</a></li>
+<li><a href="../../../scripts/nxdomainddos.py" download>nxdomainddos.py</a></li>
+</ul>
+<p><br>
+<br></p>
+<h1 id="phase-1-configure-the-authoritative-server">Phase 1: Configure the Authoritative Server</h1>
+<p>The Authoritative Server is responsible for holding the DNS zone records for example.com. In this phase, we configure it with a set of known valid subdomains (e.g., testa, testb, testc) so that we can later verify that legitimate DNS queries resolve correctly both before and after the attack.</p>
+<h3 id="step-11-add-test-subdomains">Step 1.1: Add test subdomains</h3>
+<p>On the <strong>Authoritative Server</strong>,</p>
+<p>1 - Create or modify the <code>db.example</code> zone file:</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">nano</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">bind</span><span class="o">/</span><span class="n">db</span><span class="o">.</span><span class="n">example</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">example</span><span class="o">.</span><span class="n">com</span><span class="o">.</span> <span class="n">IN</span> <span class="n">SOA</span> <span class="n">ns1</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span><span class="o">.</span> <span class="n">admin</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span><span class="o">.</span> <span class="p">(</span>
+    <span class="mi">1</span> <span class="mi">7200</span> <span class="mi">3600</span> <span class="mi">1209600</span> <span class="mi">86400</span>
+<span class="p">)</span>
+    <span class="n">NS</span> <span class="n">ns1</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span><span class="o">.</span>
+<span class="n">ns1</span><span class="o">.</span><span class="n">example</span><span class="o">.</span><span class="n">com</span><span class="o">.</span> <span class="n">A</span> <span class="mf">10.0.2.1</span>
+
+<span class="o">@</span>                <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">10.0.10.1</span>
+<span class="n">www</span>              <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">10.0.10.1</span>
+<span class="n">testa</span>            <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">10.0.10.1</span>
+<span class="n">testb</span>            <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">10.0.10.1</span>
+<span class="n">testc</span>            <span class="n">IN</span>      <span class="n">A</span>       <span class="mf">10.0.10.1</span>
+</code></pre></div></p>
+<p>2 - Restart the BIND service (named):</p>
+<p><div class="highlight"><pre><span></span><code>pkill<span class="w"> </span>named<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>named<span class="w"> </span>-c<span class="w"> </span>/etc/bind/named.conf
+</code></pre></div>
+<br></p>
+<p>On the <strong>Resolver</strong>,</p>
+<p>3 - Test DNS resolution: <code>dig testa.attacker.com</code></p>
+<p><br></p>
+<p>Make sure the Root Server, Resolver are correctly configured with the IP addresses for this lab, check <a href="../../../setup/" target="_blank">Lab Setup Guide</a>.</p>
+<p><br>
+<br>
+<br></p>
+<h1 id="phase-2-setting-up-the-attackers-infrastructure">Phase 2: Setting up the Attacker's Infrastructure</h1>
+<p>The attacker's infrastructure consists of a central controller machine and four bot machines. The attacker does not send DNS queries directly; instead, it orchestrates the bots remotely via SSH to distribute the flood traffic across multiple source IPs, making the attack harder to block with simple IP-based filtering and increasing the total query throughput.</p>
+<h3 id="step-21-prepare-the-scripts">Step 2.1: Prepare the Scripts</h3>
+<p>On the <strong>Attacker</strong> machine, add the script <code>nxdomainddos_activate_bots.py</code>:</p>
+<div class="highlight"><pre><span></span><code>nano<span class="w"> </span>/home/nxdomainddos_activate_bots.py
+</code></pre></div>
+<p>This script uses the paramiko python library to command, via ssh, the <code>nxdomainddos.py</code> to be run on each of the bots.</p>
+<p><br></p>
+<p>On the <strong>Bot</strong> machines, add the script <code>nxdomainddos.py</code>:</p>
+<div class="highlight"><pre><span></span><code>nano<span class="w"> </span>/home/nxdomainddos.py
+</code></pre></div>
+<p>The script <code>nxdomainddos.py</code> generates 1,000 unique, random 3-letter subdomains (e.g., abc.example.com, xyz.example.com), crafts raw network packets using the Scapy library with a given source IP address and targets DNS Resolvers by sending these 1,000 queries to specific DNS resolvers (10.0.0.1 and 10.0.1.1).</p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>Why does the attack script generate random subdomains rather than reusing the same fake domain name repeatedly?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>Because DNS resolvers cache responses. If the same non-existent domain were queried repeatedly, the resolver would return the cached NXDOMAIN response without performing a new recursive lookup, drastically reducing the load on both the resolver and the authoritative server. By generating a different random subdomain for each query, the attacker ensures that no cached response exists, forcing the resolver to perform a full recursive lookup for every single query. This is precisely what makes the NXDOMAIN DDoS attack so resource-intensive for the victim infrastructure.</p>
+</details>
+<p><br>
+<br></p>
+<h1 id="phase-3-validation-and-analysis">Phase 3: Validation and Analysis</h1>
+<p>You can now execute the full attack and observe the results. Do a Wireshark capture right next to Authoritative Server and another next to a Victim Resolver interfaces (as a tip, use a <code>dns</code> filter to better analyze the relevant DNS packets).</p>
+<h3 id="step-31-test-dns-resolution">Step 3.1: Test DNS Resolution</h3>
+<p>On the <strong>Client</strong> machine, run:</p>
+<div class="highlight"><pre><span></span><code>dig<span class="w"> </span>testa.example.com
+</code></pre></div>
+<p>Make sure it receives a correct response. If not, restart BIND on the designated <strong>Resolver</strong> machine.</p>
+<h3 id="step-32-run-the-attack">Step 3.2: Run the attack</h3>
+<p>On the <strong>Attacker</strong> machine, run:</p>
+<div class="highlight"><pre><span></span><code>python3<span class="w"> </span>/home/nxdomainddos_activate_bots.py
+</code></pre></div>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>Looking at the Wireshark capture taken next to the Authoritative Server, what do you notice about the volume and content of the DNS queries arriving there compared to what you would expect under normal conditions? What does this tell you about the effectiveness of the attack in propagating flood traffic beyond the resolver?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>Under normal conditions, the authoritative server would only receive queries for domains it is responsible for, and only after the resolver has confirmed there is no cached answer. During the attack, the authoritative server is flooded with queries for random, non-existent subdomains of example.com (e.g., xqr.example.com, kbz.example.com). Because none of these domains exist and the resolver has no cached NXDOMAIN for any of them, every single bot query triggers a full recursive lookup that reaches the authoritative server. The capture shows a flood of queries arriving from the resolvers' IP addresses (since the resolvers forward on behalf of the bots), each receiving an NXDOMAIN response. This demonstrates that the attack successfully propagates through the resolver layer and overwhelms the authoritative server as well, not just the recursive resolvers themselves.</p>
+</details>
+<p><br>
+<br>
+<br>
+<br>
+<br></p>
+<h1 id="countermeasure">Countermeasure</h1>
+<p>After performing the attack, we now pass on to the countermeasure phase. NXDOMAIN DDoS exploits the DNS protocol by flooding a target with queries for non-existent domains, forcing authoritative DNS servers to generate and return "NXDOMAIN" (non-existent domain) responses. This attack leverages the fact that resolving non-existent domains consumes more server resources than answering legitimate queries, as the server must perform recursive lookups and return negative responses. The attacker’s goal is to exhaust the DNS infrastructure’s CPU, memory, and bandwidth, disrupting service for legitimate users.
+A defining characteristic of this attack is that it does not rely on amplification or spoofing but instead abuses the inherent inefficiency of processing NXDOMAIN responses. Since the attacker sends a high volume of queries for random or non-existent subdomains, the targeted DNS server can be overwhelmed by the sheer number of recursive lookups and negative responses it must generate. This can lead to degraded performance or complete unavailability of DNS services.</p>
+<p>To defend against NXDOMAIN-based DDoS attacks, network administrators can enforce firewall rate-limiting rules. By restricting the number of DNS queries allowed from a single source IP, these rules prevent attackers from flooding the server with invalid requests, ensuring service availability and protecting against resource exhaustion.</p>
+<p><br>
+<br></p>
+<h3 id="step-1-configure-firewall-rule">Step 1: Configure Firewall Rule</h3>
+<p>On each of the <strong>Victim Resolvers</strong>, run:</p>
+<div class="highlight"><pre><span></span><code>iptables<span class="w"> </span>-A<span class="w"> </span>INPUT<span class="w"> </span>-p<span class="w"> </span>udp<span class="w"> </span>--dport<span class="w"> </span><span class="m">53</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-m<span class="w"> </span>hashlimit<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--hashlimit-above<span class="w"> </span><span class="m">5</span>/sec<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--hashlimit-burst<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--hashlimit-mode<span class="w"> </span>srcip<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--hashlimit-name<span class="w"> </span>dns_flood<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-j<span class="w"> </span>DROP
+</code></pre></div>
+<p>This iptbales rule adds a rate-limiting filter on incoming UDP traffic destined for port 53 (DNS). It uses the hashlimit module to track query rates on a per source IP basis. Any source IP that sends more than 5 DNS queries per second (with an allowed burst of up to 10 packets) will have its excess packets silently dropped. This effectively caps the query rate from any single client, preventing a bot from overwhelming the resolver regardless of how many random subdomains it queries. Legitimate clients, which typically send only a handful of DNS queries per second, are unaffected by this threshold.</p>
+<p>To see the list of all the rules in the iptables firewall, run:
+<div class="highlight"><pre><span></span><code>iptables<span class="w"> </span>-L<span class="w"> </span>--line-numbers<span class="w"> </span>-n
+</code></pre></div></p>
+<h3 id="step-2-re-run-the-attack">Step 2:  Re-run the attack</h3>
+<p>Repeat Step 3.2 to re-run the attack. Do two Wireshark captures like before, one right next to one of the Victim Resolvers and another next to the Authoritative Server to be able to see the influence of the countermeasures restrictions on network traffic.</p>
+<p><br></p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>Comparing the Wireshark capture at the Authoritative Server before and after applying the iptables rule on the resolvers, what difference do you observe in the volume of traffic reaching the authoritative server? Why does a firewall rule applied at the resolver have this effect on a different machine downstream? </p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>After applying the rate-limiting rule on the resolvers, the traffic volume arriving at the Authoritative Server drops dramatically. The vast majority of the bot queries are now dropped at the resolver's INPUT chain before they are ever processed by BIND. Because the resolver never processes these dropped packets, it never initiates recursive lookups on their behalf — meaning the authoritative server simply never receives the corresponding forwarded queries. This illustrates an important principle: a well-placed firewall rule at an intermediate node (the resolver) can shield downstream infrastructure (the authoritative server) from the flood, even though the rule is not applied on the authoritative server itself.</p>
+</details>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>Why don't we also implement the same iptables rule on the Authoritative Server? What would change in terms of availability of the DNS service for the clients of the Victim Resolvers?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>Compared to the previously explored scenario of only using firewall rules on the Victim Resolvers, applying the same rule on the Authoritative Server would introduce a critical problem: the rule would filter based on source IP address, and from the Authoritative Server's perspective, all queries (both legitimate and malicious) arrive with the Victim Resolvers' IP addresses as the source (since resolvers forward queries on behalf of their clients). There is no way for the Authoritative Server to distinguish a query forwarded on behalf of a bot from a query forwarded on behalf of a real user. As a result, once the resolver's query rate exceeds the threshold (which it easily would during an attack), the iptables rule would begin dropping all traffic from that resolver, including legitimate recursive lookups for real clients. In short, applying the rate-limiting rule at the Authoritative Server would protect it from exhaustion but at the cost of blocking all DNS resolution for the legitimate users behind the victim resolvers which is an unacceptable trade-off that the resolver-level rule avoids by filtering at the actual source of the flood traffic.</p>
+</details>
+<p><br>
+<br></p>
+<h1 id="conclusion">Conclusion</h1>
+<p>As we saw, after enforcing the firewall rules on the Resolvers the vast majority of query packets arriving at the resolvers were dropped. This also means they were never processed by the recursive resolvers and no extra resolution steps to the Authoritative Server were carried out for those dropped queries. The countermeasure therefore protected both the resolvers and the authoritative server simultaneously, without degrading service for legitimate clients — demonstrating that correct placement of rate-limiting controls within the DNS resolution chain is key to an effective defence against NXDOMAIN DDoS attacks.</p>
+<p><br></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.tabs", "navigation.indexes", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

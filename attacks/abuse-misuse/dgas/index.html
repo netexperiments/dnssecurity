@@ -1,0 +1,1529 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://netexperiments.github.io/dnssecurity/attacks/abuse-misuse/dgas/">
+      
+      
+        <link rel="prev" href="../tunneling/">
+      
+      
+        <link rel="next" href="../ff-dgas-tunneling/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>DGA-based - DNS Security</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="DNS Security" class="md-header__button md-logo" aria-label="DNS Security" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            DNS Security
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              DGA-based
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../setup/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Lab Setup
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../enhancements/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  DNS Security and Privacy Enhancements
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  DNS Attacks and Countermeasures
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="DNS Security" class="md-nav__button md-logo" aria-label="DNS Security" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    DNS Security
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lab Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../enhancements/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Security and Privacy Enhancements
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Security and Privacy Enhancements
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../enhancements/dnssec/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNSSEC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../enhancements/doh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS-over-HTTPS (DoH)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Attacks and Countermeasures
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Attacks and Countermeasures
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../protocol/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Protocol and Resolution Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_2" id="__nav_4_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Protocol and Resolution Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../protocol/rebinding/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Rebinding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../protocol/dhcp-dns-spoofing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DHCP DNS Spoofing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../server/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Server and Infrastructure Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_3" id="__nav_4_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Server and Infrastructure Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/nxdomain-ddos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NXDOMAIN DDoS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/cache-poisoning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Cache Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/kaminsky/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kaminsky Cache Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/zone-transfer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unauthorized Zone Transfer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../server/dns-arp-poisoning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS ARP Poisoning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Abuse/Misuse Attacks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_4" id="__nav_4_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DNS Abuse/Misuse Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../amplification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Amplification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ff-single/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Fast Flux Single-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ff-double/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Fast Flux Double-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tunneling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DNS Tunneling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DGA-based
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ff-dgas-tunneling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fast Flux and DGA-based Tunneling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="background">Background</h1>
+<p>Domain Generation Algorithms (DGAs) are a key evasion technique used by modern malware families to maintain resilient communication channels with their Command-and-Control (C&amp;C) servers through the use of botnets. Rather than relying on hardcoded domain names, DGAs generate a large number of pseudo-random domain names at runtime. This approach significantly complicates detection and blocking efforts by security mechanisms that rely on static lists of known malicious domains.</p>
+<p>DGAs are used to algorithmically generate domain names that malware can attempt to contact in order to receive commands and/or exfiltrate data to. The attacker and the malware both implement the same deterministic algorithm, allowing synchronization without direct communication. Typically, DGAs produce domain names based on a set of input values such as the current date or timestamp, a predefined seed value, external or volatile inputs, for example, trending Twitter hashtags or news headlines. The generated domains often resemble random alphanumeric strings (like, xjo3k7d.com, akz8p1.net), which can help them evade pattern-based detection.</p>
+<figure>
+<p><img alt="Figure 1: DGA-based C&amp;C attack" src="../../../images/background/DGAs.png" width="600" />
+  </p>
+<figcaption>Figure 1: DGA-based attack</figcaption>
+</figure>
+<p>Figure 1 reveals a scenario where DGAs are used. The steps are the following:</p>
+<ul>
+<li><strong>Step 1:</strong> The  attacker generates a list of algorithmically generated domain names using a predefined algorithm and seed.</li>
+<li><strong>Step 2:</strong> The attacker elects one of those domains, shown in the figure as tuv34wxy.ps, and registers it in the DNS infrastructure so that it resolves to the IP address 192.0.2.1 of the attacker-controlled server (C&amp;C server)</li>
+<li><strong>Step 3:</strong> The infected host (bot) generates the same domain list using the same algorithm and seed.</li>
+<li><strong>Step 4:</strong> The infected host queries those domains one by one until one of them resolves successfully, after a sequence of failed lookups signaled by NXDOMAIN DNS replies. In the figure, the queries for qidhp3la.net and ij789klm.iw fail, while the query for tuv34wxy.ps returns the IP address 192.0.2.1. </li>
+<li><strong>Step 5:</strong> Once the server IP address is obtained, the infected host connects to the attacker-controlled server (C&amp;C server) and establishes a communication channel. This channel allows the attacker to manage the infected host remotely and to trigger harmful actions such as data exfiltration, execution of malicious commands, and participation in denial-of-service activity. In a common realization of this model, the infected host is incorporated into a botnet managed through attacker-controlled infrastructure. After a predefined period, the attacker may activate another domain from the same generated set, restarting the process and making the malicious infrastructure more difficult to track, block, and take down.</li>
+</ul>
+<p>DGAs provide attackers with resilience: by generating thousands of domains daily, malware only needs one active domain to maintain communication, evading blocklists; obfuscation: random, meaningless domain names bypass traditional detection and blacklisting; and scalability: infected hosts independently generate domains using embedded algorithms, enabling decentralized, large-scale attacks with minimal attacker effort.</p>
+<p>Those same characteristics pose serious challenges for defenders. The constant generation of new domains makes static detection methods ineffective, requiring dynamic and predictive approaches instead. Reverse-engineering the malware to extract the DGA algorithm is technically demanding and time-intensive, while proactive domain registration or blocking is both operationally challenging and legally constrained. The sheer volume of domains—sometimes tens of thousands per day—can overwhelm DNS monitoring, making it difficult to separate malicious queries from legitimate traffic.</p>
+<p><br>
+<br></p>
+<h1 id="objectives">Objectives</h1>
+<p>Our goal with the following configurations is to simulate a DGA-based C&amp;C attack. This lab demonstrates how attackers use DGAs to generate and rotate command-and-control (C&amp;C) domains, evading detection and maintaining persistent communication with compromised machines. You will act as both the attacker and the victim malware, executing scripts to generate domains, register them with a DNS server, establish C&amp;C communication, and observe the data exfiltration process. Hereafter, a <strong>malware-running victim</strong> might be referred to as <strong>bot</strong> for the sake of simplicity.</p>
+<p><br>
+<br></p>
+<h1 id="lab-prerequisites-network-configuration">Lab Prerequisites &amp; Network Configuration</h1>
+<figure>
+<p><img alt="Figure 2: GNS3 Lab Topology" src="../../../images/dgas-1.png" />
+  </p>
+<figcaption>Figure 2: GNS3 Lab Topology</figcaption>
+</figure>
+<p>In the GNS3 project showed in Figure 2, you will need to add in the following topology that uses four key nodes (be sure to previously check the <a href="../../../setup/" target="_blank">Lab Setup Guide</a>):</p>
+<table>
+<thead>
+<tr>
+<th>Node Name</th>
+<th>Role</th>
+<th>IP Address</th>
+<th>Subnet</th>
+<th>Key Configuration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Victim</strong></td>
+<td>Infected Machine</td>
+<td><strong>192.168.10.2</strong></td>
+<td>192.168.10.0/24</td>
+<td>Queries DNS at 192.168.20.2</td>
+</tr>
+<tr>
+<td><strong>DNS-Server</strong></td>
+<td>DNS Server (DNSMasq)</td>
+<td><strong>192.168.20.2</strong></td>
+<td>192.168.20.0/24</td>
+<td>Used for domain resolution</td>
+</tr>
+<tr>
+<td><strong>Attacker</strong></td>
+<td>Attacker Console/Setup</td>
+<td><strong>192.168.30.2</strong></td>
+<td>192.168.30.0/24</td>
+<td>Used to run DGA and DNS registration</td>
+</tr>
+<tr>
+<td><strong>C&amp;C-Server (C2-Server)</strong></td>
+<td>Command and Control Server (Flask)</td>
+<td><strong>192.168.40.2</strong></td>
+<td>192.168.40.0/24</td>
+<td>Hosts the malicious service</td>
+</tr>
+</tbody>
+</table>
+<p>Here the DNS server used is not based on BIND, like it is in most of these labs, but based on DNSMasq. You can install the Docker container adosztal/dns for the <strong>DNS Server</strong> at GNS3.
+<br></p>
+<p><br></p>
+<p>The following scripts were used in this lab:</p>
+<ul>
+<li><a href="../../../scripts/CC_server.py" download>CC_server.py</a></li>
+<li><a href="../../../scripts/dga_banjori_attacker.py" download>dga_banjori_attacker.py</a></li>
+<li><a href="../../../scripts/dga_banjori_victim.py" download>dga_banjori_victim.py</a></li>
+<li><a href="../../../scripts/dga_register_domain_attacker.py" download>dga_register_domain_attacker.py</a></li>
+</ul>
+<p><br></p>
+<h2 id="the-algorithm-used-banjori-dga-variant">The Algorithm Used: Banjori DGA Variant</h2>
+<p>In this lab we will use a simple, deterministic sequence-based DGA, often associated with early malware families like <strong>Banjori</strong>. The domain generation relies on a simple character-shifting process:</p>
+<ul>
+<li>A <strong>seed</strong> domain (tuvydgaattack.pt) is used to start the sequence.</li>
+<li>The next domain is generated based on simple arithmetic operations applied to the ASCII values of the characters of the previous domain.</li>
+<li>Only the first 4 characters of the domain are changed.</li>
+</ul>
+<p><br>
+<br></p>
+<h1 id="phase-1-attacker-setup-and-dns-registration">Phase 1: Attacker Setup and DNS Registration</h1>
+<h3 id="step-11-generate-the-agd-list-and-select-the-domain">Step 1.1: Generate the AGD List and Select the Domain</h3>
+<p>On the <strong>Attacker</strong> machine, run:</p>
+<div class="highlight"><pre><span></span><code>python3<span class="w"> </span>/home/dga_banjori_attacker.py
+</code></pre></div>
+<p>The attacker runs the pre-configured DGA script. In this script, a list of 500 domains is generated based on the seed and following the Banjori algorithm, a random AGD is chosen at the end to be then registered. </p>
+<h3 id="step-12-register-the-cc-domain-with-the-dns-server">Step 1.2: Register the C&amp;C Domain with the DNS Server</h3>
+<p>On the <strong>Attacker</strong> machine, run:</p>
+<div class="highlight"><pre><span></span><code>python3<span class="w"> </span>/home/dga_register_domain_attacker.py<span class="w"> </span>--domain<span class="w"> </span>DGA_DOMAIN<span class="w"> </span>--ip<span class="w"> </span>C<span class="p">&amp;</span>C_SERVER_IP
+</code></pre></div>
+<p>The Attacker maps the selected domain to the <strong>C&amp;C-Server</strong> IP address. The Python script automates the process of registering a domain-IP pair in a DNSMasq server by updating a custom hosts file and reloading DNSMasq. It connects to that server (192.168.20.2) using Paramiko (SSH library) and reads/writes in a hosts file (/etc/dnsmasq.d/hosts/dynamic_hosts.txt) via SFTP. </p>
+<p><br>
+<br></p>
+<h1 id="phase-2-activation-and-data-exfiltration">Phase 2: Activation and Data Exfiltration</h1>
+<h3 id="step-21-activating-the-cc-server">Step 2.1: Activating the C&amp;C Server</h3>
+<p>On the <strong>C&amp;C-Server</strong>, run:</p>
+<div class="highlight"><pre><span></span><code>python3<span class="w"> </span>/home/CC_server.py
+</code></pre></div>
+<p>The C&amp;C server’s script is responsible for handling the beacon signal sent by the bots and all communication thereafter. It allows an operator to monitor connected bots, to send commands, and collect outputs and files from those bots. The server exposes four HTTP endpoints for communication with bots: <code>/beacon</code> (POST, bots send a "beacon" to signal they are alive); <code>/get-command</code> (GET, bots request commands to execute); <code>/report</code> (POST, bots send the output of executed commands); <code>/file-report</code> (POST, bots send file contents e.g., stolen data). The script can then save the information obtained for future use.
+<br>
+<br></p>
+<h3 id="step-22-victim-initiates-the-connection">Step 2.2: Victim Initiates the Connection</h3>
+<p>Do a Wireshark capture right next to the Victim interface (as a tip, use a “dns” filter to better analyze the relevant DNS packets).</p>
+<p>On the <strong>Victim</strong> machine, run:</p>
+<div class="highlight"><pre><span></span><code>python3<span class="w"> </span>/home/dga_banjori_victim.py
+</code></pre></div>
+<p>Observe the connection attempts and the final successful beacon confirmation on the C&amp;C terminal. Look into the Wireshark capture to see the process in detail.</p>
+<p>The Victim runs the malware script: it generates 500 domains, performs iterative DNS queries to the <strong>DNS Server</strong> until one resolves to an IP address, the <strong>C&amp;C’s</strong>, and establishes a connection with that machine. It will use the previously mentioned HTTP endpoints to communicate with the C&amp;C server.
+<br>
+<br></p>
+<h3 id="step-23-issuing-commands-and-exfiltration">Step 2.3: Issuing Commands and Exfiltration</h3>
+<p>Use the C&amp;C operator interface to control the Victim. Start by selecting Option <code>2. Issue Command to Victim</code>, entering Victim ID (<code>1</code>), and running the command <code>ls</code>. Next, issue another command using the same process, this time entering <code>ls /home</code>. To verify the output, select Option <code>3. View General Command Outputs</code> and confirm that the directory listing is received.</p>
+<p>For data exfiltration, select Option <code>2. Issue Command to Victim</code> again, issue the command <code>read /home/password.txt</code>, and then select Option <code>4. View Received Files</code>. The content of the requested file should be displayed, confirming successful exfiltration.</p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>Based on the current network setup, if the Victim's DNS setting was pointing to an internal resolver instead of a public one, would this attack still succeed? Why or why not?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>It depends on the level of control network administrators could have over the inbound and outbound traffic. They could choose drastic strategies like having a whitelist of available domains to be queried, even if this would severely detrimental to a normal user experience. But only a very restrictive environment would make DGA-based attacks impossible.</p>
+</details>
+<p><br>
+<br></p>
+<h1 id="phase-3-domain-rotation">Phase 3: Domain Rotation</h1>
+<h3 id="step-31-rotating-the-cc-domain">Step 3.1: Rotating the C&amp;C Domain</h3>
+<p>1 - Run on the <strong>Attacker</strong> to get a new selected domain.</p>
+<div class="highlight"><pre><span></span><code>python3<span class="w"> </span>/home/dga_banjori_attacker.py
+</code></pre></div>
+<p>2 - Register the new domain: </p>
+<div class="highlight"><pre><span></span><code><span class="n">python3</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">dga_register_domain_attacker</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">domain</span> <span class="n">NEW_DGA_DOMAIN</span> <span class="o">--</span><span class="n">ip</span> <span class="mf">192.168.40.2</span>
+</code></pre></div>
+<p>To simulate the resilience expected when using a DGA technique, the Attacker now has to register a new domain for the C&amp;C, the victims at the time of the change should still be able to contact the C&amp;C Server, but new victims will use the new domain to establish a connection.
+<br></p>
+<h3 id="step-32-re-establishing-the-connection">Step 3.2: Re-establishing the Connection</h3>
+<p>While maintaining the C&amp;C Server script still running, try to re-establish the connection by running the victim script. </p>
+<p>On the <strong>Victim</strong> machine, run:</p>
+<div class="highlight"><pre><span></span><code>python3<span class="w"> </span>/home/dga_banjori_victim.py
+</code></pre></div>
+<p>Execute the command and confirm the connection is re-established using the new, rotated domain.</p>
+<p><br></p>
+<h2 id="challenge-exploring-other-dga-algorithms">Challenge: Exploring Other DGA Algorithms</h2>
+<p>The Banjori DGA variant used here is simplistic. Real-world DGAs are often far more complex, incorporating factors like the current date, time, or external data (e.g., Bitcoin exchange rates, Twitter hashtags) to generate domains. This makes prediction extremely difficult without knowing the exact algorithm and seed.
+Check here for more information: <a href="https://github.com/baderj/domain_generation_algorithms" target="_blank">https://github.com/baderj/domain_generation_algorithms</a></p>
+<p>Copy the contents of the <code>dga_banjori_attacker.py</code> and <code>dga_banjori_victim.py</code> scripts to new files and  implement a basic <strong>Simple Pseudo-Random DGA</strong> where the domains are generated using a fixed random seed. Use the previous given source to understand how to implement such algorithms in Python. You can use <a href="https://bin.re/blog/krakens-two-domain-generation-algorithms/" target="_blank">Kraken</a> for example. </p>
+<ul>
+<li><strong>Replace the <code>next_domain</code> function</strong> in both scripts with a different generation method using a fixed string or integer as the initial seed for repeatability.</li>
+<li><strong>Repeat Phases 1-3</strong> of this lab guide using your chosen algorithm.</li>
+</ul>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>Did the attack still succeed? Write down one advantage of using a Date/Time Synchronous DGA over the simple Fixed-Seed Pseudo-Random DGA you just implemented.</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>Date/Time Synchronous DGAs enable real-time synchronization between malware and C&amp;C servers, making domain prediction and blocking harder for defenders.</p>
+</details>
+<p><br>
+<br>
+<br>
+<br>
+<br></p>
+<h1 id="countermeasure">Countermeasure</h1>
+<p>After performing the attack, we now pass on to the countermeasure phase. DGAs are considered a state-of-the-art attack mechanism precisely due to its detection elusive nature and robust tolerance to termination attempts. One of the core features of this type of attack technique is the use of many algorithmically generated domains, of which only a few are indeed valid to be used. The main consequence of this is the trail of numerous NXDOMAIN response messages (responses with no answer) left behind during the connection attempt phase, which can signal the presence of this attack if monitored.</p>
+<p>We will use an Intrusion Detection/Prevention System - IDS/IPS (like <strong>Snort</strong>) to monitor NXDOMAIN messages sent by the DNS Resolver to the Victim.</p>
+<figure>
+<p><img alt="Figure 3: Updated GNS3 Lab Topology" src="../../../images/dgas-2.png" />
+  </p>
+<figcaption>Figure 3: Updated GNS3 Lab Topology</figcaption>
+</figure>
+<p><br>
+<br></p>
+<h2 id="idsips-setup">IDS/IPS Setup</h2>
+<p>In Figure 3, we introduce a Snort machine between Victim and the central Router, that will serve as a middle-man between both. By using the IDS/IPS Snort it can drop packets and even block specific origins. </p>
+<h3 id="step-1-snort-alert-configuration">Step 1: Snort Alert Configuration</h3>
+<p>On the <strong>Snort</strong> machine, edit the <code>/etc/snort/rules/local.rules</code> file to add a rule.</p>
+<p><strong>Rule:</strong> </p>
+<div class="highlight"><pre><span></span><code>alert<span class="w"> </span>udp<span class="w"> </span>any<span class="w"> </span><span class="m">53</span><span class="w"> </span>-&gt;<span class="w"> </span><span class="nv">$HOME_NET</span><span class="w"> </span>any<span class="w"> </span><span class="o">(</span>msg:<span class="s2">&quot;High Volume DNS Responses with Zero Answer RRs Detected&quot;</span><span class="p">;</span><span class="w"> </span>flow:established<span class="p">;</span><span class="w"> </span>byte_test:2,<span class="o">=</span>,0,6,relative<span class="p">;</span><span class="w"> </span>threshold:type<span class="w"> </span>limit,<span class="w"> </span>track<span class="w"> </span>by_src,<span class="w"> </span>count<span class="w"> </span><span class="m">10</span>,<span class="w"> </span>seconds<span class="w"> </span><span class="m">60</span><span class="p">;</span><span class="w"> </span>sid:1000002<span class="p">;</span><span class="w"> </span>rev:1<span class="p">;</span><span class="o">)</span>
+</code></pre></div>
+<p>An IDS/IPS like Snort needs a rule to be able to alert in case of such rule applies. Edit the local.rules file to add it. The sid field is the unique ID of a rule in that file, change it accordingly. UDP 53 is used to identify DNS protocol messages. Make sure to previously check the Setup Guide to enter the necessary Snort pre-configurations.</p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>What is this segment (<code>byte_test:2,=,0,6,relative;</code>) for?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>This byte_test checks the 7th and 8th bytes (offset 6, relative to the UDP payload start) in a DNS response. It verifies if the Answer RR count (number of answers) is zero, indicating no answers were provided.</p>
+</details>
+<p><br></p>
+<h3 id="step-2-re-run-the-attack">Step 2: Re-run the attack</h3>
+<p>On the <strong>Snort</strong> machine, run:</p>
+<div class="highlight"><pre><span></span><code>snort<span class="w"> </span>-Q<span class="w"> </span>-A<span class="w"> </span>console<span class="w"> </span>-i<span class="w"> </span>eth0:eth1<span class="w"> </span>-c<span class="w"> </span>/etc/snort/snort.conf
+</code></pre></div>
+<p>Run the attack, like before, but this time also run Snort in the <strong>Snort</strong> machine and observe the alert messages. Also use a Wireshark capture in between the <strong>Victim</strong> and <strong>Snort</strong> machines (use a “dns” filter to better analyze the relevant packets).</p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>Why did the Victim receive all NXDOMAIN messages if there was already a Snort rule in place? Why did they go through the Snort machine? </p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>The snort rule in place was just an "alert" rule, without any capacity to block packets in any way. A "drop" rule however can stop packets.</p>
+</details>
+<p><br></p>
+<h3 id="step-3-modify-the-rule-and-re-run-the-attack">Step 3: Modify the Rule and Re-run the attack.</h3>
+<p>Now let's modify the rule to see what happens. Be sure to also capture the network traffic as before.</p>
+<p><strong>Rule:</strong></p>
+<div class="highlight"><pre><span></span><code>drop<span class="w"> </span>udp<span class="w"> </span>any<span class="w"> </span><span class="m">53</span><span class="w"> </span>-&gt;<span class="w"> </span><span class="nv">$HOME_NET</span><span class="w"> </span>any<span class="w"> </span><span class="o">(</span>msg:<span class="s2">&quot;High Volume DNS Responses with Zero Answer RRs Detected&quot;</span><span class="p">;</span><span class="w"> </span>flow:established<span class="p">;</span><span class="w"> </span>byte_test:2,<span class="o">=</span>,0,6,relative<span class="p">;</span><span class="w"> </span>threshold:type<span class="w"> </span>limit,<span class="w"> </span>track<span class="w"> </span>by_src,<span class="w"> </span>count<span class="w"> </span><span class="m">10</span>,<span class="w"> </span>seconds<span class="w"> </span><span class="m">60</span><span class="p">;</span><span class="w"> </span>sid:1000002<span class="p">;</span><span class="w"> </span>rev:2<span class="p">;</span><span class="o">)</span>
+</code></pre></div>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>Did this new rule make any difference in the completion of the attack?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>Yes, this rule did make a difference in the length and difficulty of the attack, but not overall on its completion. The malware in the victim is still able to get the inforamtion it needed, even if it takes a longer time.</p>
+</details>
+<p><br></p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>Should a new rule that simply blocks packets coming in from the previously detected NXDOMAIN packets' origin IP address be used? Why or why not?</p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>No, a rule like that should not be used. Since this attack relies on clueless resolvers for the necessary data to get to the Victim Client, a rule that just blocks the origin IP of all the NXDOMAIN responses would just be blocking a normal resolver, and not the real source of the tampering.</p>
+</details>
+<p><br>
+<br>
+<br></p>
+<h1 id="conclusion">Conclusion</h1>
+<p>As we saw, after we altered the snort rule from “alert” to “drop”, the empty response NXDOMAIN packets were blocked and wouldn't reach the victim, and so the malware script had a much more substantial task of finding the correct domain to establish the connection with the C&amp;C server.</p>
+<p>Although we use the “drop” rule the attack isn't stopped effectively and so the Snort’s behaviour ends up being more akin to an intrusion detection than intrusion prevention system because the attack can still be completed even if is much more delayed (at least in the early stages of connection establishment).</p>
+<p>By using the countermeasure here explored, human intervention (network administraton) is necessary to, after the attack’s initial detection, devise further measures to stop it from happening again in the future.</p>
+<div class="admonition question question">
+<p class="admonition-title">Question</p>
+<p>What do you think could be a way to automate the detection and blocking of this attack technique without harming legitimate traffic and without using human input? </p>
+</div>
+<details class="success">
+<summary>Answer</summary>
+<p>A good way of doing it would be to do traffic analysis using machine learning techniques, that can look into all the domain names (and also quantity of packets, etc) being queried and determine if it could be a sign of DGA-based attacks.</p>
+</details>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.tabs", "navigation.indexes", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
