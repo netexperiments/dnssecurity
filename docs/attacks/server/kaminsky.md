@@ -9,7 +9,7 @@ A feature of DNS not previously explained, relevant for this attack, is the glue
 
 
 <figure markdown id="figure-1">
-  ![Figure 1: DNS Tunneling attack](../../images/background/Kaminsky.png)
+  ![Figure 1: DNS Tunneling attack](../../images/background/Kaminsky.png){ width="600" }
   <figcaption>Figure 1: Kaminsky Cache Poisoning attack</figcaption>
 </figure>
 
@@ -17,14 +17,13 @@ A feature of DNS not previously explained, relevant for this attack, is the glue
  [Figure 1](#figure-1) shows a scenario where the victim DNS server has a record of the domain (**example.com**) in cache. Evidently, the victim DNS server has no record of the subdomain (**1238.example.com**). The attacker has a pre-configured authoritative nameserver for the domain (**example.com**) and has a fast connection to the victim DNS server. The attack's steps are the following:
  
 
-- **Step 1:**  The attacker sends a DNS query request to the victim DNS server about the domain **1238.example.com**.
-- **Step 2:** The victim DNS server queries the domain's nameserver (**ns1.example.com**) to get the domain's corresponding IP address.
-- **Step 2.1:** Simultaneously, the attacker's nameserver floods the victim DNS server with spoofed DNS replies, using different QIDs, a malicious NS record in the Authority Section and a corresponding glue record (A record) in the Additional Section, identifying the attacker's nameserver (192.0.2.1) as being authoritative for **example.com**.
-- **Step 3:** The domain's nameserver (ns1.example.com) responds and an NS record in the Authority Section, indicating that it is responsible for the domain's name resolution. Additionally, it includes a glue record in the Additional Section, which is an A record mapping ns1.example.com to its IP address (212.0.1.9). This informs the resolver that ns1.example.com is authoritative for resolving all subdomains, including 1238.example.com.
-- **Step 4:** The victim DNS server finally responds to the attacker with the IP address it assumes to be of 1238.example.com. If Step 2.1 happened successfully before Step 3, the returned IP address in Step 4 will be that given by the attacker's nameserver in Step 2.1 (1.2.3.4).
-
-
-Do note that the attack is only successful if Step 2.1 happens before Step 3, and for that, the attacker's nameserver has to flood the victim DNS server with replies right after the attacker sends the DNS query in Step 1.
+- **Step 1:** The attacker sends the Resolver an A-record query for a fresh randomized name, here **s1.example.com**.
+- **Step 2:** Because the requested name is not cached, the Resolver sends an upstream query for s1.example.com to a legitimate authoritative DNS server for example.com, using transaction **ID 101**.
+- **Step 3:** While this query remains outstanding, the attacker floods the Resolver with forged responses that reproduce the question but contain different transaction-ID guesses, illustrated by QID=100, QID=101, and QID=102. Each response pretends to originate from the queried authoritative server and contains a direct answer mapping s1.example.com to **192.0.2.2**, an Authority-section NS record delegating example.com to **ns1.example.com**, and an Addtional-section A record mapping that nameserver to the attacker-controlled address **192.0.2.1**.
+- **Step 4:** If the forged response containing QID=101 arrives first, the Resolver associates it with the outstanding query and processes the RRsets it contains. The direct Answer-section record for s1.example.com is eligible to be cached. If the Authority and Additional-section records also satisfy the Resolver’s bailiwick, relevance, and trust requirements, the malicious delegation and corresponding nameserver address are cached as well.
+- **Step 5:** The legitimate authoritative server returns an NXDOMAIN response for the non-existent randomized name, also using QID=101; however, this response arrives too late and is ignored because the query has already been completed. The figure then distinguishes two possible outcomes.
+- **Step 6a:** If the attacker loses the race or the desired delegation data is not accepted, another attempt is triggered with a fresh name, such as **s2.example.com**.
+- **Step 6b:** If the malicious delegation is accepted, the Resolver uses it during a later resolution and sends an A-record query for **www.example.com** to the attacker-controlled nameserver ns1.example.com at 192.0.2.1.
 
 <br>
 

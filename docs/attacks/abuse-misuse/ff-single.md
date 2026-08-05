@@ -13,26 +13,20 @@ change dynamically. In more advanced variants like Double-Flux, the NS records (
 rotate, adding another layer of obfuscation.
 
 <figure markdown>
-  ![Figure 1: DGA-based C&C attack](../../images/background/FastFluxSingle.png)
+  ![Figure 1: DGA-based C&C attack](../../images/background/FastFluxSingle.png){ width="600" }
   <figcaption>Figure 1: Fast Flux Single - based attack</figcaption>
 </figure>
 
 Figure 1 shows an example of a Single Flux Architecture. These are the steps in the figure:
 
-- **Step 1:** The Attacker generates a preset list of FFAs' IP addresses which the authoritative nameserver will use to add or update the A records for **cc.attacker.com**.
-- **Step 2:** The victim sends a DNS query for cc.attacker.com to a DNS
-resolver.
-- **Step 3:** The recursive DNS server forwards the query to the authoritative server for **attacker.com**
-to resolve the domain name.
-- **Step 4:**  The authoritative server responds with the IP address of one fast-flux agent IP address (59.35.174.58) and sets a very low TTL value.
-- **Step 5:** The local DNS resolver returns the IP address to the victim.
-- **Step 6:** The victim connects to the returned IP address provided (59.35.174.58).
-- **Step 7:** The FFA at 59.35.174.58, acting as a fast-flux proxy, forwards the traffic to the actual Attacker's Server.
-- **Step 8:** The Attacker's Server processes the request—such as issuing instructions to the victim or receiving stolen data—and sends a response back to the fast-flux agent.
-- **Step 9:** The fast-flux agent relays the response to the victim.
+- **Step 1:** The victim sends a DNS query for **service.attacker.com** to a DNS resolver. 
+- **Step 2:** The resolver queries the authoritative DNS server for the A record of service.attacker.com.
+- **Step 3:** The authoritative server replies with the IP address **101.23.65.98**, corresponding to one fast-flux agent, and sets a short TTL for that answer. 
+- **Step 4:** The resolver returns that IP address to the victim.
+- **Step 5:** The victim connects to **101.23.65.98**.
+- **Step 6:** The fast-flux agent relays the traffic to the hidden backend server. Because the TTL is short, a later lookup for the same name may return a different fast-flux agent IP address, such as **59.35.174.58** or **219.67.43.12**. In this way, the domain remains stable from the victim’s point of view, while the visible service endpoint may change across successive resolutions.
 
-As the TTL expires quickly, the victim or resolver may need to resolve cc.attacker.com again, at which point the authoritative server returns a different IP address (**101.23.65.98**), pointing
-to another fast-flux agent. In this way, the domain remains stable from the host's point of view, while the service endpoint visible on the network keeps changing.
+
 
 <br>
 <br>

@@ -10,19 +10,16 @@ In practice, attackers use botnets or compromised devices to send a flood of DNS
 
 
 <figure markdown id="figure-1">
-  ![Figure 1: DNS Tunneling attack](../../images/background/NXDOMAINS.png)
+  ![Figure 1: DNS Tunneling attack](../../images/background/NXDOMAINS.png){ width="600" }
   <figcaption>Figure 1: NXDOMAIN DDoS attack</figcaption>
 </figure>
 
 
  [Figure 1](#figure-1) shows an NXDOMAIN DDoS case example. All the bots are using the same two DNS resolvers which, of course, in a real-world scenario would not occur. These are the steps:
 
-- **Step 1:** The attacker commands a botnet to send a high volume of DNS queries for random subdomains of example.com.
-- **Step 2:** Each receiving DNS resolver, receives each query and begins a recursive lookup. The first time it queries a root DNS server to obtain a referral to the appropriate Top-Level Domain (TLD) server, in this case, the .com TLD server.
-- **Step 3:** Each resolver then queries the .com TLD server, receiving the IP address of the authoritative nameserver responsible for example.com.
-- **Step 4:** For the rest of the packets each resolver now only sends the queries to the authoritative nameserver for example.com, which responds with NXDOMAIN messages indicating the requested subdomains do not exist.
-- **Step 5:** Each NXDOMAIN response is sent back to the querying bots.
-- **Step 6:** Due to the flood of DNS queries, the victim resolvers' and authoritative server's resources can be overwhelmed with the increased load, and legitimate query resolutions from clients are halted.
+- **Step 1:** The botnet sends a large number of DNS queries for randomized, non-existent subdomains of example.com to multiple resolvers.
+- **Step 2:** Because the queried names are unique and do not appear in cache, each resolver performs recursive resolution by forwarding the queries toward the authoritative DNS server for example.com, which then returns NXDOMAIN
+replies. Since this process is repeated at high rate and across many distinct names, both the resolvers and the authoritative server are burdened with a continuous stream of futile DNS work. As a consequence, legitimate DNS queries may be delayed, dropped, or time out, causing service degradation or denial of service for users that depend on the affected DNS infrastructure.
 
 <br>
 <br>

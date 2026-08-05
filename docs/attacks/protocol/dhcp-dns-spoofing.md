@@ -12,22 +12,21 @@ Initially, the attacker monitors a network for DHCP requests from clients seekin
 
 
 <figure markdown id="figure-1">
-  ![Figure 1: DHCP DNS Spoofing attack](../../images/background/DHCP_DNS_Spoofing.png)
+  ![Figure 1: DHCP DNS Spoofing attack](../../images/background/DHCP_DNS_Spoofing.png){ width="600" }
   <figcaption>Figure 1: DHCP DNS Spoofing attack</figcaption>
 </figure>
 
  [Figure 1](#figure-1) shows a DHCP DNS spoofing scenario. These are the steps:
 
 
-- **Step 1:** A victim device joins the network or attempts to renew its lease and broadcasts a DHCPDISCOVER message to the entire local network in order to find an available DHCP server.
-- **Step 2:**  The Attacker DHCP Server intercepts the broadcast and immediately sends a DHCPOFFER. To ensure the Victim chooses it has its DHCP server. This message includes standard networking info, like an IP address and gateway, but also the IP address of a DNS Resolver, 157.53.85.16, which belongs to the Attacker DNS Resolver. 
-- **Step 3:** The Victim accepts the malicious offer and configures its network settings based on the attacker's provided info. It then performs a query for a domain, like example.com. From this point on, every time the victim tries to resolve a domain it will be sent to the Attacker DNS Resolver.
-- **Step 4:** The Attacker DNS Resolver can now reply with an IP address belonging to an attacker machine, effectively redirecting the Victim away from the legitimate destination.
-
-In Step 2, the attacker may first perform a DHCP Starvation attack to exhaust the legitimate DHCP Server's IP pool, making the rogue Attacker DHCP Server the only one capable of responding.
-
+- **Step 1:** The victim broadcasts a DHCPDISCOVER message in order to obtain network configuration parameters.
+- **Step 2:** The rogue DHCP server replies with a malicious DHCPOFFER/DHCPACK, providing the IP address **198.51.100.53** as the DNS server to be used by the victim. If the victim accepts this configuration, its subsequent DNS queries are directed to the attacker-controlled DNS server instead of to a legitimate resolver.
+- **Step 3:** The victim sends a DNS query for example.com to the malicious DNS server at **198.51.100.53**.
+- **Step 4:** The malicious DNS server returns a forged DNS reply mapping example.com to the attacker-controlled IP address **192.0.2.1**.
+- **Step 5:** The victim establishes a connection to the attacker-controlled server, believing that it corresponds to the legitimate destination originally requested.
 
 
+In this way, the attacker first corrupts the victim’s DNS configuration through rogue DHCP and then exploits that false configuration to control the DNS resolution process and redirect the victim’s subsequent communication.
 
 <br>
 <br>

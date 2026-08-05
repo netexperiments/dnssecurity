@@ -15,11 +15,12 @@ DNS spoofing based on ARP Poisoning, or just simply DNS ARP Poisoning is an appl
 
 Figure 1 reveals a DNS spoofing based on ARP Poisoning attack scenario. The steps are the following:
 
-- **Step 1:** The attacker scans the network to identify active devices and their IP/MAC mappings. It then sends ARP replies to a recurrent ARP Request of both the Victim and the ARP Server with each other's MAC addresses paired with the attacker's own IP address. 
-- **Step 2:** Eventually, the Victim sends a DNS Query for example.com which the attacker intercepts since he now acts as "man-in-the-middle".
-- **Step 3:** The attacker replies with the IP address of his pre-configured malicious webserver.
-- **Step 4:** The Victim establishes a connection with the Attacker Webserver, oblivious to it not being the legitimate webserver for example.com.
-- **Step 5:** The Attacker Webserver is now free to respond with whatever it sees fit.
+- **Step 1:** The attacker sends a forged ARP reply to the victim, falsely associating the resolver or gateway IP address with the attacker’s MAC address. As a result, DNS traffic sent by the victim is delivered first to the attacker.
+- **Step 2:** Eventually, the victim issues a DNS query for example.com, which is intercepted by the attacker because of the poisoned ARP state.
+- **Step 3:** Before the legitimate DNS response is received, the attacker sends a forged DNS reply mapping example.com to an attacker-controlled IP address. If the victim accepts this spoofed reply, it associates the requested
+domain name with the false destination.
+- **Step 4:** The victim establishes a connection to the attacker-controlled server, believing that it corresponds to the legitimate destination originally requested. In this way, the attacker uses ARP poisoning to gain an on-path position and DNS spoofing to redirect the victim’s subsequent communication.
+
 
 
 

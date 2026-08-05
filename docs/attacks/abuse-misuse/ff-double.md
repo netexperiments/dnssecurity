@@ -17,24 +17,22 @@ name server is taken down, new ones quickly replace it, and the domain remains a
 
 
 <figure markdown>
-  ![Figure 1: DGA-based C&C attack](../../images/background/FastFluxDouble.png)
+  ![Figure 1: DGA-based C&C attack](../../images/background/FastFluxDouble.png){ width="600" }
   <figcaption>Figure 1: Fast Flux Double - based attack</figcaption>
 </figure>
 
 Figure 1 shows an example of a Double Flux Architecture. These are the steps in the figure:
 
-- **Step 1:** The attacker adds or updates the NS and A records for attacker.com and ns.attacker.com, respectively, pointing them to a fast-flux agent (**219.67.43.12**). 
-- **Step 2:** The A record for **cc.attacker.com** with a short TTL, such as 60 seconds, is added on the new fast-flux agent acting as ns.attacker.com pointing it to the fast-flux agent (**59.35.174.58**).
-- **Step 3:** The victim sends a DNS query for cc.attacker.com to a DNS resolver.
-- **Step 4:** The DNS resolver, after going through the DNS hierarchy, queries the  authoritative server for attacker.com to resolve cc.attacker.com.
-- **Step 5:** The query is handled by a fast-flux agent acting as the nameserver, which replies to the DNS Resolver with IP address 59.35.174.58.
-- **Step 6:** The DNS server relays the result back to the victim.
-- **Step 7:** The victim initiates a connection to the resolved IP address (59.35.174.58).
-- **Step 8:** The request is received by a fast-flux agent and forwarded
-to the Attacker's Server.
-- **Step 9:** The C&C server processes the request and sends a response back to the fast-flux agent.
-- **Step 10:** The fast-flux agent relays the Attacker's Server’s response back to the victim.
-- **Step 11:** The Attacker's Server can now update both the A record for **cc.attacker.com** and the NS and A records for the authoritative nameserver, pointing them to new fast-flux agents (like **101.23.65.98**) to continue the rotation.
+- **Step 1:** The attacker rotates the DNS authority for attacker.com, so that the domain is currently served by one authoritative server, shown in the figure as **ns1.attacker.com**. 
+- **Step 2:** The victim sends a DNS query for **service.attacker.com** to a DNS resolver.
+- **Step 3:** The resolver queries the current authoritative server for the A record of service.attacker.com
+- **Step 4:** The authoritative server replies with the IP address **101.23.65.98**, corresponding to one fast-flux agent, and sets a short TTL for that answer. 
+- **Step 5:** The resolver returns that IP address to the victim.
+- **Step 6:** The victim connects to **101.23.65.98**.
+- **Step 7:** The fast-flux agent relays the traffic to the hidden backend server. Because the service-record TTL is short, and because previously learned authority-related information eventually expires from resolver caches,
+later lookups may return not only a different fast-flux agent IP address, such as **59.35.174.58** or **219.67.43.12**, but also different authoritative-server information for **attacker.com**, for example moving authority from **ns1.attacker.com** to **ns2.attacker.com**. In this way, Double-Flux removes stability from both the service layer and the DNS-control layer, further increasing the resilience of the malicious infrastructure.
+
+
 
 <br>
 <br>

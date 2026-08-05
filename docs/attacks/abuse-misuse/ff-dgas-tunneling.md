@@ -21,17 +21,17 @@ It is recommended to first complete the aforementioned lab guides in order to un
 
 Figure 1 shows an example of a combined Fast Flux/DGA/Tunneling Architecture. These are the steps in the figure:
 
-- **Step 1:** The attacker generates a list of **AGDs** (algorithmically generated domains) according to a preset algorithm and seed, and chooses one.
-- **Step 2:** The attacker registers the NS and A records for the chosen AGD, tuv34wxy.ps, and ns.tuv34wxy.ps, respectively, on the DNS infrastructure, pointing to a fast-flux agent (**219.67.43.12**). 
-- **Step 3:** The malware-infected host, using the same seed and algorithm, 
-generates an equal list of domains as the attacker.
-- **Step 4:** By trial and error, the infected host eventually gets 
-an IP address (**59.35.174.58**) result from a DNS server for one of the domains 
-(tuv34wxy.ps) it had generated.
-- **Step 5:** The infected host send a query, through the DNS Server, to the FFA, acting as nameserver, for the TXT record associated with of oi9L#1..com a subdomain of the generated domain, effectively surrendering the host sensitive data.
-- **Step 6:**  The FFA forwards the delivered data to the C&C server. 
-- **Step 7:** The C&C server directs ns.attacker.com to send a new command order to the host (e.g. run comand2.py).
-- **Step 8:** The DNS Server responds with the FFA reply to the DNS Query with the new command as a TXT record. 
+- **Step 1:** The  attacker runs the DGA, selects one generated domain, here agd3.net, activates it in the DNS infrastructure, and sets the NS and corresponding address information so that
+agd3.net is served by the active fast-flux agent **ns.agd3.net**. This creates the DNS condition needed for the infected host to discover the active domain. The use of a fast-flux agent as the authoritative endpoint allows the attacker to later rotate this role to another agent, such as **ns.agd8.net**.
+- **Step 2:** The infected host runs the same DGA and sends DNS queries for the generated domains, such as **agd1.net**, **agd2.net**, and **agd3.net**, to the DNS infrastructure.
+- **Step 3:** The DNS infrastructure returns NXDOMAIN responses for inactive AGDs. These negative replies are expected during the discovery phase and correspond to the trial-and-error behavior of DGA-based rendezvous. When the infected host queries the active AGD, the DNS infrastructure does not return NXDOMAIN; instead, it follows the configured delegation.
+- **Step 4:** The DNS infrastructure queries the active fast-flux agent for agd3.net, because that agent is currently authoritative for the active AGD. 
+- **Step 5a:** The active fast-flux agent returns a valid DNS response for agd3.net to the DNS infrastructure.
+- **Step 5b:** That valid response is returned to the infected host. This response indicates to the malware that agd3.net is the active rendezvous domain, and it therefore begins the tunneling phase under that domain.
+- **Step 6a:** The infected host sends an encoded DNS query such as **chunk1.agd3.net**. The leftmost label carries a fragment of the data being exfiltrated. Because chunk1.agd3.net is a fresh subdomain under agd3.net, the DNS infrastructure forwards the query to the authoritative server for agd3.net.
+- **Step 6b:** The query therefore reaches the active fast-flux agent.
+- **Step 7:** The active fast-flux agent extracts or relays the encoded payload to the attacker. DNS responses may also carry information in the opposite direction, allowing the same channel to support command delivery as well as
+exfiltration.
 
 <br>
 <br>

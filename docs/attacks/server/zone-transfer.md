@@ -17,10 +17,10 @@ Initially, the attacker identifies the authoritative name servers for the target
  [Figure 1](#figure-1) shows a unauthorized zone transfer scenario using a misconfigured victim nameserver. These are the steps:
 
 
-- **Step 1:** The attacker sends a NS DNS query to a resolver for example.com
-- **Step 2:** The resolver answers with the IP address (185.0.46.1) of ns1.example.com, the authoritative server for example.com
-- **Step 3:** The attacker now queries ns1.example.com directly, specifically requesting a zone transfer (AXFR) of the example.com zone
-- **Step 4:** The Victim Nameserver replies with various answer records relating to the example.com zone.
+- **Step 1:** The attacker sends an NS query for example.com to the DNS infrastructure in order to discover the authoritative server for the target domain.
+- **Step 2:** The DNS infrastructure replies with the authoritative server name, here **ns1.example.com**.
+- **Step 3:** The attacker sends an AXFR request directly to that authoritative server.
+- **Step 4:** If the server is misconfigured and does not enforce access control on zone transfers, it replies with the full zone data, which the attacker can then inspect to obtain a detailed view of the target’s DNS namespace, including hosts, services, and addressing information that may be useful for subsequent intrusion attempts.
 
 
 

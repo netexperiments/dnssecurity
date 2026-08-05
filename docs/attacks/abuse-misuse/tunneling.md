@@ -11,28 +11,20 @@ Initially, the attacker encodes the data to be exfiltrated or the commands to be
 
 
 <figure markdown>
-  ![Figure 1: DNS Tunneling attack](../../images/background/Tunneling.png)
+  ![Figure 1: DNS Tunneling attack](../../images/background/Tunneling.png){ width="600" }
   <figcaption>Figure 1: DNS Tunneling attack</figcaption>
 </figure>
 
 Figure 1 shows a sensitive data extraction scenario using DNS Tunneling from a victim already infected with the attacker’s malware. These are the steps:
 
 
-- **Step 1:** The attacker registers the domain attacker.com.
-- **Step 2:** The malware in the victim’s machine has access to certain sensitive data, in this case, a password (oi9L#1).
-- **Step 3:** The bot in the victim machine performs a DNS query for oi9L#1.attacker.com, a subdomain of the attacker’s controlled domain (attacker.com). This subdomain name includes the obtained password.
-- **Step 4:** The local DNS server has to check with root/gTLD servers to get the IP address of the authoritative nameserver for attacker.com.
-- **Step 5:** The root/gTLD servers reply with the IP address of the authoritative nameserver for (attacker.com).
-- **Step 6:** The DNS server queries the attacker’s nameserver for the IP address of oi9L#1.attacker.com, effectively surrendering the victim’s password to the attacker.
-- **Step 7:**  The ns.attacker.com nameserver forwards the delivered password to the attacker. 
-
-- **Step 8:** The attacker directs ns.attacker.com to send a new command order to the bot (e.g. run comand2.py).
-
-- **Step 9:** The ns.attacker.com nameserver replies to the previous DNS Query with the new command as a TXT record. 
-- **Step 10:**  The DNS Resolver forwards the DNS Reply to the bot. 
+- **Step 1:** The infected host issues a DNS query under attacker.com, with the leftmost label carrying an encoded representation of the stolen password.
+- **Step 2:** The DNS infrastructure carries that query to the attacker-controlled authoritative nameserver for attacker.com, where the encoded data becomes available to the attacker.
+- **Step 3:** That nameserver encodes a command such as run command.py in a DNS reply, for example in a **TXT** record.
+- **Step 4:** The DNS infrastructure returns that reply to the infected host, allowing the malware to receive the command. By repeating this process across multiple DNS exchanges, the attacker can maintain a covert
+bidirectional channel over apparently legitimate DNS traffic.
 
 
-In the case of C&C communication, the server can also encode responses into DNS replies, which are then sent back to the compromised system. And ultimately, by continuously sending and receiving DNS queries and responses, the attacker can maintain a persistent communication channel with the compromised system, allowing for data exfiltration, command execution, and other malicious activities.
 <br>
 <br>
 

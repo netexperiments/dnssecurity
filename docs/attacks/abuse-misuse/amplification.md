@@ -9,21 +9,19 @@ Initially, the attacker forges DNS queries in which the source IP address is rep
 
 
 <figure markdown id="figure-1">
-  ![Figure 1: DNS Tunneling attack](../../images/background/Amplification.png){ width="400" }
+  ![Figure 1: DNS Tunneling attack](../../images/background/Amplification.png){ width="600" }
   <figcaption>Figure 1: DNS Amplification attack</figcaption>
 </figure>
 
  [Figure 1](#figure-1) shows a DNS Amplification attack scenario. These are the steps:
 
 
-- **Step 1:** The attacker commands a botnet to send a high volume of small ANY DNS queries (which requests ANY records) to open DNS resolvers. The source IP address of these queries is spoofed to match the IP address of the Victim (203.0.113.1).
-- **Step 2:** Each resolver generates large DNS responses (e.g., a 4,000-byte reply to a 60-byte query) and sends them to the spoofed IP address belonging to the Victim. The Victim receives an overwhelming flood of unsolicited, large DNS responses, consuming its network bandwidth.
-- **Step 3:** This flood of amplified responses overwhelms the Victim’s network, preventing legitimate communication and causing service disruption.
-
-The open DNS resolvers may also experience increased load due to processing a large number of queries, potentially degrading its performance for other users. However, the primary target is the Victim, not the resolvers.
+- **Step 1:** The botnet sends a burst of small DNS **ANY** queries for largezone.com to multiple open resolvers, while forging the source IP address of those queries so that it matches the victim’s address, here **203.0.113.1**. 
+- **Step 2:** Each open resolver processes the query as if it had been legitimately sent by the victim and returns a much larger DNS reply to the spoofed destination, namely the victim at **203.0.113.1**. Because the source IP was spoofed, the combined traffic from many resolvers accumulates into a flood of unsolicited amplified responses. As a consequence, the victim’s network link or local resources can become saturated by the incoming DNS
+traffic, so legitimate communication is delayed or dropped, causing denial of service.
 
 
-
+The open resolvers may also experience some additional processing load, but they are not the primary target of the attack. Their main role is to act as reflectors and amplifiers that multiply the traffic delivered to the victim.
 
 <br>
 <br>

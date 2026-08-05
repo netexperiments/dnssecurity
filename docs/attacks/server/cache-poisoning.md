@@ -12,7 +12,7 @@ DNS poisoning attacks become much harder when the attacker is not on the same LA
 
 
 <figure markdown id="figure-1">
-  ![Figure 1: DNS Tunneling attack](../../images/background/CachePoisoning.png)
+  ![Figure 1: DNS Tunneling attack](../../images/background/CachePoisoning.png){ width="600" }
   <figcaption>Figure 1: DNS Cache Poisoning attack</figcaption>
 </figure>
 
@@ -20,15 +20,13 @@ DNS poisoning attacks become much harder when the attacker is not on the same LA
  [Figure 1](#figure-1) shows a DNS Cache Poisoning scenario where the Victim DNS Server has no record of the domain **example.com**, and the attacker has a fast connection to the DNS Server. The attack's steps are the following:  
 
 
-- **Step 1:** The Attacker sends DNS Query request to Victim DNS Server about domain example.com.
-- **Step 2:** Victim DNS Server sends DNS Query to Root/gTLD servers inquiring about example.com.
-- **Step 2.1:** Simultaneously, the Attacker floods the Victim DNS Server with DNS Replies containing the IP address (192.0.2.2) belonging to their fake web server for example.com, and using different QIDs.
-- **Step 3:** Root/gTLD servers respond to the previous DNS Query with information about the domain’s nameserver.
-- **Step 4:** The Victim DNS Server queries the domain’s nameserver (ns1.example.com) to get the domain’s corresponding IP address.
-- **Step 5:** The domain’s nameserver (ns1.example.com) responds with IP address of example.com (212.0.0.1).
-- **Step 6:** The Victim DNS Server finally responds to the Attacker with the IP address it assumes to be of example.com. If Step 2.1 happened successfully before Step 5, the returned IP address in step 6 will be 192.0.2.2.
+- **Step 1:** The attacker triggers the Resolver to look up the A record for example.com
+- **Step 2:** Because no cached A record for example.com is available, the Resolver initiates an upstream lookup. If the required delegation information is also absent, a complete recursive lookup may first involve root and TLD servers; for simplicity, the figure omits those intermediate exchanges and shows only the query sent to the authoritative DNS server for example.com, using transaction ID 101.
+- **Step 3:** While the upstream query remains outstanding, the attacker floods the Resolver with forged responses that reproduce the question and claim that example.com resolves to the attacker-controlled address 192.0.2.2. The responses contain different transaction-ID guesses, illustrated in the figure by QID=100, QID=101, and QID=102, and pretend to originate from the queried authoritative server.
+- **Step 4:** The forged response containing QID=101 arrives first and matches the outstanding query. The Resolver therefore processes the response and caches its direct Answer-section record, creating the false mapping example.com A 192.0.2.2 shown in the cache box.
+- **Step 5:** The legitimate authoritative server returns the correct response, example.com A 212.0.0.1, also using QID=101. However, this response arrives too late and is ignored because the outstanding query has already been
+completed. Consequently, subsequent clients using the Resolver receive the poisoned mapping and may be redirected to the attacker-controlled server at 192.0.2.2 until the cache entry expires. If the legitimate response arrives before the matching forged response, the Resolver instead caches the correct mapping, and the attacker must normally wait for its TTL to expire before attempting to poison the same name again.
 
-Do note that the attack is only successful if Step 2.1 happens before Step 5, and if that wasn't the case, steps 4 and 5 would simply not occur. This all means that the attacker has to flood the Victim DNS server with replies right after sending the DNS Query in Step 1.
 
 <br>
 <br>

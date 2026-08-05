@@ -13,15 +13,14 @@ Rebinding via a compromised local DNS resolver: A more difficult but potentially
 
 Figure 1 illustrates a scenario based on "Client-side rebinding via a malicious website", in which the victim visits a malicious website controlled by the attacker (**www.attacker.com**). The victim also has a private web server on their local network that is normally inaccessible from the internet. The attacker, who has access to a compromised DNS Server, can control the DNS records for their domain and knows the private IP of the victim’s internal service, launches the attack as follows:
 
-- **Step 1:** The Attacker tricks the Victim into accessing its malicious web page on www.attacker.com (such as, via phishing) and a DNS request is sent to the malicious domain's DNS server.
-- **Step 2:** The DNS server returns (231.0.2.1) that corresponds to the correct IP address of the Attacker’s Web server.
-- **Step 3:** The Victim’s web browser gets the web page from the Attacker Web Server.
-- **Step 4:** After the page is loaded, the browser runs the malicious script.
-- **Step 5:** The Web Browser sends a new request to www.attacker.com through a DNS Query sent to the DNS Server.
-- **Step 6:** The DNS Server returns the Victim’s Private Web Server IP address (192.168.0.2).
-- **Step 7:** The malicious script sends an HTTP request to the private server. Because the browser treats the request as same-origin, it allows the malicious page to fully interact with the private server’s resources.
+- **Step 1:** The victim’s browser sends a DNS query for **www.attacker.com**. 
+- **Step 2:** The attacker-controlled DNS server replies with the public IP address of the attacker’s web server, for example **198.51.100.10**. 
+- **Step 3:** The browser retrieves the malicious web page from that server over HTTP.
+- **Step 4:** The browser executes the malicious JavaScript contained in the page. 
+- **Step 5:** The script causes a new access to www.attacker.com, which leads the browser to perform another DNS lookup for the same hostname.
+- **Step 6:** The attacker-controlled DNS server now returns the IP address of the target internal web server, for example **192.168.0.2**.
+- **Step 7:** The malicious script sends HTTP requests to that internal server. Because the browser still associates those requests with the hostname www.attacker.com, it may allow the interaction under the same-origin policy, thereby exposing the internal service to attacker-controlled requests.
 
-The attack is now concluded. The attacker can now send HTTP requests to the Private Web Server, and the Web Browser will not identify it as a cross-origin request. The attacker is free to fully access the Private Web Server.
 
 <br>
 <br>
