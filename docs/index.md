@@ -1,4 +1,4 @@
-# DNS Security
+# DNS-SecLab
 
 This website documents a hands-on study of DNS security, developed as part of a 
 Master's dissertation at Instituto Superior Técnico (IST). It covers both defensive 

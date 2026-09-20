@@ -1,0 +1,42 @@
+Copyright 2026 Pedro Barão
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+This project contains educational material, experimental configurations, scripts, and documentation for studying computer networking and security protocols.
+
+The experiments in this project may use, depend on, or interact with third-party software and technologies, including but not limited to:
+
+OpenSSL
+OpenSSH
+Linux
+Docker
+GNS3
+Wireshark
+BIND 9 (including dig, rndc, nsupdate, and DNSSEC tools)
+Unbound
+dnsdist
+Dnsmasq
+Snort
+Scapy
+Python (including Paramiko and Flask)
+iptables / Netfilter
+Firefox
+NGINX
+curl
+Cisco IOS / IOSvL2 (proprietary)
+Third-party Docker images and GNS3 appliances referenced in the lab guides
+MkDocs / Material for MkDocs
+
+These third-party projects are not licensed under the Apache License 2.0 by virtue of their use in this project. Each third-party project remains subject to its own applicable license and copyright notices.
+
+This NOTICE file does not replace or modify the licenses applicable to third-party software, documentation, protocols, or other materials used by the experiments.

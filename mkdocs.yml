@@ -1,12 +1,36 @@
-site_name: DNS Security
+site_name: DNS-SecLab
 site_url: https://netexperiments.github.io/dnssecurity/
+
+site_description: DNS-SecLab documents a hands-on study of DNS security, developed as part of a Master's dissertation at Instituto Superior Técnico (IST). It covers both defensive mechanisms that strengthen DNS integrity and privacy, as well as a broad range of attack techniques demonstrated in GNS3, a controlled lab environment.
+site_author: Pedro Luís Barão
+
+repo_url: https://github.com/netexperiments/dnssecurity
+repo_name: netexperiments/dnssecurity
+
 theme:
   name: material
+  language: en
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
   features:
     - navigation.sections
     - navigation.tabs  
     - navigation.indexes
     - content.code.copy
+  icon:
+    repo: fontawesome/brands/github
 markdown_extensions:
   - toc:
       toc_depth: 0
@@ -17,6 +41,11 @@ markdown_extensions:
   - pymdownx.superfences
 #extra_css:
  # - stylesheets/extra.css
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/pedroluisbarao
 
 nav:
   - Home: index.md
