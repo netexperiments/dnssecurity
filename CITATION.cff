@@ -7,6 +7,8 @@ authors:
     given-names: "Pedro"
   - family-names: "Valadas"
     given-names: "Rui"
+  - family-names: "Domingues"
+    given-names: "Tiago"
 version: "1.0.0"
 date-released: "2026-09-19"
 license: "Apache-2.0"
